@@ -1,0 +1,3 @@
+callbackAddForTest(\1,\1) >> /0
+callbackAddForTest(\1,callbackAddForTest(\1,\1)) >> /1
+callbackAddForTest(callbackAddForTest(\1,\1),callbackAddForTest(\1,\1)) >> /2

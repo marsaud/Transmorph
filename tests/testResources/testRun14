@@ -1,0 +1,6 @@
+/firstNames/0 >> /0.first
+/firstNames/1 >> /1.first
+/firstNames/2 >> /2.first
+/lastNames/0 >> /0.last
+/lastNames/1 >> /1.last
+/lastNames/2 >> /2.last
