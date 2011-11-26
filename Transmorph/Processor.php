@@ -27,10 +27,10 @@
  * 
  * @package Transmorph
  * 
- * @property-read TransmorphPluginInterface[] $plugins
- * @property-read Transmorph_Reader $reader
- * @property-read Transmorph_Writer $writer
- * @property-read mixed $input Read-only. Always null except for plugins fired by {@link run()}
+ * @property-read TransmorphPluginInterface[] $plugins Array containing registered plugins.
+ * @property-read Transmorph_Reader $reader The input reader component.
+ * @property-read Transmorph_Writer $writer The output writer component.
+ * @property-read mixed $input The input submitted to {@link run()}. Always null except for plugins fired by {@link run()}
  * 
  * @todo plugin registering interface
  * 
@@ -40,25 +40,28 @@ class Transmorph_Processor
     const REGEX_CONST = '#^\\\.+$#';
 
     /**
-     * Les données d'entrée de la transformation.
+     * The input submitted to {@link run()}. Encapsulated to be read by plugins.
      *
      * @var mixed
      */
     protected $_input;
 
     /**
+     * The input reader component.
      *
      * @var Transmorph_Reader
      */
     protected $_reader;
 
     /**
+     * The output writer component.
      *
      * @var Transmorph_Writer
      */
     protected $_writer;
 
     /**
+     * Array of plugins for the {@link Transmorph}
      *
      * @var TransmorphPluginInterface[]
      */
@@ -282,6 +285,50 @@ class Transmorph_Processor
         }
 
         return $parameters;
+    }
+
+    public function prependPlugin(Transmorph_Plugin_Interface $plugin)
+    {
+        foreach ($this->_plugins as $p)
+        {
+            if (get_class($p) == get_class($plugin))
+            {
+                throw new Transmorph_Exception('Plugin ' . get_class($plugin) . ' already registered');
+            }
+        }
+        array_unshift($this->_plugins, $plugin);
+    }
+
+    public function appendPlugin(Transmorph_Plugin_Interface $plugin)
+    {
+        foreach ($this->_plugins as $p)
+        {
+            if (get_class($p) == get_class($plugin))
+            {
+                throw new Transmorph_Exception('Plugin ' . get_class($plugin) . ' already registered');
+            }
+        }
+        array_push($this->_plugins, $plugin);
+    }
+
+    public function removePlugin($pluginClassName)
+    {
+        $removeKey = null;
+        foreach ($this->_plugins as $key => $value)
+        {
+            if (get_class($value) === $pluginClassName)
+            {
+                $removeKey = $key;
+                break;
+            }
+        }
+
+        if ($removeKey === null)
+        {
+            throw new Transmorph_Exception('Plugin ' . $pluginClassName . ' not found for removal.');
+        }
+        
+        unset ($this->_plugins[$removeKey]);
     }
 
     /**
