@@ -25,14 +25,31 @@
 /**
  * Description of Transmorph_Processor
  * 
+ * Transmorph's purpose is to provide data stucture transformation driven by a
+ * file giving tranformation rules.
+ * 
+ * @todo TASK document the transformation rule format.
+ * 
+ * Transmorph_Processor is the "front" component for every day use.
+ * 
+ * A full file-driven transformation can be done with the {@link run()} method,
+ * more particular operations are available, like a transformation from a
+ * configuration string with {@link handleLine()} or simply use "read rules" to
+ * explore data structures with {@link handleMapEntry}.
+ * 
+ * See also {@link Transmorph_Reader} and {@link Transmorph_Writer} doc for
+ * other particular operations.
+ * 
+ * Transmorph_Processor functionalities can be extended by providing plugins
+ * implementing {@link Transmorph_Plugin_Interface} or extending 
+ * {@link Transmorph_Plugin_Abstract}.
+ * 
  * @package Transmorph
  * 
  * @property-read TransmorphPluginInterface[] $plugins Array containing registered plugins.
  * @property-read Transmorph_Reader $reader The input reader component.
  * @property-read Transmorph_Writer $writer The output writer component.
  * @property-read mixed $input The input submitted to {@link run()}. Always null except for plugins fired by {@link run()}
- * 
- * @todo plugin registering interface
  * 
  */
 class Transmorph_Processor
@@ -61,13 +78,19 @@ class Transmorph_Processor
     protected $_writer;
 
     /**
-     * Array of plugins for the {@link Transmorph}
+     * Array of plugins called by all '_fire*' methods.
      *
      * @var TransmorphPluginInterface[]
      */
     protected $_plugins;
 
-    public function __construct()
+    /**
+     * @todo FEATURE The constructor could call a kind of _init protected overridable
+     * method(s) to instanciate reader & writer, so extending Transmorph_Process
+     * would be an opportunity to use extended Transmorph_Reader and
+     * Transmorph_Writer subclasses. 
+     */
+    public final function __construct()
     {
         $this->_reader = new Transmorph_Reader($this);
         $this->_writer = new Transmorph_Writer($this);
@@ -76,19 +99,24 @@ class Transmorph_Processor
     }
 
     /**
-     * @todo Etudier la possibilité de passer soit un fichier avec la $map,
-     * soit la $map directement en string[].
-     *
-     * @param mixed $input
-     * @param string $filePath
+     * Call this method forthe main use of Transmorph : tranforming a data structure
+     * to another one following a set of rules written in a file.
      * 
-     * @return mixed 
+     * @todo FEATURE This method could take a path/to/file, or the transformation rules
+     * in a string, as it ould be written in the file.
+     *
+     * @param mixed $input A variable of any type. As the purpose is to tranform
+     * structures, most of the time the input will be a structure of array and/or
+     * objects.
+     * @param string $filePath The path to the file defining tranformation rules.
+     * 
+     * @return mixed The output structure resulting from the transformation.
      */
     public function run($input, $filePath)
     {
         $this->_input = $input;
         /**
-         * @todo Vérifications sur la validité du filePath
+         * @todo TASK Check for file existence to throw a clean exception.
          */
         $map = $this->handleFile($filePath);
         $map = $this->_fireProcessMap($map);
@@ -104,11 +132,18 @@ class Transmorph_Processor
     }
 
     /**
-     * Ouvre $_filePath, et stock les lignes dans un tableau de string
+     * Reads a file to give back the file lines in an array of strings.
+     * Of course the expected file is a tranformation rule file.
      * 
-     * @param string $filePath A path to a map ENTRY file.
+     * @todo FEATURE. As {@link run()} is implemented, it expects an array
+     * of transformation rules given "ready to use" by handleFile; and it passes
+     * this array to {@link _fireProcessMap()}. It would be interesting to
+     * introduce a _fireProcessFileLines in handleFile to take soem work to be
+     * done to go from file to "map".
+     * 
+     * @param string $filePath A /path/to/a_file.
      *
-     * @return string[] le tableau avec les lignes du fichier.
+     * @return string[] The lines found in the file.
      */
     public function handleFile($filePath)
     {
@@ -116,11 +151,14 @@ class Transmorph_Processor
     }
 
     /**
-     * Traite une ligne de fichier d'entrée
+     * Executes one transformation rule.
      *
-     * @param mixed $output
-     * @param mixed $input
-     * @param string $line 
+     * @param mixed $output A variable where the data pulled from $input will be 
+     * written. 
+     * @param mixed $input The data structure to transmorph to $ouput.
+     * @param string $line A single complete transformation rule.
+     * 
+     * @return void
      */
     public function handleLine(&$output, $input, $line)
     {
@@ -130,24 +168,25 @@ class Transmorph_Processor
     }
 
     /**
-     * Recursif
+     * Pulls data from an $input following a read-rule.
      * 
-     * Parse et évalue récursivement un ENTRY pour en dégager d'autres ENTRY, 
-     * ou des PATTERN ou CONST à évaluer.
-     * 
-     * La récursivité s'arrête aux PATTERN ou CONST.
+     * This function can recursively follow imbricated callbacks declared in the
+     * read-rule. Recursivity stops when a constant rule or a simple read-rule is
+     * found. 
      *
-     * @param mixed $input
-     * @param string $mapEntry ENTRY
+     * @param mixed $input The data read followinf the rule.
+     * @param string $mapEntry The read-rule.
      * 
-     * @return mixed 
+     * @return mixed The data read and/or processed(when callbacks are used).
      */
     public function handleMapEntry($input, $mapEntry)
     {
         if ($this->isConst($mapEntry))
         {
             /**
-             * @todo dedicated function
+             * @todo TASK This tiny operation deserves its own method so an 
+             * evolution of the rule format or whatever could need maintenance
+             * around the "constant" feature will be clean and easy.
              */
             return substr($mapEntry, 1);
         }
@@ -179,10 +218,11 @@ class Transmorph_Processor
     }
 
     /**
-     * Vérifie si un ENTRY est une CONST
+     * Checks if a read-rule is a constant rule.
      *
-     * @param string $mapEntry
-     * @return boolean
+     * @param string $mapEntry The read-rule to check.
+     * 
+     * @return boolean True if the rule is constant rule.
      */
     public function isConst($mapEntry)
     {
@@ -190,10 +230,11 @@ class Transmorph_Processor
     }
 
     /**
-     * Vérifie si un ENTRY est un PATH
+     * Checks if a read-rule is a simple read-rule.
      *
-     * @param string $mapEntry
-     * @return boolean
+     * @param string $mapEntry The rule to check.
+     * 
+     * @return boolean True if the rule is simple read-rule.
      */
     public function isPath($mapEntry)
     {
@@ -202,12 +243,12 @@ class Transmorph_Processor
     }
 
     /**
-     * Récupère le nom du Callback dans le $mapEntry
-     * Renvoie une chaine vide si il n'y pas de callback
+     * Assuming a read-rule to be a complex read-rule, attempts to parse out a 
+     * callback name.
      *
-     * @param string $mapEntry un ENTRY
+     * @param string $mapEntry The rule to analyse.
      * 
-     * @return string FUNCTION
+     * @return string The callback name if found, null otherwise.
      */
     public function findCallback($mapEntry)
     {
@@ -225,21 +266,19 @@ class Transmorph_Processor
     }
 
     /**
-     * Récupère si elles existent les expressions formatées des paramètres du 
-     * callback dans le $mapEntry.
-     * Renvoie un tableau numérique avec les expressions dans l'ordre où elles
-     * étaient écrites.
+     * Assuming a read-rule to be a complex read-rule, attempts to parse out 
+     * parameters for a callback.
      *
-     * @param string $mapEntry ENTRY
+     * @param string $mapEntry The rule to analyse.
      * 
-     * @return string[] des ENTRY|PATTERN
+     * @return string[] An array of strings expected to be read-rules to provide
+     * parameters for a callback.
      */
     public function findCallbackParams($mapEntry)
     {
         $parameters = array();
-
         /*
-         * Avec cette regex, on capture le bloc (*,*,*) du callback
+         * This regex captures a () block following what can be a callback name.
          */
         $entryRegex = '#^[^/\.\(]+\((.*)\)$#';
 
@@ -248,13 +287,10 @@ class Transmorph_Processor
         if (isset($matches[1]))
         {
             $paramString = $matches[1];
-            //Index du tableau de chaînes renvoyé
             $index = 0;
             /*
-             * Profondeur de parenthèses pendant le parsing.
-             * Permet de bypasser les ',' encapsulés dans des formes de ce
-             * type :
-             * (*,(a,b),*)
+             * We watch the parenthesis depth to keep parameters for imbricated 
+             * callbacks uses for later.
              */
             $parenthesisDepth = 0;
 
@@ -287,6 +323,18 @@ class Transmorph_Processor
         return $parameters;
     }
 
+    /**
+     * Adds a plugin in first position on the plugin stack. The plugin order is
+     * important when several plugin on the stack concretely implement the same
+     * method(s) of the {@link Transmorph_Plugin_Interface}.
+     *
+     * @param Transmorph_Plugin_Interface $plugin An instance of a plugin.
+     * 
+     * @return void
+     * 
+     * @throws Transmorph_Exception If an instance of the same plugin class is 
+     * already in the stack.
+     */
     public function prependPlugin(Transmorph_Plugin_Interface $plugin)
     {
         foreach ($this->_plugins as $p)
@@ -299,6 +347,18 @@ class Transmorph_Processor
         array_unshift($this->_plugins, $plugin);
     }
 
+    /**
+     * Adds a plugin in the last position of the plugin stack. The plugin order is
+     * important when several plugin on the stack concretely implement the same
+     * method(s) of the {@link Transmorph_Plugin_Interface}.
+     *
+     * @param Transmorph_Plugin_Interface $plugin An instance of a plugin.
+     * 
+     * @return void
+     * 
+     * @throws Transmorph_Exception If an instance of the same plugin class is 
+     * already in the stack.
+     */
     public function appendPlugin(Transmorph_Plugin_Interface $plugin)
     {
         foreach ($this->_plugins as $p)
@@ -311,6 +371,16 @@ class Transmorph_Processor
         array_push($this->_plugins, $plugin);
     }
 
+    /**
+     * Removes a plugin identified by its class name from the plugin stack. 
+     *
+     * @param string $pluginClassName The class name of the plugin to remove.
+     * 
+     * @return void
+     * 
+     * @throws Transmorph_Exception if the plugin to remove is not found in the
+     * stack.
+     */
     public function removePlugin($pluginClassName)
     {
         $removeKey = null;
@@ -327,8 +397,8 @@ class Transmorph_Processor
         {
             throw new Transmorph_Exception('Plugin ' . $pluginClassName . ' not found for removal.');
         }
-        
-        unset ($this->_plugins[$removeKey]);
+
+        unset($this->_plugins[$removeKey]);
     }
 
     /**
@@ -336,9 +406,9 @@ class Transmorph_Processor
      * 
      * @codeCoverageIgnore Trivial
      *
-     * @param string $name
+     * @param string $name Property name.
      * 
-     * @return mixed 
+     * @return mixed Property value.
      */
     public function __get($name)
     {
@@ -355,7 +425,7 @@ class Transmorph_Processor
                 break;
             case 'input':
                 /**
-                 *  @todo this should return a recursive copy/clone to avoid breaking encapsulation.
+                 *  @todo TASK this should return a recursive copy/clone to avoid breaking encapsulation.
                  */
                 return $this->_input;
                 break;
@@ -366,11 +436,13 @@ class Transmorph_Processor
     }
 
     /**
+     * @see Transmorph_Plugin_Interface::processMap()
+     * 
      * @codeCoverageIgnore
      *
-     * @param string[] $map An ENTRY array to process.
+     * @param string[] $map @see Transmorph_Plugin_Interface::processMap().
      * 
-     * @return string[] The processed array of ENTRYs.
+     * @return string[] @see Transmorph_Plugin_Interface::processMap().
      */
     protected function _fireProcessMap(array $map)
     {
@@ -384,11 +456,13 @@ class Transmorph_Processor
     }
 
     /**
+     * @see Transmorph_Plugin_Interface::processLine()
+     * 
      * @codeCoverageIgnore
      *
-     * @param Transmorph_Line $line A LINE to process.
+     * @param string[] $map @see Transmorph_Plugin_Interface::processLine().
      * 
-     * @return Transmorph_Line The processed LINE.
+     * @return string[] @see Transmorph_Plugin_Interface::processLine().
      */
     protected function _fireProcessLine(Transmorph_Line $line)
     {
@@ -402,11 +476,13 @@ class Transmorph_Processor
     }
 
     /**
+     * @see Transmorph_Plugin_Interface::processCallback()
+     * 
      * @codeCoverageIgnore
      *
-     * @param string $callback A callback name to process.
+     * @param string[] $map @see Transmorph_Plugin_Interface::processCallback().
      * 
-     * @return string The processes callback name.
+     * @return string[] @see Transmorph_Plugin_Interface::processCallback().
      */
     protected function _fireProcessCallback($callback)
     {
@@ -420,11 +496,13 @@ class Transmorph_Processor
     }
 
     /**
+     * @see Transmorph_Plugin_Interface::processCallbackParams()
+     * 
      * @codeCoverageIgnore
      *
-     * @param string[] $callbackParams An ENTRY array to process.
+     * @param string[] $map @see Transmorph_Plugin_Interface::processCallbackParams().
      * 
-     * @return string[] The processed ENTRY array.
+     * @return string[] @see Transmorph_Plugin_Interface::processCallbackParams().
      */
     protected function _fireProcessCallbackParams(array $callbackParams)
     {
