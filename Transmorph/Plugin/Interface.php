@@ -41,11 +41,11 @@ interface Transmorph_Plugin_Interface
     
     /**
      * @param Transmorph_Processor $transmorph The working Transmorph Instance.
-     * @param Transmorph_Line $line The original line.
+     * @param Transmorph_Rule $rule The original rule.
      * 
-     * @return Transmorph_Line The processed line.
+     * @return Transmorph_Rule The processed rule.
      */
-    public function processLine(Transmorph_Processor $transmorph, Transmorph_Line $line);
+    public function processRule(Transmorph_Processor $transmorph, Transmorph_Rule $rule);
     
     /**
      * @param Transmorph_Processor $transmorph The working Transmorph Instance.

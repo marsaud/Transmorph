@@ -42,13 +42,13 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
 
         $processedMap = array();
 
-        foreach ($map as $key => $mapLine)
+        foreach ($map as $key => $mapRule)
         {
             $lineNumber = $key + 1;
-            $tLine = new Transmorph_Line($mapLine);
+            $tRule = new Transmorph_Rule($mapRule);
 
             $matchesInput = array();
-            $foundInput = preg_match_all(self::ITER_NODE_REGEX, $tLine->source, $matchesInput, PREG_OFFSET_CAPTURE);
+            $foundInput = preg_match_all(self::ITER_NODE_REGEX, $tRule->sourceRule, $matchesInput, PREG_OFFSET_CAPTURE);
             if ($foundInput > 1)
             {
                 throw new Transmorph_Exception(
@@ -60,7 +60,7 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
             }
 
             $matchesOutput = array();
-            $foundOutput = preg_match_all(self::ITER_NODE_REGEX, $tLine->target, $matchesOutput);
+            $foundOutput = preg_match_all(self::ITER_NODE_REGEX, $tRule->targetRule, $matchesOutput);
             if ($foundOutput > 1)
             {
                 throw new Transmorph_Exception(
@@ -78,11 +78,11 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
 
             if ($foundInput === 0 && $foundOutput === 0)
             {
-                $processedMap[] = $mapLine;
+                $processedMap[] = $mapRule;
             }
             else
             {
-                $path = substr($tLine->source, 0, $matchesInput[0][0][1]);
+                $path = substr($tRule->sourceRule, 0, $matchesInput[0][0][1]);
                 
                 $iterableNode = null;
                 try
@@ -94,7 +94,7 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
                     throw new Transmorph_Exception('Processing Map Line ' . $lineNumber . ' throws : ' . $exc->getMessage());
                 }
 
-                $mapExtension = $this->extendMapLine($iterableNode, $mapLine);
+                $mapExtension = $this->extendMapRule($iterableNode, $mapRule);
                 $processedMap = array_merge($processedMap, $mapExtension);
             }
         }
@@ -120,26 +120,26 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
     /**
      *
      * @param mixed $iterableNode
-     * @param string $mapLine 
+     * @param string $mapRule 
      * 
      * @return string[]
      */
-    public function extendMapLine($iterableNode, $mapLine)
+    public function extendMapRule($iterableNode, $mapRule)
     {
         $this->_checkIterableNode($iterableNode);
-        $mapLineExtension = array();
+        $mapRuleExtension = array();
         
         $count = 0;
         foreach ($iterableNode as $key => $value)
         {
-            $newMapLine = preg_replace('/#/', $key, $mapLine, -1, $count);
-            $mapLineExtension[] = $newMapLine;
+            $newMapRule = preg_replace('/#/', $key, $mapRule, -1, $count);
+            $mapRuleExtension[] = $newMapRule;
             if ($count === 0)
             {
                 break;
             }
         }
-        return $mapLineExtension;
+        return $mapRuleExtension;
     }
     
     /**

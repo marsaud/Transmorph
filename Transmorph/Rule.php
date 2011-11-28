@@ -33,10 +33,10 @@
  * 
  * @subpackage Line
  * 
- * @property-read string $source ENTRY de lecture de la ligne.
- * @property-read string $target PATH d'écriture de la ligne.
+ * @property-read string $sourceRule ENTRY de lecture de la ligne.
+ * @property-read string $targetRule PATH d'écriture de la ligne.
  */
-class Transmorph_Line
+class Transmorph_Rule
 {
     /**
      * Le pattern d'expression réglière permettant de parser une ligne de mapping (LINE).
@@ -47,13 +47,13 @@ class Transmorph_Line
      *
      * @var string
      */
-    protected $_source;
+    protected $_sourceRule;
 
     /**
      *
      * @var string
      */
-    protected $_target;
+    protected $_targetRule;
 
     /**
      * Construit une instance à partir de la ligne de mapping (LINE) fournie.
@@ -62,28 +62,28 @@ class Transmorph_Line
      */
     public function __construct($line)
     {
-        $this->_parseLine($line);
+        $this->_parseRule($line);
     }
 
     /**
      * Interprète la LINE pour en extraire l'ENTRY source et le PATH cible.
      *
-     * @param string $line
+     * @param string $rule
      * 
      * throws TransmorphLineException
      */
-    protected function _parseLine($line)
+    protected function _parseRule($rule)
     {
         $matches = array();
-        $found = preg_match(self::LINE_REGEX, $line, $matches);
+        $found = preg_match(self::LINE_REGEX, $rule, $matches);
 
         if ($found !== 1)
         {
-            throw new Transmorph_Line_Exception('STRING is not conform to TransmorphLine format');
+            throw new Transmorph_Rule_Exception('STRING is not conform to Transmorph Rule format');
         }
 
-        $this->_source = $matches[1];
-        $this->_target = $matches[3];
+        $this->_sourceRule = $matches[1];
+        $this->_targetRule = $matches[3];
     }
 
     /**
@@ -95,11 +95,11 @@ class Transmorph_Line
     {
         switch ($name)
         {
-            case 'source':
-                return $this->_source;
+            case 'sourceRule':
+                return $this->_sourceRule;
                 break;
-            case 'target':
-                return $this->_target;
+            case 'targetRule':
+                return $this->_targetRule;
                 break;
             default:
                 throw new OutOfRangeException(__CLASS__ . ' has no ' . $name . ' property');

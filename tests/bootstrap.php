@@ -24,8 +24,8 @@ require_once $srcDir . '/Transmorph/Reader/Exception.php';
 require_once $srcDir . '/Transmorph/Reader.php';
 require_once $srcDir . '/Transmorph/Writer.php';
 require_once $srcDir . '/Transmorph/Writer/Exception.php';
-require_once $srcDir . '/Transmorph/Line/Exception.php';
-require_once $srcDir . '/Transmorph/Line.php';
+require_once $srcDir . '/Transmorph/Rule/Exception.php';
+require_once $srcDir . '/Transmorph/Rule.php';
 
 require_once $srcDir . '/Transmorph/Plugin/Interface.php';
 require_once $srcDir . '/Transmorph/Plugin/Abstract.php';

@@ -228,7 +228,7 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider handleMapEntryDataProvider
+     * @dataProvider handleReadRuleDataProvider
      *
      * @param mixed $input
      * @param string $mapEntry
@@ -236,7 +236,7 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     public function testHandleMapEntry($input, $mapEntry, $expected)
     {
-        $this->assertEquals($expected, $this->object->handleMapEntry($input, $mapEntry));
+        $this->assertEquals($expected, $this->object->handleReadRule($input, $mapEntry));
     }
 
     /**
@@ -247,10 +247,10 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     public function testHandleMapEntryExceptions($mapEntry)
     {
-        $this->object->handleMapEntry(null, $mapEntry);
+        $this->object->handleReadRule(null, $mapEntry);
     }
 
-    public function handleMapEntryDataProvider()
+    public function handleReadRuleDataProvider()
     {
         $data = array();
 
@@ -318,21 +318,21 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider handleLineDataProvider
+     * @dataProvider handleRuleDataProvider
      *
      * @param mixed $input
      * @param string $line
      * @param mixed $expected 
      */
-    public function testHandleLine($input, $line, $expected)
+    public function testhandleRule($input, $line, $expected)
     {
         $output = null;
 
-        $this->object->handleLine($output, $input, $line);
+        $this->object->handleRule($output, $input, $line);
         $this->assertEquals($expected, $output);
     }
 
-    public function handleLineDataProvider()
+    public function handleRuleDataProvider()
     {
         $data = array();
 

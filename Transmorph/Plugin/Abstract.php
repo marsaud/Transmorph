@@ -50,9 +50,9 @@ abstract class Transmorph_Plugin_Abstract implements Transmorph_Plugin_Interface
         return $pathNode;
     }
 
-    public function processLine(Transmorph_Processor $transmorph, Transmorph_Line $line)
+    public function processRule(Transmorph_Processor $transmorph, Transmorph_Rule $rule)
     {
-        return $line;
+        return $rule;
     }
 
     public function processMap(Transmorph_Processor $transmorph, array $map)

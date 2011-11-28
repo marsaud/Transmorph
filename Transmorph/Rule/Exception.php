@@ -20,19 +20,19 @@
  * 
  * @package Transmorph
  * 
- * @subpackage Line
+ * @subpackage Rule
  * 
  */
 
 /**
- * Description of Transmorph_Line_Exception
+ * Description of Transmorph_Rulee_Exception
  * 
  * @package Transmorph
  * 
- * @subpackage Line
+ * @subpackage Rule
  * 
  */
-class Transmorph_Line_Exception extends Transmorph_Exception
+class Transmorph_Rule_Exception extends Transmorph_Exception
 {
     
 }

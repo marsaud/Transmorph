@@ -28,14 +28,12 @@
  * Transmorph's purpose is to provide data stucture transformation driven by a
  * file giving tranformation rules.
  * 
- * @todo TASK document the transformation rule format.
- * 
  * Transmorph_Processor is the "front" component for every day use.
  * 
  * A full file-driven transformation can be done with the {@link run()} method,
  * more particular operations are available, like a transformation from a
- * configuration string with {@link handleLine()} or simply use "read rules" to
- * explore data structures with {@link handleMapEntry}.
+ * rule string with {@link handleRule()} or simply use "read-rules" to
+ * explore data structures with {@link handleReadRule}.
  * 
  * See also {@link Transmorph_Reader} and {@link Transmorph_Writer} doc for
  * other particular operations.
@@ -43,6 +41,8 @@
  * Transmorph_Processor functionalities can be extended by providing plugins
  * implementing {@link Transmorph_Plugin_Interface} or extending 
  * {@link Transmorph_Plugin_Abstract}.
+ * 
+ * @todo TASK document the transformation rule format.
  * 
  * @package Transmorph
  * 
@@ -99,32 +99,32 @@ class Transmorph_Processor
     }
 
     /**
-     * Call this method forthe main use of Transmorph : tranforming a data structure
+     * Call this method for the main use of Transmorph : transforming a data structure
      * to another one following a set of rules written in a file.
      * 
      * @todo FEATURE This method could take a path/to/file, or the transformation rules
-     * in a string, as it ould be written in the file.
+     * in a string, as it could be written in the file.
      *
      * @param mixed $input A variable of any type. As the purpose is to tranform
      * structures, most of the time the input will be a structure of array and/or
      * objects.
-     * @param string $filePath The path to the file defining tranformation rules.
+     * @param string $ruleFilePath The path to the file defining tranformation rules.
      * 
      * @return mixed The output structure resulting from the transformation.
      */
-    public function run($input, $filePath)
+    public function run($input, $ruleFilePath)
     {
         $this->_input = $input;
         /**
          * @todo TASK Check for file existence to throw a clean exception.
          */
-        $map = $this->handleFile($filePath);
+        $map = $this->handleFile($ruleFilePath);
         $map = $this->_fireProcessMap($map);
 
         $output = null;
-        foreach ($map as $line)
+        foreach ($map as $rule)
         {
-            $this->handleLine($output, $input, $line);
+            $this->handleRule($output, $input, $rule);
         }
 
         $this->_input = null;
@@ -156,15 +156,15 @@ class Transmorph_Processor
      * @param mixed $output A variable where the data pulled from $input will be 
      * written. 
      * @param mixed $input The data structure to transmorph to $ouput.
-     * @param string $line A single complete transformation rule.
+     * @param string $rule A single complete transformation rule.
      * 
      * @return void
      */
-    public function handleLine(&$output, $input, $line)
+    public function handleRule(&$output, $input, $rule)
     {
-        $tLine = new Transmorph_Line($line);
-        $tLine = $this->_fireProcessLine($tLine);
-        $this->_writer->feed($output, $tLine->target, $this->handleMapEntry($input, $tLine->source));
+        $tRule = new Transmorph_Rule($rule);
+        $tRule = $this->_fireProcessRule($tRule);
+        $this->_writer->feed($output, $tRule->targetRule, $this->handleReadRule($input, $tRule->sourceRule));
     }
 
     /**
@@ -179,7 +179,7 @@ class Transmorph_Processor
      * 
      * @return mixed The data read and/or processed(when callbacks are used).
      */
-    public function handleMapEntry($input, $mapEntry)
+    public function handleReadRule($input, $mapEntry)
     {
         if ($this->isConst($mapEntry))
         {
@@ -456,23 +456,23 @@ class Transmorph_Processor
     }
 
     /**
-     * @see Transmorph_Plugin_Interface::processLine()
+     * @see Transmorph_Plugin_Interface::processRule()
      * 
      * @codeCoverageIgnore
      *
-     * @param string[] $map @see Transmorph_Plugin_Interface::processLine().
+     * @param string[] $map @see Transmorph_Plugin_Interface::processRule().
      * 
-     * @return string[] @see Transmorph_Plugin_Interface::processLine().
+     * @return string[] @see Transmorph_Plugin_Interface::processRule().
      */
-    protected function _fireProcessLine(Transmorph_Line $line)
+    protected function _fireProcessRule(Transmorph_Rule $rule)
     {
         foreach ($this->_plugins as $plugin)
         {
             /* @var $plugin TransmorphPluginInterface */
-            $line = $plugin->processLine($this, $line);
+            $rule = $plugin->processRule($this, $rule);
         }
 
-        return $line;
+        return $rule;
     }
 
     /**

@@ -27,6 +27,8 @@
 /**
  * Description of TransmorphWriter
  * 
+ * This class handles Transmorph write rules.
+ * 
  * @package Transmorph
  * 
  * @subpackage Writer
@@ -37,17 +39,29 @@ class Transmorph_Writer
 {
 
     /**
+     * We can inject a Transmorph_Processor here for the writer to acces the plugin
+     * stack.
+     * 
+     * @todo TASK I don't like this processor/writer coupling for plugin access.
+     * Time will bring me an idea...
      *
      * @var Transmorph_Processor
      */
     protected $_t;
 
     /**
+     * A class name used to instanciate object nodes in the transformation output.
      *
      * @var string
      */
     protected $_objectNodeType;
 
+    /**
+     * The $transmorph parameter can provide a plugin stack fir the writer. Most
+     * of the time this $transmorph will be a caller of the writer.
+     *
+     * @param mixed $transmorph 
+     */
     public function __construct($transmorph = null)
     {
         if ($transmorph !== null)
@@ -58,15 +72,32 @@ class Transmorph_Writer
         $this->_objectNodeType = 'stdClass';
     }
 
+    /**
+     * This method lately "type-hints" the {@link __construct()} $transmorph parameter.
+     *
+     * @param Transmorph_Processor $t A processor. See {@link __construct()}
+     */
     protected function _setTransmorph(Transmorph_Processor $t)
     {
         $this->_t = $t;
     }
 
+    /**
+     * This method resolves a write rule to push data in a variable, creating
+     * structure nodes in this variable if necessary.
+     *
+     * @param mixed $node The variable to write in.
+     * @param string $path The write rule.
+     * @param mixed $value The value to push in $node.
+     * 
+     * @return mixed The modified $node. 
+     */
     public function feed(&$node, $path, $value)
     {
+        
         if ($path === '' || $path == '/' || $path == '.')
         {
+            // Simple type. No structure.
             $node = $value;
         }
         else
@@ -87,6 +118,7 @@ class Transmorph_Writer
 
             if ($pathNode[0] == '/')
             {
+                // Our node must be an array.
                 if ($node === null)
                 {
                     $node = array();
@@ -121,6 +153,7 @@ class Transmorph_Writer
             }
             elseif ($pathNode[0] == '.')
             {
+                // Our node must be an object.
                 if ($node === null)
                 {
                     $class = $this->_objectNodeType;
@@ -135,7 +168,6 @@ class Transmorph_Writer
                     throw new Transmorph_Writer_Exception();
                 }
 
-                // objet
                 $key = substr($pathNode, 1);
                 if (!isset($node->$key))
                 {
@@ -161,9 +193,12 @@ class Transmorph_Writer
     }
 
     /**
+     * Property handling.
+     * 
      * @codeCoverageIgnore Trivial
      *
-     * @param string $name
+     * @param string $name Property name.
+     * 
      * @return mixed 
      */
     public function __get($name)
@@ -180,10 +215,14 @@ class Transmorph_Writer
     }
 
     /**
+     * Property handling.
+     * 
      * @codeCoverageIgnore Trivial
      *
-     * @param string $name
-     * @param mixed $value 
+     * @param string $name Property name.
+     * @param mixed $value Property value.
+     * 
+     * @return void
      */
     public function __set($name, $value)
     {
@@ -199,10 +238,12 @@ class Transmorph_Writer
     }
 
     /**
+     * @see Transmorph_Plugin_Interface::processOutputPathNode()
+     * 
      * @codeCoverageIgnore
      *
-     * @param string $pathNode
-     * @return string 
+     * @param string $pathNode .
+     * @return string .
      */
     protected function _fireProcessOuputPathNode($pathNode)
     {

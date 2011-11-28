@@ -58,12 +58,12 @@ abstract class Transmorph_Plugin_AbstractTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Transmorph_Plugin_Abstract::processLine
+     * @covers Transmorph_Plugin_Abstract::processRule
      */
     public function testProcessLine()
     {
-        $line = new Transmorph_Line(' >> ');
-        $this->assertEquals($line, $this->object->processLine(new Transmorph_Processor(), $line));
+        $line = new Transmorph_Rule(' >> ');
+        $this->assertEquals($line, $this->object->processRule(new Transmorph_Processor(), $line));
     }
 
     /**
