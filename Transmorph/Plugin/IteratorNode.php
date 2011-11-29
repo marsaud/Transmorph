@@ -48,7 +48,7 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
             $tRule = new Transmorph_Rule($mapRule);
 
             $matchesInput = array();
-            $foundInput = preg_match_all(self::ITER_NODE_REGEX, $tRule->sourceRule, $matchesInput, PREG_OFFSET_CAPTURE);
+            $foundInput = preg_match_all(self::ITER_NODE_REGEX, $tRule->readRule, $matchesInput, PREG_OFFSET_CAPTURE);
             if ($foundInput > 1)
             {
                 throw new Transmorph_Exception(
@@ -60,7 +60,7 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
             }
 
             $matchesOutput = array();
-            $foundOutput = preg_match_all(self::ITER_NODE_REGEX, $tRule->targetRule, $matchesOutput);
+            $foundOutput = preg_match_all(self::ITER_NODE_REGEX, $tRule->writeRule, $matchesOutput);
             if ($foundOutput > 1)
             {
                 throw new Transmorph_Exception(
@@ -82,7 +82,7 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
             }
             else
             {
-                $path = substr($tRule->sourceRule, 0, $matchesInput[0][0][1]);
+                $path = substr($tRule->readRule, 0, $matchesInput[0][0][1]);
                 
                 $iterableNode = null;
                 try

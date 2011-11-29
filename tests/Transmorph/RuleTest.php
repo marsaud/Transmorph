@@ -19,8 +19,8 @@ class Transmorph_RuleTest extends PHPUnit_Framework_TestCase
     public function testConstructor($source, $target, $rule)
     {
         $object = new Transmorph_Rule($rule);
-        $this->assertEquals($source, $object->sourceRule);
-        $this->assertEquals($target, $object->targetRule);
+        $this->assertEquals($source, $object->readRule);
+        $this->assertEquals($target, $object->writeRule);
     }
 
     /**

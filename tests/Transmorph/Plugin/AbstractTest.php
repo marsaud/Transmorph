@@ -50,11 +50,11 @@ abstract class Transmorph_Plugin_AbstractTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Transmorph_Plugin_Abstract::processInputPathNode
+     * @covers Transmorph_Plugin_Abstract::processReadRuleNode
      */
     public function testProcessInputPathNode()
     {
-        $this->assertEquals('test', $this->object->processInputPathNode(new Transmorph_Processor(), 'test'));
+        $this->assertEquals('test', $this->object->processReadRuleNode(new Transmorph_Processor(), 'test'));
     }
 
     /**
@@ -76,11 +76,11 @@ abstract class Transmorph_Plugin_AbstractTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Transmorph_Plugin_Abstract::processOutPutPathNode
+     * @covers Transmorph_Plugin_Abstract::processWriteRuleNode
      */
     public function testProcessOutPutPathNode()
     {
-        $this->assertEquals('test', $this->object->processOutPutPathNode(new Transmorph_Processor(), 'test'));
+        $this->assertEquals('test', $this->object->processWriteRuleNode(new Transmorph_Processor(), 'test'));
     }
 
 }

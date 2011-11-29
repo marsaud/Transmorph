@@ -43,7 +43,10 @@ class Transmorph_Writer
      * stack.
      * 
      * @todo TASK I don't like this processor/writer coupling for plugin access.
-     * Time will bring me an idea...
+     * Time will bring me an idea...-> IDEA -> Writer (& Reader) should have
+     * its own Plugin Stack implemented its own plugin interface, so it will be
+     * stand alone. Used by Processor, this one can feed the plugn stack of its
+     * reader & writer.
      *
      * @var Transmorph_Processor
      */
@@ -112,7 +115,7 @@ class Transmorph_Writer
                 throw new Transmorph_Writer_Exception();
             }
             $pathNode = $matches[1];
-            $pathNode = $this->_fireProcessOuputPathNode($pathNode);
+            $pathNode = $this->_fireProcessWriteRuleNode($pathNode);
 
             $remainingPath = isset($matches[4]) ? $matches[4] : '';
 
@@ -195,11 +198,11 @@ class Transmorph_Writer
     /**
      * Property handling.
      * 
-     * @codeCoverageIgnore Trivial
+     * @codeCoverageIgnore Trivial.
      *
      * @param string $name Property name.
      * 
-     * @return mixed 
+     * @return mixed Property value.
      */
     public function __get($name)
     {
@@ -217,7 +220,7 @@ class Transmorph_Writer
     /**
      * Property handling.
      * 
-     * @codeCoverageIgnore Trivial
+     * @codeCoverageIgnore Trivial.
      *
      * @param string $name Property name.
      * @param mixed $value Property value.
@@ -238,25 +241,27 @@ class Transmorph_Writer
     }
 
     /**
-     * @see Transmorph_Plugin_Interface::processOutputPathNode()
+     * Plugin caller.
      * 
-     * @codeCoverageIgnore
+     * @see Transmorph_Plugin_Interface::processWriteRuleNode()
      *
-     * @param string $pathNode .
-     * @return string .
+     * @param string $ruleNode passed to plugin.
+     * 
+     * @return string back from plugin.
      */
-    protected function _fireProcessOuputPathNode($pathNode)
+    protected function _fireProcessWriteRuleNode($ruleNode)
     {
         if ($this->_t !== null)
         {
             $plugins = $this->_t->plugins;
+            /* @var $plugin Transmorph_Plugin_Interface */
             foreach ($plugins as $plugin)
             {
-                $pathNode = $plugin->processOutPutPathNode($this->_t, $pathNode);
+                $ruleNode = $plugin->processWriteRuleNode($this->_t, $ruleNode);
             }
         }
 
-        return $pathNode;
+        return $ruleNode;
     }
 
 }

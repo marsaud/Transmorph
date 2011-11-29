@@ -45,7 +45,7 @@ abstract class Transmorph_Plugin_Abstract implements Transmorph_Plugin_Interface
         return $callbackParams;
     }
 
-    public function processInputPathNode(Transmorph_Processor $transmorph, $pathNode)
+    public function processReadRuleNode(Transmorph_Processor $transmorph, $pathNode)
     {
         return $pathNode;
     }
@@ -60,7 +60,7 @@ abstract class Transmorph_Plugin_Abstract implements Transmorph_Plugin_Interface
         return $map;
     }
 
-    public function processOutPutPathNode(Transmorph_Processor $transmorph, $pathNode)
+    public function processWriteRuleNode(Transmorph_Processor $transmorph, $pathNode)
     {
         return $pathNode;
     }

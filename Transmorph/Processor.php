@@ -164,7 +164,7 @@ class Transmorph_Processor
     {
         $tRule = new Transmorph_Rule($rule);
         $tRule = $this->_fireProcessRule($tRule);
-        $this->_writer->feed($output, $tRule->targetRule, $this->handleReadRule($input, $tRule->sourceRule));
+        $this->_writer->feed($output, $tRule->writeRule, $this->handleReadRule($input, $tRule->readRule));
     }
 
     /**

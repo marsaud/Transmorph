@@ -25,6 +25,8 @@
  */
 
 /**
+ * An plugin interface used by {@link Transmorph_Processor}.
+ * 
  * @package Transmorph
  * 
  * @subpackage Plugin
@@ -32,15 +34,31 @@
 interface Transmorph_Plugin_Interface
 {
     /**
-     * @param Transmorph_Processor $transmorph The working Transmorph Instance.
-     * @param string[] $map The original map.
+     * Called by {@link Transmorph_Processor::run()} to process the lines
+     * returned by {@link Transmorph_Processor::handleFile()}.
      * 
-     * @return string[] $map The processed map.
+     * The point is to be free to put extended information in the transformation 
+     * file, to feed extra features. This method should capture those extra 
+     * informations before 'cleaning' the file before 'standard' transformation 
+     * processing.
+     * 
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
+     * @param string[] $map The original rule-map.
+     * 
+     * @return string[] $map The processed rule-map.
      */
     public function processMap(Transmorph_Processor $transmorph, array $map);
     
     /**
-     * @param Transmorph_Processor $transmorph The working Transmorph Instance.
+     * Called by {@link Transmorph_Processor::handleRule()} to process the rule
+     * before passing it to the writer.
+     * 
+     * The point is to extend the informations carried by a rule, to feed extra 
+     * features. This method should capture those extra informations before giving
+     * back a {@link Transmorph_Rule} that the {@link Transmorph_Processor} can
+     * process.
+     * 
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
      * @param Transmorph_Rule $rule The original rule.
      * 
      * @return Transmorph_Rule The processed rule.
@@ -48,7 +66,7 @@ interface Transmorph_Plugin_Interface
     public function processRule(Transmorph_Processor $transmorph, Transmorph_Rule $rule);
     
     /**
-     * @param Transmorph_Processor $transmorph The working Transmorph Instance.
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
      * @param string $callback The original callback name.
      * 
      * @return string The processed callback name.
@@ -56,7 +74,7 @@ interface Transmorph_Plugin_Interface
     public function processCallback(Transmorph_Processor $transmorph, $callback);
     
     /**
-     * @param Transmorph_Processor $transmorph The working Transmorph Instance.
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
      * @param string[] $callbackParams An array of ENTRYs to be callback parameters
      * 
      * @return string[] The processed callback array
@@ -64,20 +82,18 @@ interface Transmorph_Plugin_Interface
     public function processCallbackParams(Transmorph_Processor $transmorph, $callbackParams);
     
     /**
-     * @param Transmorph_Processor $transmorph The working Transmorph Instance.
-     * @param string $pathNode The original pathNode.
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
+     * @param string $ruleNode The original rule node.
      * 
-     * @return string The processed pathNode.
+     * @return string The processed rule node.
      */
-    public function processInputPathNode(Transmorph_Processor $transmorph, $pathNode);
+    public function processReadRuleNode(Transmorph_Processor $transmorph, $ruleNode);
     
     /**
-     * @param Transmorph_Processor $transmorph The working Transmorph Instance.
-     * @param string $pathNode The original pathNode.
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
+     * @param string $ruleNode The original rule node.
      * 
-     * @return string The processed pathNode.
+     * @return string The processed rule node.
      */
-    public function processOutPutPathNode(Transmorph_Processor $transmorph, $pathNode);
+    public function processWriteRuleNode(Transmorph_Processor $transmorph, $ruleNode);
 }
-
-?>

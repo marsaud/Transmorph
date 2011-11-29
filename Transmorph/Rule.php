@@ -20,43 +20,46 @@
  * 
  * @package Transmorph
  * 
- * @subpackage Line
+ * @subpackage Rule
  * 
  */
 
 /**
  * Description of Transmorph_Line
  *
- * Assure le parsing d'une ligne de mapping (LINE) et encapsule le résultat obtenu.
+ * This class encapsulates the parsing of a transormation rule to obtain the 
+ * read-rule and the write_rule.
  * 
  * @package Transmorph
  * 
- * @subpackage Line
+ * @subpackage Rule
  * 
- * @property-read string $sourceRule ENTRY de lecture de la ligne.
- * @property-read string $targetRule PATH d'écriture de la ligne.
+ * @property-read string $readRule The read-rule.
+ * @property-read string $writeRule The write-rule.
  */
 class Transmorph_Rule
 {
     /**
-     * Le pattern d'expression réglière permettant de parser une ligne de mapping (LINE).
+     * The regex that does the job.
      */
     const LINE_REGEX = '#^(.*)( >> )(.*)$#';
 
     /**
+     * The read-rule.
      *
      * @var string
      */
-    protected $_sourceRule;
+    protected $_readRule;
 
     /**
+     * The write-rule.
      *
      * @var string
      */
-    protected $_targetRule;
+    protected $_writeRule;
 
     /**
-     * Construit une instance à partir de la ligne de mapping (LINE) fournie.
+     * The constructor triggers the parsing of the rule.
      *
      * @param string $line 
      */
@@ -66,11 +69,11 @@ class Transmorph_Rule
     }
 
     /**
-     * Interprète la LINE pour en extraire l'ENTRY source et le PATH cible.
+     * Parsing of the rule.
      *
-     * @param string $rule
+     * @param string $rule The rule to parse.
      * 
-     * throws TransmorphLineException
+     * @throws Transmorph_Rule_Exception
      */
     protected function _parseRule($rule)
     {
@@ -82,24 +85,26 @@ class Transmorph_Rule
             throw new Transmorph_Rule_Exception('STRING is not conform to Transmorph Rule format');
         }
 
-        $this->_sourceRule = $matches[1];
-        $this->_targetRule = $matches[3];
+        $this->_readRule = $matches[1];
+        $this->_writeRule = $matches[3];
     }
 
     /**
+     * Property handling.
      *
-     * @param string $name
-     * @return mixed 
+     * @param string $name Property name.
+     * 
+     * @return mixed Property value. 
      */
     public function __get($name)
     {
         switch ($name)
         {
-            case 'sourceRule':
-                return $this->_sourceRule;
+            case 'readRule':
+                return $this->_readRule;
                 break;
-            case 'targetRule':
-                return $this->_targetRule;
+            case 'writeRule':
+                return $this->_writeRule;
                 break;
             default:
                 throw new OutOfRangeException(__CLASS__ . ' has no ' . $name . ' property');
