@@ -27,6 +27,8 @@
 /**
  * Description of Transmorph_Reader_Exception
  * 
+ * Package specific exception.
+ * 
  * @package Transmorph
  * 
  * @subpackage Reader

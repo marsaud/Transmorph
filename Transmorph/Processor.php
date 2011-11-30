@@ -437,12 +437,10 @@ class Transmorph_Processor
 
     /**
      * @see Transmorph_Plugin_Interface::processMap()
-     * 
-     * @codeCoverageIgnore
      *
-     * @param string[] $map @see Transmorph_Plugin_Interface::processMap().
+     * @param string[] $map passed to plugin.
      * 
-     * @return string[] @see Transmorph_Plugin_Interface::processMap().
+     * @return string[] back from plugin.
      */
     protected function _fireProcessMap(array $map)
     {
@@ -457,12 +455,10 @@ class Transmorph_Processor
 
     /**
      * @see Transmorph_Plugin_Interface::processRule()
-     * 
-     * @codeCoverageIgnore
      *
-     * @param string[] $map @see Transmorph_Plugin_Interface::processRule().
+     * @param Transmorph_Rule $rule passed to plugin.
      * 
-     * @return string[] @see Transmorph_Plugin_Interface::processRule().
+     * @return Transmorph_Rule back from plugin.
      */
     protected function _fireProcessRule(Transmorph_Rule $rule)
     {
@@ -477,12 +473,10 @@ class Transmorph_Processor
 
     /**
      * @see Transmorph_Plugin_Interface::processCallback()
-     * 
-     * @codeCoverageIgnore
      *
-     * @param string[] $map @see Transmorph_Plugin_Interface::processCallback().
+     * @param mixed $callback passed to plugin.
      * 
-     * @return string[] @see Transmorph_Plugin_Interface::processCallback().
+     * @return mixed back from plugin.
      */
     protected function _fireProcessCallback($callback)
     {
@@ -497,12 +491,10 @@ class Transmorph_Processor
 
     /**
      * @see Transmorph_Plugin_Interface::processCallbackParams()
-     * 
-     * @codeCoverageIgnore
      *
-     * @param string[] $map @see Transmorph_Plugin_Interface::processCallbackParams().
+     * @param string[] $callbackParams passed to plugin.
      * 
-     * @return string[] @see Transmorph_Plugin_Interface::processCallbackParams().
+     * @return string[] back for plugin.
      */
     protected function _fireProcessCallbackParams(array $callbackParams)
     {

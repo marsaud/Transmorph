@@ -27,6 +27,8 @@
 /**
  * Description of Transmorph_Rulee_Exception
  * 
+ * Package specific exception.
+ * 
  * @package Transmorph
  * 
  * @subpackage Rule

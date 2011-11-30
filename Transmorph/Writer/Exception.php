@@ -27,6 +27,8 @@
 /**
  * Description of Transmorph_Writer_Exception
  * 
+ * Package specific exception.
+ * 
  * @package Transmorph
  * 
  * @subpackage Writer

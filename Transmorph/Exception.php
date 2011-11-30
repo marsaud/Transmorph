@@ -25,6 +25,8 @@
 /**
  * Description of Transmorph_Exception
  * 
+ * Package specific exception.
+ * 
  * @package Transmorph
  * 
  */

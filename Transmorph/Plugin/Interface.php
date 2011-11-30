@@ -66,22 +66,33 @@ interface Transmorph_Plugin_Interface
     public function processRule(Transmorph_Processor $transmorph, Transmorph_Rule $rule);
     
     /**
-     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
-     * @param string $callback The original callback name.
+     * Called by {@link Transmorph_Processor::handleReadRule()} to process callback
+     * names before using them.
      * 
-     * @return string The processed callback name.
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
+     * @param mixed $callback The original callback.
+     * 
+     * @return mixed The processed callback.
      */
     public function processCallback(Transmorph_Processor $transmorph, $callback);
     
     /**
-     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
-     * @param string[] $callbackParams An array of ENTRYs to be callback parameters
+     * Called by {@link Transmorph_Processor::handleReadRule()} to process 
+     * callback parameters provided as an array of strings assumed to be
+     * raw read-rules.
      * 
-     * @return string[] The processed callback array
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
+     * @param string[] $callbackParams An array of read-rules purposed to be evaluated
+     * as callback parameters.
+     * 
+     * @return string[] The processed array.
      */
     public function processCallbackParams(Transmorph_Processor $transmorph, $callbackParams);
     
     /**
+     * Called by {@link Transmorph_Reader::query()} to process a "read-rule-node" 
+     * before the Transmorph_Reader will exploit it.
+     * 
      * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
      * @param string $ruleNode The original rule node.
      * 
@@ -90,6 +101,9 @@ interface Transmorph_Plugin_Interface
     public function processReadRuleNode(Transmorph_Processor $transmorph, $ruleNode);
     
     /**
+     * Called by {@link Transmorph_Writer::feed()} to process a "write-rule-node" 
+     * before the Transmorph_Writer will exploit it.
+     * 
      * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
      * @param string $ruleNode The original rule node.
      * 
