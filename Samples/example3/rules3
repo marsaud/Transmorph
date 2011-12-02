@@ -1,0 +1,4 @@
+.first/0 >> /a.foo
+.first/1 >> /a.bar
+\2 >> /b.baz
+.second/3 >> /b.zzz
