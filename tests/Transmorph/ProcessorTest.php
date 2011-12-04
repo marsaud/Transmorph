@@ -1,6 +1,12 @@
 <?php
 
 require_once dirname(__FILE__) . '/../../Transmorph/Processor.php';
+require_once dirname(__FILE__) . '/../../Transmorph/Plugin/Abstract.php';
+
+class TestPlugin extends Transmorph_Plugin_Abstract
+{
+    
+}
 
 function callbackAddForTest($t1, $t2)
 {
@@ -15,6 +21,21 @@ function callbackConcatForTest($s1, $s2)
 function callbackNoParamForTest()
 {
     return __FUNCTION__;
+}
+
+class PluginForTest1 extends Transmorph_Plugin_Abstract
+{
+    
+}
+
+class PluginForTest2 extends Transmorph_Plugin_Abstract
+{
+    
+}
+
+class PluginForTest3 extends Transmorph_Plugin_Abstract
+{
+    
 }
 
 /**
@@ -212,7 +233,7 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider handleMapEntryDataProvider
+     * @dataProvider handleReadRuleDataProvider
      *
      * @param mixed $input
      * @param string $mapEntry
@@ -220,7 +241,7 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     public function testHandleMapEntry($input, $mapEntry, $expected)
     {
-        $this->assertEquals($expected, $this->object->handleMapEntry($input, $mapEntry));
+        $this->assertEquals($expected, $this->object->handleReadRule($input, $mapEntry));
     }
 
     /**
@@ -231,10 +252,10 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     public function testHandleMapEntryExceptions($mapEntry)
     {
-        $this->object->handleMapEntry(null, $mapEntry);
+        $this->object->handleReadRule(null, $mapEntry);
     }
 
-    public function handleMapEntryDataProvider()
+    public function handleReadRuleDataProvider()
     {
         $data = array();
 
@@ -242,9 +263,6 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
         $data[1] = array(null, '\1', 1);
         $data[2] = array(null, '\0a', '0a');
 
-        /**
-         * @todo FEATURE : permettre de forcer le type des constantes.
-         */
         $data[3] = array(null, '\true', 'true');
         $data[4] = array(null, '\false', 'false');
 
@@ -302,21 +320,21 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider handleLineDataProvider
+     * @dataProvider handleRuleDataProvider
      *
      * @param mixed $input
      * @param string $line
      * @param mixed $expected 
      */
-    public function testHandleLine($input, $line, $expected)
+    public function testhandleRule($input, $line, $expected)
     {
         $output = null;
 
-        $this->object->handleLine($output, $input, $line);
+        $this->object->handleRule($output, $input, $line);
         $this->assertEquals($expected, $output);
     }
 
-    public function handleLineDataProvider()
+    public function handleRuleDataProvider()
     {
         $data = array();
 
@@ -348,6 +366,7 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     public function testRun($ouptut, $input, $filePath)
     {
+        $this->object->appendPlugin(new TestPlugin());
         $this->assertEquals($ouptut, $this->object->run($input, $filePath));
     }
 
@@ -420,6 +439,83 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
         return $data;
     }
 
-}
+    /**
+     * @covers Transmorph_Processor::appendPlugin
+     * @expectedException Transmorph_Exception
+     */
+    public function testAppendPluginException1()
+    {
+        $this->object->appendPlugin(new PluginForTest1());
+        $this->object->appendPlugin(new PluginForTest1());
+    }
 
-?>
+    /**
+     * @covers Transmorph_Processor::prependPlugin
+     * @expectedException Transmorph_Exception
+     */
+    public function testAppendPluginException2()
+    {
+        $this->object->prependPlugin(new PluginForTest1());
+        $this->object->prependPlugin(new PluginForTest1());
+    }
+
+    /**
+     * @covers Transmorph_Processor::removePlugin
+     * @expectedException Transmorph_Exception
+     */
+    public function testRemovePluginException()
+    {
+        $this->object->removePlugin('anyUnregisteredClassName');
+    }
+
+    /**
+     *@covers Transmorph_Processor::appendPlugin
+     */
+    public function testPluginRegistry1()
+    {
+        $t = new Transmorph_Processor();
+        $t->appendPlugin(new PluginForTest1());
+        $plugins = array_values($t->plugins);
+        $this->assertEquals(array(new PluginForTest1()), $plugins);
+        
+        return $t;
+    }
+    
+    /**
+     * @covers Transmorph_Processor::appendPlugin
+     * @depends testPluginRegistry1
+     */
+    public function testPluginRegistry2(Transmorph_Processor $t)
+    {
+        $t->appendPlugin(new PluginForTest2());
+        $plugins = array_values($t->plugins);
+        $this->assertEquals(array(new PluginForTest1(), new PluginForTest2()), $plugins);
+        
+        return $t;
+    }
+    
+    /**
+     * @covers Transmorph_Processor::prependPlugin
+     * @depends testPluginRegistry2
+     */
+    public function testPluginRegistry3(Transmorph_Processor $t)
+    {
+        $t->prependPlugin(new PluginForTest3());
+        $plugins = array_values($t->plugins);
+        $this->assertEquals(array(new PluginForTest3(), new PluginForTest1(), new PluginForTest2()), $plugins);
+        
+        return $t;
+    }
+    
+    /**
+     * @covers Transmorph_Processor::removePlugin
+     * @depends testPluginRegistry3
+     */
+    public function testPluginRegistry4(Transmorph_Processor $t)
+    {
+        $t->removePlugin('PluginForTest1');
+        $plugins = array_values($t->plugins);
+        $this->assertEquals(array(new PluginForTest3(), new PluginForTest2()), $plugins);
+    }
+
+}

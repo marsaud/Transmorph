@@ -1,21 +1,50 @@
 <?php
 
 /**
+ * This file is part of Transmorph.
+ *
+ * Transmorph is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Transmorph is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Transmorph. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
+ * 
  * @package Transmorph
+ * 
+ * @subpackage Reader
+ * 
  */
 
 /**
  * Description of Transmorph_Reader
+ * 
+ * This class handles Transmorph read rules.
  *
  * @package Transmorph
- * @subpackage Reader
  * 
- * @author fabrice
+ * @subpackage Reader
  */
 class Transmorph_Reader
 {
 
     /**
+     * We can inject a Transmorph_Processor here for the reader to acces the plugin
+     * stack.
+     * 
+     * @todo TASK I don't like this processor/reader coupling for plugin access.
+     * Time will bring me an idea...-> IDEA -> Reader (& Writer) should have
+     * its own Plugin Stack implemented its own plugin interface, so it will be
+     * stand alone. Used by Processor, this one can feed the plugn stack of its
+     * reader & writer.
      *
      * @var Transmorph_Processor
      */
@@ -29,51 +58,52 @@ class Transmorph_Reader
         }
     }
 
+    /**
+     * This method lately "type-hints" the {@link __construct()} $transmorph parameter.
+     *
+     * @param Transmorph_Processor $t A processor. See {@link __construct()}
+     */
     protected function _setTransmorph(Transmorph_Processor $t)
     {
         $this->_t = $t;
     }
 
     /**
-     * Explore récursivement une structure de données d'entrée composées
-     * indifférement d'objets, de tableaux numériques ou associatifs et de
-     * scalaires, selon un chemin de recherche formaté(PATH).
-     *
-     * @param mixed $input Une structure de données
-     * @param string $path Un PATH
+     * Follows recursively a 'simple' read-rule to pull out a value from an 
+     * input variable.
      * 
-     * @return mixed la valeur ou sous-structure trouvée en résolvant $path
+     *
+     * @todo TASK in the read-rules, we could support only '/' and let
+     * the query handle the 'array key or object property ?' problem. Or 
+     * support '.' as a strict query fr object property, and let the '/'
+     * be general...
+     *
+     * @param mixed $input The variable to read in.
+     * @param string $rule The read-rule.
+     * 
+     * @return mixed The pulled-out value.
      */
-    public function query($input, $path)
+    public function query($input, $rule)
     {
         $result = null;
 
-        if ($path === '' || $path == '/' || $path == '.')
+        if ($rule === '' || $rule == '/' || $rule == '.')
         {
-            /**
-             * Si on est arrivés au bout d'un PATH, on peut renvoyer la valeur courante.
-             * 
-             * Je laisse un / ou . optionel à la manière du / optionel à la fin
-             * d'un nom de dossier sous UNIX pour une commande comme 'cd' par exemple.
-             * 
-             * @todo Dans les ENRTY, je songe à tout exprimer en / et à laisser le .
-             * dans les 'target PATH' seulement pour forcer l'usage de stdClass.
-             */
             $result = $input;
         }
         else
         {
             $matches = array();
-            $found = preg_match('#^((/[^\./\\\]+)|(\.[^\./\\\]+))((\.|/).*)*$#', $path, $matches);
+            $found = preg_match('#^((/[^\./\\\]+)|(\.[^\./\\\]+))((\.|/).*)*$#', $rule, $matches);
 
             if ($found !== 1)
             {
-                throw new Transmorph_Reader_Exception('Unresolvable Transmorph PATH');
+                throw new Transmorph_Reader_Exception('Illegal read-rule : ' . $rule);
             }
 
             $nextNode = $matches[1];
 
-            $nextNode = $this->_fireProcessInputPathNode($nextNode);
+            $nextNode = $this->_fireProcessReadRuleNode($nextNode);
 
             $remainingPath = isset($matches[4]) ? $matches[4] : '';
             $key = substr($nextNode, 1);
@@ -82,7 +112,7 @@ class Transmorph_Reader
             {
                 if (!isset($input[$key]))
                 {
-                    throw new Transmorph_Reader_Exception('PATH references no value');
+                    throw new Transmorph_Reader_Exception('Read-rule leads to nothing');
                 }
                 $result = $this->query($input[$key], $remainingPath);
             }
@@ -90,7 +120,7 @@ class Transmorph_Reader
             {
                 if (!isset($input->$key))
                 {
-                    throw new Transmorph_Reader_Exception('PATH references no value');
+                    throw new Transmorph_Reader_Exception('Read-rule leads to nothing');
                 }
                 $result = $this->query($input->$key, $remainingPath);
             }
@@ -100,23 +130,24 @@ class Transmorph_Reader
     }
 
     /**
-     * @codeCoverageIgnore
+     * @see Transmorph_Plugin_Interface::processReadRuleNode()
      *
-     * @param string $pathNode
-     * @return string 
+     * @param string $ruleNode passed to plugin.
+     * 
+     * @return string back from plugin.
      */
-    protected function _fireProcessInputPathNode($pathNode)
+    protected function _fireProcessReadRuleNode($ruleNode)
     {
         if ($this->_t !== null)
         {
             $plugins = $this->_t->plugins;
             foreach ($plugins as $plugin)
             {
-                $pathNode = $plugin->processInputPathNode($this->_t, $pathNode);
+                $ruleNode = $plugin->processReadRuleNode($this->_t, $ruleNode);
             }
         }
 
-        return $pathNode;
+        return $ruleNode;
     }
 
 }

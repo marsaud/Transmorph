@@ -1,0 +1,1 @@
+concat(concat(.words/0,.words/1),concat(double(.numbers/single),.words/2)) >> .sentence

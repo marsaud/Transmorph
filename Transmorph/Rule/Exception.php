@@ -20,21 +20,21 @@
  * 
  * @package Transmorph
  * 
- * @subpackage Reader
+ * @subpackage Rule
  * 
  */
 
 /**
- * Description of Transmorph_Reader_Exception
+ * Description of Transmorph_Rulee_Exception
  * 
  * Package specific exception.
  * 
  * @package Transmorph
  * 
- * @subpackage Reader
+ * @subpackage Rule
  * 
  */
-class Transmorph_Reader_Exception extends Transmorph_Exception
+class Transmorph_Rule_Exception extends Transmorph_Exception
 {
-    //put your code here
+    
 }

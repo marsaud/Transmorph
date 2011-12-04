@@ -1,5 +1,29 @@
-Transmorph README FILE
+====== Transmorph README FILE ======
 
-=====
 
-26/11/2011 : Documentation is in progress. Coming soon.
+Developed under PHP 5.3.2
+
+===== Generate API documentation with phpDocumentor : =====
+
+
+Check and modify the 'target' value in doc.ini
+
+Place yourself in the project root directory (where doc.ini stands) and run :
+
+$ phpdoc -c doc.ini
+
+Verified with phpDocumentor 1.4.3
+
+===== Run PHPUnit tests =====
+
+
+Place yourself in the tests directory and run :
+
+$ phpunit --bootstrap bootstrap.php .
+
+Verified with phpunit 3.6.3
+
+===== MANUAL =====
+
+
+The MANUAL has been written under Dokuwiki Release 2011-05-25a "Rincewind".

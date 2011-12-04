@@ -50,20 +50,20 @@ abstract class Transmorph_Plugin_AbstractTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Transmorph_Plugin_Abstract::processInputPathNode
+     * @covers Transmorph_Plugin_Abstract::processReadRuleNode
      */
     public function testProcessInputPathNode()
     {
-        $this->assertEquals('test', $this->object->processInputPathNode(new Transmorph_Processor(), 'test'));
+        $this->assertEquals('test', $this->object->processReadRuleNode(new Transmorph_Processor(), 'test'));
     }
 
     /**
-     * @covers Transmorph_Plugin_Abstract::processLine
+     * @covers Transmorph_Plugin_Abstract::processRule
      */
     public function testProcessLine()
     {
-        $line = new Transmorph_Line(' >> ');
-        $this->assertEquals($line, $this->object->processLine(new Transmorph_Processor(), $line));
+        $line = new Transmorph_Rule(' >> ');
+        $this->assertEquals($line, $this->object->processRule(new Transmorph_Processor(), $line));
     }
 
     /**
@@ -76,11 +76,11 @@ abstract class Transmorph_Plugin_AbstractTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Transmorph_Plugin_Abstract::processOutPutPathNode
+     * @covers Transmorph_Plugin_Abstract::processWriteRuleNode
      */
     public function testProcessOutPutPathNode()
     {
-        $this->assertEquals('test', $this->object->processOutPutPathNode(new Transmorph_Processor(), 'test'));
+        $this->assertEquals('test', $this->object->processWriteRuleNode(new Transmorph_Processor(), 'test'));
     }
 
 }
