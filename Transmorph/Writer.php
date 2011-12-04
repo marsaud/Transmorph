@@ -97,7 +97,7 @@ class Transmorph_Writer
      */
     public function feed(&$node, $path, $value)
     {
-        
+
         if ($path === '' || $path == '/' || $path == '.')
         {
             // Simple type. No structure.
@@ -109,10 +109,7 @@ class Transmorph_Writer
             $found = preg_match('#^((/[^\./\\\]+)|(\.[^\./\\\]+))((\.|/).*)*$#', $path, $matches);
             if ($found !== 1)
             {
-                /**
-                 * @todo complete
-                 */
-                throw new Transmorph_Writer_Exception();
+                throw new Transmorph_Writer_Exception('Illegal write-rule : ' . $path);
             }
             $pathNode = $matches[1];
             $pathNode = $this->_fireProcessWriteRuleNode($pathNode);
@@ -129,10 +126,7 @@ class Transmorph_Writer
 
                 if (!is_array($node))
                 {
-                    /**
-                     * @todo complete
-                     */
-                    throw new Transmorph_Writer_Exception();
+                    throw new Transmorph_Writer_Exception('Incoherence beetween write-rule and output node type');
                 }
 
                 $key = substr($pathNode, 1);
@@ -165,10 +159,7 @@ class Transmorph_Writer
 
                 if (!is_object($node))
                 {
-                    /**
-                     * @todo complete
-                     */
-                    throw new Transmorph_Writer_Exception();
+                    throw new Transmorph_Writer_Exception('Incoherence beetween write-rule and output node type');
                 }
 
                 $key = substr($pathNode, 1);

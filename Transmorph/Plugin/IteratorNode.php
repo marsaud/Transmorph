@@ -27,8 +27,6 @@
 /**
  * Description of Transmorph_Plugin_IteratorNode
  * 
- * @todo TASK The line-number handling idea is stupid. Wipe out.
- * 
  * @package Transmorph
  * 
  * @subpackage Plugin
@@ -43,9 +41,8 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
 
         $processedMap = array();
 
-        foreach ($map as $key => $mapRule)
+        foreach ($map as $mapRule)
         {
-            $lineNumber = $key + 1;
             $tRule = new Transmorph_Rule($mapRule);
 
             $matchesInput = array();
@@ -55,8 +52,8 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
                 throw new Transmorph_Exception(
                     __CLASS__ . ' supports only one iteration node per read-rule. Found '
                     . $foundInput
-                    . ' in read-rule in line '
-                    . $lineNumber . '.'
+                    . ' in read-rule : '
+                    . $tRule->readRule
                 );
             }
 
@@ -67,14 +64,14 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
                 throw new Transmorph_Exception(
                     __CLASS__ . ' supports only one iteration node per write-rule. Found '
                     . $foundOutput
-                    . ' in write-rule in line '
-                    . $lineNumber . '.'
+                    . ' in write-rule : '
+                    . $tRule->writeRule
                 );
             }
 
             if ($foundOutput === 1 && $foundInput === 0)
             {
-                throw new Transmorph_Exception('Line ' . $lineNumber . ' : Iteration must root on read-rule.');
+                throw new Transmorph_Exception('Iteration must root on read-rule.');
             }
 
             if ($foundInput === 0 && $foundOutput === 0)
@@ -84,7 +81,7 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
             else
             {
                 $path = substr($tRule->readRule, 0, $matchesInput[0][0][1]);
-                
+
                 $iterableNode = null;
                 try
                 {
@@ -92,10 +89,10 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
                 }
                 catch (Transmorph_Exception $exc)
                 {
-                    throw new Transmorph_Exception('Processing Map Line ' . $lineNumber . ' throws : ' . $exc->getMessage());
+                    throw new Transmorph_Exception(__CLASS__ . ' throws : ' . $exc->getMessage() . ' on rule : ' . $tRule);
                 }
 
-                $mapExtension = $this->extendMapRule($iterableNode, $mapRule);
+                $mapExtension = $this->extendRule($iterableNode, $mapRule);
                 $processedMap = array_merge($processedMap, $mapExtension);
             }
         }
@@ -125,11 +122,11 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
      * 
      * @return string[]
      */
-    public function extendMapRule($iterableNode, $mapRule)
+    public function extendRule($iterableNode, $mapRule)
     {
         $this->_checkIterableNode($iterableNode);
         $mapRuleExtension = array();
-        
+
         $count = 0;
         foreach ($iterableNode as $key => $value)
         {
@@ -142,7 +139,7 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
         }
         return $mapRuleExtension;
     }
-    
+
     /**
      *
      * @param mixed $node

@@ -42,8 +42,6 @@
  * implementing {@link Transmorph_Plugin_Interface} or extending 
  * {@link Transmorph_Plugin_Abstract}.
  * 
- * @todo TASK document the transformation rule format.
- * 
  * @package Transmorph
  * 
  * @property-read TransmorphPluginInterface[] $plugins Array containing registered plugins.
@@ -175,28 +173,23 @@ class Transmorph_Processor
      * found. 
      *
      * @param mixed $input The data read followinf the rule.
-     * @param string $mapEntry The read-rule.
+     * @param string $readRule The read-rule.
      * 
      * @return mixed The data read and/or processed(when callbacks are used).
      */
-    public function handleReadRule($input, $mapEntry)
+    public function handleReadRule($input, $readRule)
     {
-        if ($this->isConst($mapEntry))
+        if ($this->isConst($readRule))
         {
-            /**
-             * @todo TASK This tiny operation deserves its own method so an 
-             * evolution of the rule format or whatever could need maintenance
-             * around the "constant" feature will be clean and easy.
-             */
-            return substr($mapEntry, 1);
+            return $this->_evalConstRule($readRule);
         }
-        elseif ($this->isPath($mapEntry))
+        elseif ($this->isPath($readRule))
         {
-            return $this->_reader->query($input, $mapEntry);
+            return $this->_reader->query($input, $readRule);
         }
         else
         {
-            $callback = $this->findCallback($mapEntry);
+            $callback = $this->findCallback($readRule);
             $callback = $this->_fireProcessCallback($callback);
             if ($callback === '')
             {
@@ -204,7 +197,7 @@ class Transmorph_Processor
             }
             else
             {
-                $paramEntries = $this->findCallbackParams($mapEntry);
+                $paramEntries = $this->findCallbackParams($readRule);
                 $paramEntries = $this->_fireProcessCallbackParams($paramEntries);
 
                 $inputArray = array();
@@ -215,6 +208,20 @@ class Transmorph_Processor
                 return call_user_func_array($callback, array_map(array($this, __FUNCTION__), $inputArray, $paramEntries));
             }
         }
+    }
+    
+    /**
+     * Evaluates a constant read-rule.
+     * 
+     * @todo FEATURE This method could apply a casting strategy to handle
+     * PHP simple internal type (int, float, string, boolean).
+     *
+     * @param string $constRule A constant read-rule
+     * @return string The constant value
+     */
+    protected function _evalConstRule($constRule)
+    {
+        return substr($constRule, 1);
     }
 
     /**

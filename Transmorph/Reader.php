@@ -98,7 +98,7 @@ class Transmorph_Reader
 
             if ($found !== 1)
             {
-                throw new Transmorph_Reader_Exception('Unresolvable Transmorph PATH');
+                throw new Transmorph_Reader_Exception('Illegal read-rule : ' . $rule);
             }
 
             $nextNode = $matches[1];
@@ -112,7 +112,7 @@ class Transmorph_Reader
             {
                 if (!isset($input[$key]))
                 {
-                    throw new Transmorph_Reader_Exception('PATH references no value');
+                    throw new Transmorph_Reader_Exception('Read-rule leads to nothing');
                 }
                 $result = $this->query($input[$key], $remainingPath);
             }
@@ -120,7 +120,7 @@ class Transmorph_Reader
             {
                 if (!isset($input->$key))
                 {
-                    throw new Transmorph_Reader_Exception('PATH references no value');
+                    throw new Transmorph_Reader_Exception('Read-rule leads to nothing');
                 }
                 $result = $this->query($input->$key, $remainingPath);
             }

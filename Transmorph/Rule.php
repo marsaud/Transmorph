@@ -112,4 +112,14 @@ class Transmorph_Rule
         }
     }
 
+    /**
+     * @codeCoverageIgnore Trivial
+     *
+     * @return string The tranformation rule.
+     */
+    public function __toString()
+    {
+        return $this->_readRule . ' >> ' . $this->_writeRule;
+    }
+
 }

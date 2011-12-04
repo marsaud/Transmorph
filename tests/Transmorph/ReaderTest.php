@@ -158,9 +158,6 @@ class Transmorph_ReaderTest extends PHPUnit_Framework_TestCase
         $data[8] = array($input, '.x');
         $data[9] = array($input, '.t/x');
         
-        /**
-         * @todo séparer ces testCases
-         */
         $data[10] = array(null, 'x');
 
         return $data;

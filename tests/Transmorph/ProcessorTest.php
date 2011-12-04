@@ -3,6 +3,11 @@
 require_once dirname(__FILE__) . '/../../Transmorph/Processor.php';
 require_once dirname(__FILE__) . '/../../Transmorph/Plugin/Abstract.php';
 
+class TestPlugin extends Transmorph_Plugin_Abstract
+{
+    
+}
+
 function callbackAddForTest($t1, $t2)
 {
     return $t1 + $t2;
@@ -258,9 +263,6 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
         $data[1] = array(null, '\1', 1);
         $data[2] = array(null, '\0a', '0a');
 
-        /**
-         * @todo FEATURE : permettre de forcer le type des constantes.
-         */
         $data[3] = array(null, '\true', 'true');
         $data[4] = array(null, '\false', 'false');
 
@@ -364,6 +366,7 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     public function testRun($ouptut, $input, $filePath)
     {
+        $this->object->appendPlugin(new TestPlugin());
         $this->assertEquals($ouptut, $this->object->run($input, $filePath));
     }
 

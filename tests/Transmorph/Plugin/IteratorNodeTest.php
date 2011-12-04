@@ -180,21 +180,21 @@ class Transmorph_Plugin_IteratorNodeTest extends Transmorph_Plugin_AbstractTest
     }
 
     /**
-     * @covers Transmorph_Plugin_IteratorNode::extendMapRule
+     * @covers Transmorph_Plugin_IteratorNode::extendRule
      * @covers Transmorph_Plugin_IteratorNode::_checkIterableNode
      * 
-     * @dataProvider extendMapRuleDataProvider
+     * @dataProvider extendRuleDataProvider
      *
      * @param type $expected
      * @param type $iterableNode
      * @param type $mapRule 
      */
-    public function testExtendMapRule($expected, $iterableNode, $mapRule)
+    public function testExtendRule($expected, $iterableNode, $mapRule)
     {
-        $this->assertEquals($expected, $this->object->extendMapRule($iterableNode, $mapRule));
+        $this->assertEquals($expected, $this->object->extendRule($iterableNode, $mapRule));
     }
 
-    public function extendMapRuleDataProvider()
+    public function extendRuleDataProvider()
     {
         $data = array();
 
@@ -219,14 +219,14 @@ class Transmorph_Plugin_IteratorNodeTest extends Transmorph_Plugin_AbstractTest
     }
 
     /**
-     * @covers Transmorph_Plugin_IteratorNode::extendMapRule
+     * @covers Transmorph_Plugin_IteratorNode::extendRule
      * @covers Transmorph_Plugin_IteratorNode::_checkIterableNode
      * 
      * @expectedException Transmorph_Exception
      */
-    public function testExtendMapRuleException()
+    public function testExtendRuleException()
     {
-        $this->object->extendMapRule('string', '#');
+        $this->object->extendRule('string', '#');
     }
 
 }
