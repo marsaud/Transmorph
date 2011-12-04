@@ -16,3 +16,5 @@ require_once $dir . '/Transmorph/Rule.php';
 
 require_once $dir . '/Transmorph/Plugin/Interface.php';
 require_once $dir . '/Transmorph/Plugin/Abstract.php';
+require_once $dir . '/Transmorph/Plugin/ClassCallback.php';
+require_once $dir . '/Transmorph/Plugin/IteratorNode.php';

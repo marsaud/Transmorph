@@ -1,0 +1,2 @@
+Calc:add(/a,/b) >> .sum
+Calc:multiply(/a,/b) >> .product

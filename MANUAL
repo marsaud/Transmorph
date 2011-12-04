@@ -1,26 +1,33 @@
-====== Transmorph Manual ======
+====== Transmorph Manual : Introduction ======
  
 
-Transmorph is a software component written in PHP 5. Its purpose is to provide data structure transformation and processing, driven by "rules" in a special format.
+Transmorph is a software component written in PHP 5. Its purpose is to provide
+ data structure transformation and processing, driven by "rules" in a special 
+format.
 
-All necessary documentation for development with Transmorph is available in the source code documentation, which respects PhpDocumentor format.
+All necessary documentation for development with Transmorph is available in the 
+source code documentation, which respects PhpDocumentor format.
 
 This manual documents the transformation rule format, Transmorph lies onto.
 
-===== The transformation rule format =====
+====== The transformation rule format ======
 
 
-A transformation rule consists of a //read-rule// linked to a //write-rule// with the '>>' symbol surrounded by single white spaces.
+A transformation rule consists of a //read-rule// linked to a //write-rule// 
+with the '>>' symbol surrounded by single white spaces.
 
 <code>
 read-rule >> write-rule
 </code>
 
-Transmorph exploits the read-rules to read values out of input data structures, optionally process these values, and finally uses the linked write-rules to write the final values in an output data structure.
+Transmorph exploits the read-rules to read values out of input data structures, 
+optionally process these values, and finally uses the linked write-rules to 
+write the final values in an output data structure.
 
-The read-rule handling is done by a sub-component called Transmorph_Reader, the write-rule handling is done by a sub-component called Transmorph_Writer.
+The read-rule handling is done by a sub-component called Transmorph_Reader, the 
+write-rule handling is done by a sub-component called Transmorph_Writer.
 
-==== The read-rules ====
+===== The read-rules =====
 
 
 A read-rule can be of 3 types :
@@ -28,7 +35,7 @@ A read-rule can be of 3 types :
   * Simple read-rule.
   * Complex read-rule.
 
-=== Constant rule ===
+==== Constant rule ====
 
 
 A constant rule consists of '\' symbol followed by a value.
@@ -39,12 +46,12 @@ A constant rule consists of '\' symbol followed by a value.
 
 A constant rule is evaluated as the value written after the '\'.
 
-=== Simple read-rule ===
+==== Simple read-rule ====
 
 
-A simple read-rule consists of a path the Transmorph_Reader will follow to get a value in a PHP variable we will call the "input".
-The path is written by a sequence of rule nodes.
-the rule nodes are of 2 kinds :
+A simple read-rule consists of a path the Transmorph_Reader will follow to get a
+ value in a PHP variable we will call the "input". The path is expressed by a 
+sequence of rule nodes. The rule nodes are of 2 kinds :
 
   * Array nodes :
 
@@ -58,26 +65,32 @@ the rule nodes are of 2 kinds :
 .object-property
 </code>
 
-Starting at the "top" of a the input, Transmorph_Reader will follow the sequence of rule nodes by trying to evaluate array keys or object attributes depending on the type of rule node encountered.
-When there are no more rule nodes left, Transmorph_Reader returns its last evaluation.
+Starting at the "top" of a the input, Transmorph_Reader will follow the sequence
+ of rule nodes by trying to evaluate array keys or object attributes depending 
+on the type of rule node encountered. When there are no more rule nodes left, 
+Transmorph_Reader returns its last evaluation.
 
-=== Complex read-rule ===
+==== Complex read-rule ====
 
 
-Complex read-rules provide data processing based on callbacks. A complex read-rule consists of a callback name followed by a pair of parenthesis encapsulating a coma separated list of parameters.
+Complex read-rules provide data processing based on callbacks. A complex 
+read-rule consists of a callback name followed by a pair of parenthesis 
+encapsulating a coma separated list of parameters.
 
 <code>
 callback(parameter1,parameter2,...)
 </code>
 
-The point is on parameters. A parameter is...a read-rule. Any of constant, simple or complex read-rule. Complex read-rules stacking is not functionally limited.
+The point is on parameters. A parameter is...a read-rule. Any of constant, 
+simple or complex read-rule. Complex read-rules stacking is not functionally 
+limited.
 
-==== The write rules ====
+===== The write rules =====
 
 
-A write-rule consists of a path the Transmorph_Writer will follow to write values in a PHP variable we will call the "output".
-The path is written by a sequence of rule nodes.
-the rule nodes are of 2 kinds :
+A write-rule consists of a path the Transmorph_Writer will follow to write 
+values in a PHP variable we will call the "output". The path is expressed by a 
+sequence of rule nodes. The rule nodes are of 2 kinds :
 
   * Array nodes :
 
@@ -91,13 +104,18 @@ the rule nodes are of 2 kinds :
 .object-property
 </code>
 
-Starting at the "top" of a the output, Transmorph_Writer will follow the sequence of rule nodes, creating, if necessary, array keys or object attributes depending on the type of rule node encountered.
-When there are no more rule nodes left, Transmorph_Writer writes a value in the last encountered/created node.
+Starting at the "top" of a the output, Transmorph_Writer will follow the 
+sequence of rule nodes, creating, if necessary, array keys or object attributes 
+depending on the type of rule node encountered. When there are no more rule 
+nodes left, Transmorph_Writer writes a value in the last encountered/created 
+node.
 
-==== Examples ====
+===== Examples =====
 
+All examples in this MANUAL can be found as executable PHP code in the Sample 
+folder shipped with Transmorph.
 
-=== Example 1 : simple read-rule with array rule-nodes ===
+==== Example 1 : simple read-rule with array rule-nodes ====
 
 
   * The input :
@@ -139,7 +157,7 @@ array(4) {
 }
 </code>
 
-=== Example 2 : simple read-rule with object rule-nodes ===
+==== Example 2 : simple read-rule with object rule-nodes ====
 
 
   * The input :
@@ -171,7 +189,7 @@ object(stdClass)#6 (2) {
 }
 </code>
 
-=== Example 3 : array nodes, object nodes and constant rule ===
+==== Example 3 : array nodes, object nodes and constant rule ====
 
 
   * The input :
@@ -223,7 +241,7 @@ array(2) {
 }
 </code>
 
-=== Example 4 : complex read-rule with callbacks ===
+==== Example 4 : complex read-rule with callbacks ====
 
 
   * The input :
@@ -273,5 +291,181 @@ concat(concat(.words/0,.words/1),concat(double(.numbers/single),.words/2)) >> .s
 object(stdClass)#6 (1) {
   ["sentence"]=>
   string(16) "FromInput2Output"
+}
+</code>
+
+===== Plugins =====
+
+
+Transmorph provides a plugin interface to extend its functionalities.
+
+All necessary documentation for development with Transmorph_Plugin_Interface is 
+available in the source code documentation, which respects PhpDocumentor format.
+
+This section of the manual explains the purpose and use of ready-to-use plugins 
+shipped with Transmorph.
+
+==== The ClassCallback Plugin ====
+
+This plugin class is Transmorph_Plugin_ClassCallback.
+
+This plugin provides support for calling class methods as callbacks in complex 
+read-rules.
+
+A class method callback is named by the class name and the method name separated
+ by one or two semi-colons.
+
+<code>
+Class:method(param1,param2,...)
+</code>
+
+Or
+
+<code>
+Class::method(param1,param2,...)
+</code>
+
+Transmorph_Plugin_ClassCallback will detect if the method to be called is static
+ or not in its class. If it is not static, Transmorph_Plugin_ClassCallback will 
+try to instantiate the class and call the method on the instantiated object.
+
+NOTICE : 
+
+If the method to call is not static, Transmorph_Plugin_ClassCallback will call 
+the constructor of the called class without parameters. The called class' 
+constructor MUST NOT have any required parameters, or the callback processing 
+will fail. 
+
+=== Example 5 : ClassCallback Plugin ===
+
+
+  * The input :
+
+<code php>
+array(2) {
+  ["a"]=>
+  int(2)
+  ["b"]=>
+  int(3)
+}
+</code>
+
+  * The callbacks
+
+<code php>
+class Calc
+{
+
+    public function add($a, $b)
+    {
+        return $a + $b;
+    }
+
+    function multiply($a, $b)
+    {
+        return $a * $b;
+    }
+
+}
+</code>
+
+  * The rules :
+
+<code>
+Calc:add(/a,/b) >> .sum
+Calc:multiply(/a,/b) >> .product
+</code>
+
+  * The output :
+
+<code php>
+object(stdClass)#8 (2) {
+  ["sum"]=>
+  int(5)
+  ["product"]=>
+  int(6)
+}
+</code>
+
+==== The IteratorNode Plugin ====
+
+
+This plugin class is Transmorph_Plugin_IteratorNode.
+
+This plugin provides dynamic iteration on data structure nodes, to handle 
+situations where array size or object attribute list are not predictable.
+
+Where a rule-node must be iterated, the following rule-node must be expressed 
+by '#'.
+
+The following read-rule in a transformation rule will make the transformation 
+rule processed one time for each key of the array-node.
+
+<code>
+array-node/#
+</code>
+
+The following read-rule in a transformation rule will make the transformation 
+rule processed one time for each public attribute of the object-node.
+
+<code>
+object-node.#
+</code>
+
+When the linked write-rule has a '#' node, the key or attribute used at each 
+iteration is re-used to evaluate the write-rule.
+
+NOTICE :
+Only one iteration point is supported. It is not possible so far to encapsulate 
+an iteration loop inside another. 
+
+=== Example 6 : IteratorNode Plugin ===
+
+
+  * The input :
+
+<code php>
+array(3) {
+  [0]=>
+  int(5)
+  [1]=>
+  int(10)
+  [2]=>
+  int(15)
+}
+</code>
+
+The following rules will be equivalent using Transmorph_Plugin_IteratorNode.
+<code>
+/0 >> .foo/0.bar
+/1 >> .foo/1.bar
+/2 >> .foo/2.bar
+</code>
+<code>
+/# >> .foo/#.bar
+</code>
+
+  * The output :
+
+<code php>
+object(stdClass)#6 (1) {
+  ["foo"]=>
+  array(3) {
+    [0]=>
+    object(stdClass)#7 (1) {
+      ["bar"]=>
+      int(5)
+    }
+    [1]=>
+    object(stdClass)#8 (1) {
+      ["bar"]=>
+      int(10)
+    }
+    [2]=>
+    object(stdClass)#9 (1) {
+      ["bar"]=>
+      int(15)
+    }
+  }
 }
 </code>

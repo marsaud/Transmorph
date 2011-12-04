@@ -27,6 +27,8 @@
 /**
  * Description of Transmorph_Plugin_IteratorNode
  * 
+ * @todo TASK The line-number handling idea is stupid. Wipe out.
+ * 
  * @package Transmorph
  * 
  * @subpackage Plugin
@@ -34,7 +36,6 @@
  */
 class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
 {
-    // const ITER_NODE_REGEX = '%^(((/[^#\./\\\]+)|(\.[^#\./\\\]+))*)((\.|/)#)((/[^#\./\\\]+)|(\.[^#\./\\\]+))*)((\.|/).*)*$%';
     const ITER_NODE_REGEX = '%((\.|/)#)%';
 
     public function processMap(Transmorph_Processor $transmorph, array $map)
@@ -52,9 +53,9 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
             if ($foundInput > 1)
             {
                 throw new Transmorph_Exception(
-                    __CLASS__ . ' supports only one iteration node per map line. Found '
+                    __CLASS__ . ' supports only one iteration node per read-rule. Found '
                     . $foundInput
-                    . ' in input in line '
+                    . ' in read-rule in line '
                     . $lineNumber . '.'
                 );
             }
@@ -64,16 +65,16 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
             if ($foundOutput > 1)
             {
                 throw new Transmorph_Exception(
-                    __CLASS__ . ' supports only one iteration node per map line. Found '
+                    __CLASS__ . ' supports only one iteration node per write-rule. Found '
                     . $foundOutput
-                    . ' in output in line '
+                    . ' in write-rule in line '
                     . $lineNumber . '.'
                 );
             }
 
             if ($foundOutput === 1 && $foundInput === 0)
             {
-                throw new Transmorph_Exception('Line ' . $lineNumber . ' : Iteration must root on input');
+                throw new Transmorph_Exception('Line ' . $lineNumber . ' : Iteration must root on read-rule.');
             }
 
             if ($foundInput === 0 && $foundOutput === 0)
