@@ -73,7 +73,7 @@ class Transmorph_Reader
      * input variable.
      * 
      *
-     * @todo TASK in the read-rules, we could support only '/' and let
+     * @todo FEATURE in the read-rules, we could support only '/' and let
      * the query handle the 'array key or object property ?' problem. Or 
      * support '.' as a strict query fr object property, and let the '/'
      * be general...
@@ -82,6 +82,8 @@ class Transmorph_Reader
      * @param string $rule The read-rule.
      * 
      * @return mixed The pulled-out value.
+     * 
+     * @throws InvalidArgumentException If the query finds a resource to return.
      */
     public function query($input, $rule)
     {
@@ -124,6 +126,11 @@ class Transmorph_Reader
                 }
                 $result = $this->query($input->$key, $remainingPath);
             }
+        }
+        
+        if (gettype($result) === 'resource')
+        {
+            throw new InvalidArgumentException('resource type is not supported');
         }
 
         return $result;

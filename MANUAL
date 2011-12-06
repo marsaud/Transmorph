@@ -27,6 +27,11 @@ write the final values in an output data structure.
 The read-rule handling is done by a sub-component called Transmorph_Reader, the 
 write-rule handling is done by a sub-component called Transmorph_Writer.
 
+NOTICE : 
+The [[http://www.php.net/manual/en/language.types.resource.php|resource]] type 
+is not handled by Transmorph. Giving an input structure containing resource type
+ values will throw a particular Exception.
+
 ===== The read-rules =====
 
 
@@ -294,7 +299,7 @@ object(stdClass)#6 (1) {
 }
 </code>
 
-===== Plugins =====
+====== Plugins ======
 
 
 Transmorph provides a plugin interface to extend its functionalities.
@@ -305,7 +310,7 @@ available in the source code documentation, which respects PhpDocumentor format.
 This section of the manual explains the purpose and use of ready-to-use plugins 
 shipped with Transmorph.
 
-==== The ClassCallback Plugin ====
+===== The ClassCallback Plugin =====
 
 This plugin class is Transmorph_Plugin_ClassCallback.
 
@@ -336,7 +341,7 @@ the constructor of the called class without parameters. The called class'
 constructor MUST NOT have any required parameters, or the callback processing 
 will fail. 
 
-=== Example 5 : ClassCallback Plugin ===
+==== Example 5 : ClassCallback Plugin ====
 
 
   * The input :
@@ -387,7 +392,7 @@ object(stdClass)#8 (2) {
 }
 </code>
 
-==== The IteratorNode Plugin ====
+===== The IteratorNode Plugin =====
 
 
 This plugin class is Transmorph_Plugin_IteratorNode.
@@ -419,7 +424,7 @@ NOTICE :
 Only one iteration point is supported. It is not possible so far to encapsulate 
 an iteration loop inside another. 
 
-=== Example 6 : IteratorNode Plugin ===
+==== Example 6 : IteratorNode Plugin ====
 
 
   * The input :

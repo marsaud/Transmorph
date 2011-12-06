@@ -93,11 +93,17 @@ class Transmorph_Writer
      * @param string $path The write rule.
      * @param mixed $value The value to push in $node.
      * 
-     * @return mixed The modified $node. 
+     * @return mixed The modified $node.
+     * 
+     * @throws InvalidArgumentException If $value is a resource.
      */
     public function feed(&$node, $path, $value)
     {
-
+        if (gettype($value) === 'resource')
+        {
+            throw new InvalidArgumentException('resource type is not supported');
+        }
+        
         if ($path === '' || $path == '/' || $path == '.')
         {
             // Simple type. No structure.

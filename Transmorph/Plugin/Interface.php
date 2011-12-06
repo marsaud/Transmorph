@@ -34,12 +34,12 @@
 interface Transmorph_Plugin_Interface
 {
     /**
-     * Called by {@link Transmorph_Processor::run()} to process the lines
-     * returned by {@link Transmorph_Processor::handleFile()}.
+     * Called by {@link Transmorph_Processor::handleFile()} after the rule file
+     * has been read.
      * 
      * The point is to be free to put extended information in the transformation 
      * file, to feed extra features. This method should capture those extra 
-     * informations before 'cleaning' the file before 'standard' transformation 
+     * informations before 'cleaning' the rule map before 'standard' transformation 
      * processing.
      * 
      * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.

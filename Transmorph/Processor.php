@@ -113,14 +113,16 @@ class Transmorph_Processor
     public function run($input, $ruleFilePath)
     {
         $this->_input = $input;
-        /**
-         * @todo TASK Check for file existence to throw a clean exception.
-         */
-        $map = $this->handleFile($ruleFilePath);
-        $map = $this->_fireProcessMap($map);
+        
+        if (!file_exists($ruleFilePath))
+        {
+            throw new Transmorph_Exception('Rule file does not exist');
+        }
+        
+        $ruleMap = $this->handleFile($ruleFilePath);
 
         $output = null;
-        foreach ($map as $rule)
+        foreach ($ruleMap as $rule)
         {
             $this->handleRule($output, $input, $rule);
         }
@@ -145,7 +147,9 @@ class Transmorph_Processor
      */
     public function handleFile($filePath)
     {
-        return file($filePath, FILE_IGNORE_NEW_LINES);
+        $ruleMap = file($filePath, FILE_IGNORE_NEW_LINES);
+        $ruleMap = $this->_fireProcessMap($ruleMap);
+        return $ruleMap;
     }
 
     /**
@@ -431,15 +435,26 @@ class Transmorph_Processor
                 return $this->_writer;
                 break;
             case 'input':
-                /**
-                 *  @todo TASK this should return a recursive copy/clone to avoid breaking encapsulation.
-                 */
-                return $this->_input;
+                return $this->_copyInput($this->_input);
                 break;
             default:
                 throw new OutOfRangeException(__CLASS__ . ' has no ' . $name . ' property-read.');
                 break;
         }
+    }
+    
+    /**
+     * This has 2 interests : making a deep copy of the input so plugins cannot 
+     * violate its encapsulation, and inhibiting savage propagation of 'resources'
+     * variables.
+     *
+     * @param mixed $input
+     * 
+     * @return mixed 
+     */
+    protected function _copyInput($input)
+    {
+        return unserialize(serialize($input));
     }
 
     /**
