@@ -18,9 +18,8 @@
  * 
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
- * @package Transmorph
+ * @package Core
  * 
- * @subpackage Writer
  * 
  */
 
@@ -29,9 +28,8 @@
  * 
  * Package specific exception.
  * 
- * @package Transmorph
+ * @package Core
  * 
- * @subpackage Writer
  * 
  */
 class Transmorph_Writer_Exception extends Transmorph_Exception

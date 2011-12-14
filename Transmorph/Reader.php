@@ -18,9 +18,7 @@
  * 
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
- * @package Transmorph
- * 
- * @subpackage Reader
+ * @package Core
  * 
  */
 
@@ -29,16 +27,15 @@
  * 
  * This class handles Transmorph read rules.
  *
- * @package Transmorph
+ * @package Core
  * 
- * @subpackage Reader
  */
 class Transmorph_Reader
 {
 
     /**
-     * We can inject a Transmorph_Processor here for the reader to acces the plugin
-     * stack.
+     * We can inject a Transmorph_Processor here for the reader to acces the 
+     * plugin stack.
      * 
      * @todo TASK I don't like this processor/reader coupling for plugin access.
      * Time will bring me an idea...-> IDEA -> Reader (& Writer) should have
@@ -48,8 +45,14 @@ class Transmorph_Reader
      *
      * @var Transmorph_Processor
      */
-    protected $_t;
+    protected $_transmorphProcessor;
 
+    /**
+     * Provides encapsulation for a calling {@link Transmorph_Processor}, so 
+     * plugins can use it.
+     *
+     * @param type $transmorph A calling {@link Transmorph_Processor}.
+     */
     public function __construct($transmorph = null)
     {
         if ($transmorph !== null)
@@ -59,29 +62,31 @@ class Transmorph_Reader
     }
 
     /**
-     * This method lately "type-hints" the {@link __construct()} $transmorph parameter.
+     * This method lately "type-hints" the {@link __construct()} $transmorph 
+     * parameter.
      *
-     * @param Transmorph_Processor $t A processor. See {@link __construct()}
+     * @param Transmorph_Processor $transmorphProcessor A processor. See {@link __construct()}
+     * 
+     * @return void
      */
-    protected function _setTransmorph(Transmorph_Processor $t)
+    protected function _setTransmorph(Transmorph_Processor $transmorphProcessor)
     {
-        $this->_t = $t;
+        $this->_transmorphProcessor = $transmorphProcessor;
     }
 
     /**
      * Follows recursively a 'simple' read-rule to pull out a value from an 
      * input variable.
      * 
-     *
-     * @todo FEATURE in the read-rules, we could support only '/' and let
-     * the query handle the 'array key or object property ?' problem. Or 
-     * support '.' as a strict query fr object property, and let the '/'
-     * be general...
-     *
      * @param mixed $input The variable to read in.
      * @param string $rule The read-rule.
      * 
      * @return mixed The pulled-out value.
+     * 
+     * @todo FEATURE in the read-rules, we could support only '/' and let
+     * the query handle the 'array key or object property ?' problem. Or 
+     * support '.' as a strict query fr object property, and let the '/'
+     * be general...
      * 
      * @throws InvalidArgumentException If the query finds a resource to return.
      */
@@ -137,20 +142,22 @@ class Transmorph_Reader
     }
 
     /**
-     * @see Transmorph_Plugin_Interface::processReadRuleNode()
+     * Firing plugins.
      *
      * @param string $ruleNode passed to plugin.
      * 
      * @return string back from plugin.
+     * 
+     * @see Transmorph_Plugin_Interface::processReadRuleNode()
      */
     protected function _fireProcessReadRuleNode($ruleNode)
     {
-        if ($this->_t !== null)
+        if ($this->_transmorphProcessor !== null)
         {
-            $plugins = $this->_t->plugins;
+            $plugins = $this->_transmorphProcessor->plugins;
             foreach ($plugins as $plugin)
             {
-                $ruleNode = $plugin->processReadRuleNode($this->_t, $ruleNode);
+                $ruleNode = $plugin->processReadRuleNode($this->_transmorphProcessor, $ruleNode);
             }
         }
 
