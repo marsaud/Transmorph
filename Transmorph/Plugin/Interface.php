@@ -18,18 +18,18 @@
  * 
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
- * @package Transmorph
+ * @package Plugin
  * 
- * @subpackage Plugin
  * 
  */
 
 /**
  * An plugin interface used by {@link Transmorph_Processor}.
  * 
- * @package Transmorph
+ * @package Plugin
  * 
- * @subpackage Plugin
+ * @todo Rework documentation
+ * 
  */
 interface Transmorph_Plugin_Interface
 {
@@ -39,10 +39,11 @@ interface Transmorph_Plugin_Interface
      * 
      * The point is to be free to put extended information in the transformation 
      * file, to feed extra features. This method should capture those extra 
-     * informations before 'cleaning' the rule map before 'standard' transformation 
-     * processing.
+     * informations before 'cleaning' the rule map before 'standard' 
+     * transformation processing.
      * 
-     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are 
+     * plugged in.
      * @param string[] $map The original rule-map.
      * 
      * @return string[] $map The processed rule-map.
@@ -54,11 +55,12 @@ interface Transmorph_Plugin_Interface
      * before passing it to the writer.
      * 
      * The point is to extend the informations carried by a rule, to feed extra 
-     * features. This method should capture those extra informations before giving
-     * back a {@link Transmorph_Rule} that the {@link Transmorph_Processor} can
-     * process.
+     * features. This method should capture those extra informations before 
+     * giving back a {@link Transmorph_Rule} that the 
+     * {@link Transmorph_Processor} can process.
      * 
-     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are 
+     * plugged in.
      * @param Transmorph_Rule $rule The original rule.
      * 
      * @return Transmorph_Rule The processed rule.
@@ -66,10 +68,11 @@ interface Transmorph_Plugin_Interface
     public function processRule(Transmorph_Processor $transmorph, Transmorph_Rule $rule);
     
     /**
-     * Called by {@link Transmorph_Processor::handleReadRule()} to process callback
-     * names before using them.
+     * Called by {@link Transmorph_Processor::handleReadRule()} to process 
+     * callback names before using them.
      * 
-     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are 
+     * plugged in.
      * @param mixed $callback The original callback.
      * 
      * @return mixed The processed callback.
@@ -81,19 +84,21 @@ interface Transmorph_Plugin_Interface
      * callback parameters provided as an array of strings assumed to be
      * raw read-rules.
      * 
-     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
-     * @param string[] $callbackParams An array of read-rules purposed to be evaluated
-     * as callback parameters.
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are 
+     * plugged in.
+     * @param string[] $callbackParams An array of read-rules purposed to be 
+     * evaluated as callback parameters.
      * 
      * @return string[] The processed array.
      */
     public function processCallbackParams(Transmorph_Processor $transmorph, $callbackParams);
     
     /**
-     * Called by {@link Transmorph_Reader::query()} to process a "read-rule-node" 
+     * Called by {@link Transmorph_Reader::query()} to process a read-rule node 
      * before the Transmorph_Reader will exploit it.
      * 
-     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are 
+     * plugged in.
      * @param string $ruleNode The original rule node.
      * 
      * @return string The processed rule node.
@@ -101,10 +106,11 @@ interface Transmorph_Plugin_Interface
     public function processReadRuleNode(Transmorph_Processor $transmorph, $ruleNode);
     
     /**
-     * Called by {@link Transmorph_Writer::feed()} to process a "write-rule-node" 
+     * Called by {@link Transmorph_Writer::feed()} to process a write-rule node 
      * before the Transmorph_Writer will exploit it.
      * 
-     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are plugged in.
+     * @param Transmorph_Processor $transmorph The Transmorph_Processor we are 
+     * plugged in.
      * @param string $ruleNode The original rule node.
      * 
      * @return string The processed rule node.

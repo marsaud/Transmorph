@@ -18,9 +18,7 @@
  * 
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
- * @package Transmorph
- * 
- * @subpackage Rule
+ * @package Core
  * 
  */
 
@@ -30,9 +28,7 @@
  * This class encapsulates the parsing of a transormation rule to obtain the 
  * read-rule and the write_rule.
  * 
- * @package Transmorph
- * 
- * @subpackage Rule
+ * @package Core
  * 
  * @property-read string $readRule The read-rule.
  * @property-read string $writeRule The write-rule.
@@ -61,17 +57,19 @@ class Transmorph_Rule
     /**
      * The constructor triggers the parsing of the rule.
      *
-     * @param string $line 
+     * @param string $ruleString A transormation rule string.
      */
-    public function __construct($line)
+    public function __construct($ruleString)
     {
-        $this->_parseRule($line);
+        $this->_parseRule($ruleString);
     }
 
     /**
      * Parsing of the rule.
      *
      * @param string $rule The rule to parse.
+     * 
+     * @return void
      * 
      * @throws Transmorph_Rule_Exception
      */
@@ -113,9 +111,11 @@ class Transmorph_Rule
     }
 
     /**
+     * Giving back the rule.
+     * 
      * @codeCoverageIgnore Trivial
      *
-     * @return string The tranformation rule.
+     * @return string The original tranformation rule string.
      */
     public function __toString()
     {

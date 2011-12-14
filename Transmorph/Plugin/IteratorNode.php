@@ -18,24 +18,35 @@
  * 
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
- * @package Transmorph
- * 
- * @subpackage Plugin
+ * @package Plugin
  * 
  */
 
 /**
  * Description of Transmorph_Plugin_IteratorNode
  * 
- * @package Transmorph
- * 
- * @subpackage Plugin
+ * @package Plugin
  * 
  */
 class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
 {
     const ITER_NODE_REGEX = '%((\.|/)#)%';
 
+    /**
+     * This plugin method searchs for the # symbol as an array key or object
+     * attribute in a read rule-node. 
+     * 
+     * When found, it iterates on the targeted node in the input of the injected
+     *  {@link Transmorph_Processor} object to create the subsequent standard 
+     * read-rules based on the node keys.
+     *
+     * @param Transmorph_Processor $transmorph A calling 
+     * {@link Transmorph_Processor}.
+     * @param string[] $map An array of transformation rule strings asssumed to 
+     * come from a transformation file.
+     * 
+     * @return string[] The processed tranformation rules.
+     */
     public function processMap(Transmorph_Processor $transmorph, array $map)
     {
 
@@ -89,7 +100,9 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
                 }
                 catch (Transmorph_Exception $exc)
                 {
-                    throw new Transmorph_Exception(__CLASS__ . ' throws : ' . $exc->getMessage() . ' on rule : ' . $tRule);
+                    throw new Transmorph_Exception(
+                        __CLASS__ . ' throws : ' . $exc->getMessage() . ' on rule : ' . $tRule
+                    );
                 }
 
                 $mapExtension = $this->extendRule($iterableNode, $mapRule);
@@ -101,10 +114,12 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
     }
 
     /**
+     * Retrieves a node in an input data structure, checking it is iterable, so
+     * the plugin can do the job.
      *
-     * @param Transmorph_Reader $reader
-     * @param string $input
-     * @param string $path 
+     * @param Transmorph_Reader $reader A reader to perform a query.
+     * @param mixed $input The input structure to query in.
+     * @param string $path The path for the query
      * 
      * @return mixed The iterable node
      */
@@ -116,17 +131,22 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
     }
 
     /**
+     * The core method of the plugin. Create a read-rule for every key in the
+     * iterable stuff trageted by the # symbol in the original read-rule.
      *
-     * @param mixed $iterableNode
-     * @param string $mapRule 
+     * @param mixed $iterableNode An iterable variable.
+     * @param string $mapRule A read-rule with the # generic key.
      * 
-     * @return string[]
+     * @return string[] The deterministic read-rules based on the real keys of
+     * the $iterableNode argument.
+     * 
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function extendRule($iterableNode, $mapRule)
     {
         $this->_checkIterableNode($iterableNode);
         $mapRuleExtension = array();
-
+        
         $count = 0;
         foreach ($iterableNode as $key => $value)
         {
@@ -141,12 +161,13 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
     }
 
     /**
+     * Checks if a variable is iterable.
      *
-     * @param mixed $node
+     * @param mixed $node The variable to check.
      * 
      * @throws Transmorph_Exception
      * 
-     * @return boolean
+     * @return void
      */
     protected function _checkIterableNode($node)
     {
@@ -154,7 +175,6 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
         {
             throw new Transmorph_Exception('Input value node is not iterable.');
         }
-        return true;
     }
 
 }

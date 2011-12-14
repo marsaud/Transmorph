@@ -18,7 +18,7 @@
  * 
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
- * @package Transmorph
+ * @package Core
  * 
  */
 
@@ -42,12 +42,15 @@
  * implementing {@link Transmorph_Plugin_Interface} or extending 
  * {@link Transmorph_Plugin_Abstract}.
  * 
- * @package Transmorph
+ * @package Core
  * 
- * @property-read TransmorphPluginInterface[] $plugins Array containing registered plugins.
+ * @property-read TransmorphPluginInterface[] $plugins Array containing 
+ * registered plugins.
  * @property-read Transmorph_Reader $reader The input reader component.
  * @property-read Transmorph_Writer $writer The output writer component.
- * @property-read mixed $input The input submitted to {@link run()}. Always null except for plugins fired by {@link run()}
+ * @property-read mixed $input The input submitted to {@link run()}. Always null
+ *  except for plugins fired by 
+ * {@link run()}.
  * 
  */
 class Transmorph_Processor
@@ -83,10 +86,12 @@ class Transmorph_Processor
     protected $_plugins;
 
     /**
-     * @todo FEATURE The constructor could call a kind of _init protected overridable
-     * method(s) to instanciate reader & writer, so extending Transmorph_Process
-     * would be an opportunity to use extended Transmorph_Reader and
-     * Transmorph_Writer subclasses. 
+     * Initializes encapsulated readers and writers.
+     * 
+     * @todo FEATURE The constructor could call a kind of _init protected 
+     * overridable method(s) to instanciate reader & writer, so extending 
+     * Transmorph_Process would be an opportunity to use extended 
+     * Transmorph_Reader and Transmorph_Writer subclasses. 
      */
     public final function __construct()
     {
@@ -97,28 +102,29 @@ class Transmorph_Processor
     }
 
     /**
-     * Call this method for the main use of Transmorph : transforming a data structure
-     * to another one following a set of rules written in a file.
-     * 
-     * @todo FEATURE This method could take a path/to/file, or the transformation rules
-     * in a string, as it could be written in the file.
+     * Call this method for the main use of Transmorph : transforming a data 
+     * structure to another one following a set of rules written in a file.
      *
-     * @param mixed $input A variable of any type. As the purpose is to tranform
-     * structures, most of the time the input will be a structure of array and/or
-     * objects.
-     * @param string $ruleFilePath The path to the file defining tranformation rules.
+     * @param mixed $input A variable of any type. As the purpose is to 
+     * tranform structures, most of the time the input will be a structure of 
+     * array and/or objects.
+     * @param string $ruleFilePath The path to the file defining tranformation 
+     * rules.
      * 
      * @return mixed The output structure resulting from the transformation.
+     * 
+     * @todo FEATURE This method could take a path/to/file, or the 
+     * transformation rules in a string, as it could be written in the file.
      */
     public function run($input, $ruleFilePath)
     {
         $this->_input = $input;
-        
+
         if (!file_exists($ruleFilePath))
         {
             throw new Transmorph_Exception('Rule file does not exist');
         }
-        
+
         $ruleMap = $this->handleFile($ruleFilePath);
 
         $output = null;
@@ -135,15 +141,15 @@ class Transmorph_Processor
      * Reads a file to give back the file lines in an array of strings.
      * Of course the expected file is a tranformation rule file.
      * 
-     * @todo FEATURE. As {@link run()} is implemented, it expects an array
-     * of transformation rules given "ready to use" by handleFile; and it passes
-     * this array to {@link _fireProcessMap()}. It would be interesting to
-     * introduce a _fireProcessFileLines in handleFile to take soem work to be
-     * done to go from file to "map".
-     * 
      * @param string $filePath A /path/to/a_file.
      *
      * @return string[] The lines found in the file.
+     * 
+     * @todo FEATURE. As {@link run()} is implemented, it expects an array of 
+     * transformation rules given "ready to use" by handleFile; and it passes
+     * this array to {@link _fireProcessMap()}. It would be interesting to
+     * introduce a _fireProcessFileLines in handleFile to take soem work to be
+     * done to go from file to "map".
      */
     public function handleFile($filePath)
     {
@@ -155,8 +161,8 @@ class Transmorph_Processor
     /**
      * Executes one transformation rule.
      *
-     * @param mixed $output A variable where the data pulled from $input will be 
-     * written. 
+     * @param mixed &$output A variable where the data pulled from $input will 
+     * be written. 
      * @param mixed $input The data structure to transmorph to $ouput.
      * @param string $rule A single complete transformation rule.
      * 
@@ -173,8 +179,8 @@ class Transmorph_Processor
      * Pulls data from an $input following a read-rule.
      * 
      * This function can recursively follow imbricated callbacks declared in the
-     * read-rule. Recursivity stops when a constant rule or a simple read-rule is
-     * found. 
+     * read-rule. Recursivity stops when a constant rule or a simple read-rule 
+     * is found. 
      *
      * @param mixed $input The data read followinf the rule.
      * @param string $readRule The read-rule.
@@ -201,27 +207,28 @@ class Transmorph_Processor
             }
             else
             {
-                $paramEntries = $this->findCallbackParams($readRule);
-                $paramEntries = $this->_fireProcessCallbackParams($paramEntries);
+                $paramExps = $this->findCallbackParams($readRule);
+                $paramExps = $this->_fireProcessCallbackParams($paramExps);
 
                 $inputArray = array();
-                for ($i = 0; $i < count($paramEntries); $i++)
+                for ($i = 0; $i < count($paramExps); $i++)
                 {
                     $inputArray[] = $input;
                 }
-                return call_user_func_array($callback, array_map(array($this, __FUNCTION__), $inputArray, $paramEntries));
+                return call_user_func_array($callback, array_map(array($this, __FUNCTION__), $inputArray, $paramExps));
             }
         }
     }
-    
+
     /**
      * Evaluates a constant read-rule.
+     *
+     * @param string $constRule A constant read-rule
+     * 
+     * @return string The constant value
      * 
      * @todo FEATURE This method could apply a casting strategy to handle
      * PHP simple internal type (int, float, string, boolean).
-     *
-     * @param string $constRule A constant read-rule
-     * @return string The constant value
      */
     protected function _evalConstRule($constRule)
     {
@@ -359,9 +366,9 @@ class Transmorph_Processor
     }
 
     /**
-     * Adds a plugin in the last position of the plugin stack. The plugin order is
-     * important when several plugin on the stack concretely implement the same
-     * method(s) of the {@link Transmorph_Plugin_Interface}.
+     * Adds a plugin in the last position of the plugin stack. The plugin order 
+     * is important when several plugin on the stack concretely implement the 
+     * same method(s) of the {@link Transmorph_Plugin_Interface}.
      *
      * @param Transmorph_Plugin_Interface $plugin An instance of a plugin.
      * 
@@ -414,12 +421,12 @@ class Transmorph_Processor
 
     /**
      * Property handling.
-     * 
-     * @codeCoverageIgnore Trivial
      *
      * @param string $name Property name.
      * 
      * @return mixed Property value.
+     * 
+     * @codeCoverageIgnore Trivial
      */
     public function __get($name)
     {
@@ -442,13 +449,13 @@ class Transmorph_Processor
                 break;
         }
     }
-    
+
     /**
      * This has 2 interests : making a deep copy of the input so plugins cannot 
-     * violate its encapsulation, and inhibiting savage propagation of 'resources'
-     * variables.
+     * violate its encapsulation, and inhibiting savage propagation of 
+     * 'resources' variables.
      *
-     * @param mixed $input
+     * @param mixed $input An input structure implied in a transfromation.
      * 
      * @return mixed 
      */
@@ -458,11 +465,13 @@ class Transmorph_Processor
     }
 
     /**
-     * @see Transmorph_Plugin_Interface::processMap()
+     * Firing plugins.
      *
      * @param string[] $map passed to plugin.
      * 
      * @return string[] back from plugin.
+     * 
+     * @see Transmorph_Plugin_Interface::processMap()
      */
     protected function _fireProcessMap(array $map)
     {
@@ -476,11 +485,13 @@ class Transmorph_Processor
     }
 
     /**
-     * @see Transmorph_Plugin_Interface::processRule()
-     *
+     * Firing plugins.
+     * 
      * @param Transmorph_Rule $rule passed to plugin.
      * 
      * @return Transmorph_Rule back from plugin.
+     * 
+     * @see Transmorph_Plugin_Interface::processRule()
      */
     protected function _fireProcessRule(Transmorph_Rule $rule)
     {
@@ -494,11 +505,13 @@ class Transmorph_Processor
     }
 
     /**
-     * @see Transmorph_Plugin_Interface::processCallback()
+     * Firing plugins.
      *
      * @param mixed $callback passed to plugin.
      * 
      * @return mixed back from plugin.
+     * 
+     * @see Transmorph_Plugin_Interface::processCallback()
      */
     protected function _fireProcessCallback($callback)
     {
@@ -512,11 +525,13 @@ class Transmorph_Processor
     }
 
     /**
-     * @see Transmorph_Plugin_Interface::processCallbackParams()
+     * Firing plugins.
      *
      * @param string[] $callbackParams passed to plugin.
      * 
      * @return string[] back for plugin.
+     * 
+     * @see Transmorph_Plugin_Interface::processCallbackParams()
      */
     protected function _fireProcessCallbackParams(array $callbackParams)
     {

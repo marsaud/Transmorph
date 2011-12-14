@@ -18,23 +18,42 @@
  * 
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
- * @package Transmorph
- * 
- * @subpackage Plugin
+ * @package Plugin
  * 
  */
 
 /**
  * Description of Transmorph_Plugin_ClassCallback
  * 
- * @package Transmorph
- * 
- * @subpackage Plugin
+ * @package Plugin
  * 
  */
 class Transmorph_Plugin_ClassCallback extends Transmorph_Plugin_Abstract
 {
 
+    /**
+     * Class Method callbacks.
+     * 
+     * This plugin method offers to parse a simple Callback expression in 
+     * read-rules, in PHP callback arrays.
+     * 
+     * The expected format is "Class:method" or "Class::method"
+     * 
+     * If method is static, the returned array wil provide class name and method
+     *  name.
+     * 
+     * If method is not static, the returned array will provide a class instance
+     *  and the method name. For this to work, the constructor class must have 
+     * no required parameters, and it will be called with no parameters at all.
+     *
+     * @param Transmorph_Processor $transmorph The calling Transmorph_Processor
+     * @param string $callback A callback name.
+     * 
+     * @return array An array representation of a class or object method for 
+     * callback. 
+     * 
+     * @SuppressWarnings(PMD.UnusedFormalParameter)
+     */
     public function processCallback(Transmorph_Processor $transmorph, $callback)
     {
         $processedCallback = preg_split('/:(:)?/', $callback);
@@ -53,18 +72,20 @@ class Transmorph_Plugin_ClassCallback extends Transmorph_Plugin_Abstract
             {
                 throw new Transmorph_Exception('Broken callback description : ' . $callback);
             }
-            $r = new ReflectionClass($processedCallback[0]);
-            /* @var $m ReflectionMethod */
-            $m = $r->getMethod($processedCallback[1]);
-            if (!$m->isStatic())
+            $reflection = new ReflectionClass($processedCallback[0]);
+            /* @var $method ReflectionMethod */
+            $method = $reflection->getMethod($processedCallback[1]);
+            if (!$method->isStatic())
             {
-                $c = $r->getConstructor();
-                if ($c instanceof ReflectionMethod && $c->getNumberOfRequiredParameters() > 0)
+                $constructor = $reflection->getConstructor();
+                if ($constructor instanceof ReflectionMethod && $constructor->getNumberOfRequiredParameters() > 0)
                 {
-                    throw new Transmorph_Exception(__CLASS__ . ' does not support constructor parameters for callback classes.');
+                    throw new Transmorph_Exception(
+                        __CLASS__ . ' does not support constructor parameters for callback classes.'
+                    );
                 }
 
-                $className = $r->name;
+                $className = $reflection->name;
                 $object = new $className();
                 $processedCallback[0] = $object;
             }

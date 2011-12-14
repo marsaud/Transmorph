@@ -18,9 +18,7 @@
  * 
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
- * @package Transmorph
- * 
- * @subpackage Writer
+ * @package Core
  * 
  */
 
@@ -29,18 +27,17 @@
  * 
  * This class handles Transmorph write rules.
  * 
- * @package Transmorph
+ * @package Core
  * 
- * @subpackage Writer
- * 
- * @property string $objectNodeType The type to instanciate when creating object nodes.
+ * @property string $objectNodeType The type to instanciate when creating object
+ *  nodes.
  */
 class Transmorph_Writer
 {
 
     /**
-     * We can inject a Transmorph_Processor here for the writer to acces the plugin
-     * stack.
+     * We can inject a Transmorph_Processor here for the writer to acces the 
+     * plugin stack.
      * 
      * @todo TASK I don't like this processor/writer coupling for plugin access.
      * Time will bring me an idea...-> IDEA -> Writer (& Reader) should have
@@ -50,10 +47,11 @@ class Transmorph_Writer
      *
      * @var Transmorph_Processor
      */
-    protected $_t;
+    protected $_transmorphProcessor;
 
     /**
-     * A class name used to instanciate object nodes in the transformation output.
+     * A class name used to instanciate object nodes in the transformation 
+     * output.
      *
      * @var string
      */
@@ -63,7 +61,7 @@ class Transmorph_Writer
      * The $transmorph parameter can provide a plugin stack fir the writer. Most
      * of the time this $transmorph will be a caller of the writer.
      *
-     * @param mixed $transmorph 
+     * @param mixed $transmorph A calling {@link Transmorph_Processor}.
      */
     public function __construct($transmorph = null)
     {
@@ -76,20 +74,23 @@ class Transmorph_Writer
     }
 
     /**
-     * This method lately "type-hints" the {@link __construct()} $transmorph parameter.
+     * This method lately "type-hints" the {@link __construct()} $transmorph 
+     * parameter.
      *
-     * @param Transmorph_Processor $t A processor. See {@link __construct()}
+     * @param Transmorph_Processor $transmorphProcessor A processor. See {@link __construct()}
+     * 
+     * @return void
      */
-    protected function _setTransmorph(Transmorph_Processor $t)
+    protected function _setTransmorph(Transmorph_Processor $transmorphProcessor)
     {
-        $this->_t = $t;
+        $this->_transmorphProcessor = $transmorphProcessor;
     }
 
     /**
      * This method resolves a write rule to push data in a variable, creating
      * structure nodes in this variable if necessary.
      *
-     * @param mixed $node The variable to write in.
+     * @param mixed &$node The variable to write in.
      * @param string $path The write rule.
      * @param mixed $value The value to push in $node.
      * 
@@ -103,7 +104,7 @@ class Transmorph_Writer
         {
             throw new InvalidArgumentException('resource type is not supported');
         }
-        
+
         if ($path === '' || $path == '/' || $path == '.')
         {
             // Simple type. No structure.
@@ -194,12 +195,12 @@ class Transmorph_Writer
 
     /**
      * Property handling.
-     * 
-     * @codeCoverageIgnore Trivial.
      *
      * @param string $name Property name.
      * 
      * @return mixed Property value.
+     * 
+     * @codeCoverageIgnore Trivial.
      */
     public function __get($name)
     {
@@ -217,12 +218,12 @@ class Transmorph_Writer
     /**
      * Property handling.
      * 
-     * @codeCoverageIgnore Trivial.
-     *
      * @param string $name Property name.
      * @param mixed $value Property value.
      * 
      * @return void
+     *
+     * @codeCoverageIgnore Trivial.
      */
     public function __set($name, $value)
     {
@@ -240,21 +241,21 @@ class Transmorph_Writer
     /**
      * Plugin caller.
      * 
-     * @see Transmorph_Plugin_Interface::processWriteRuleNode()
-     *
      * @param string $ruleNode passed to plugin.
      * 
      * @return string back from plugin.
+     *
+     * @see Transmorph_Plugin_Interface::processWriteRuleNode()
      */
     protected function _fireProcessWriteRuleNode($ruleNode)
     {
-        if ($this->_t !== null)
+        if ($this->_transmorphProcessor !== null)
         {
-            $plugins = $this->_t->plugins;
+            $plugins = $this->_transmorphProcessor->plugins;
             /* @var $plugin Transmorph_Plugin_Interface */
             foreach ($plugins as $plugin)
             {
-                $ruleNode = $plugin->processWriteRuleNode($this->_t, $ruleNode);
+                $ruleNode = $plugin->processWriteRuleNode($this->_transmorphProcessor, $ruleNode);
             }
         }
 
