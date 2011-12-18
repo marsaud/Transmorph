@@ -53,7 +53,7 @@
  * {@link run()}.
  * 
  */
-class Transmorph_Processor
+class Transmorph_Processor implements Transmorph_Plugin_StackInterface
 {
     const REGEX_CONST = '#^\\\.+$#';
 
@@ -77,13 +77,12 @@ class Transmorph_Processor
      * @var Transmorph_Writer
      */
     protected $_writer;
-
+    
     /**
-     * Array of plugins called by all '_fire*' methods.
      *
-     * @var TransmorphPluginInterface[]
+     * @var Transmorph_Plugin_Stack
      */
-    protected $_plugins;
+    protected $_pluginStack;
 
     /**
      * Initializes encapsulated readers and writers.
@@ -99,6 +98,8 @@ class Transmorph_Processor
         $this->_writer = new Transmorph_Writer($this);
 
         $this->_plugins = array();
+        
+        $this->_pluginStack = new Transmorph_Plugin_Stack();
     }
 
     /**
@@ -355,14 +356,7 @@ class Transmorph_Processor
      */
     public function prependPlugin(Transmorph_Plugin_Interface $plugin)
     {
-        foreach ($this->_plugins as $p)
-        {
-            if (get_class($p) == get_class($plugin))
-            {
-                throw new Transmorph_Exception('Plugin ' . get_class($plugin) . ' already registered');
-            }
-        }
-        array_unshift($this->_plugins, $plugin);
+        $this->_pluginStack->prependPlugin($plugin);
     }
 
     /**
@@ -379,14 +373,7 @@ class Transmorph_Processor
      */
     public function appendPlugin(Transmorph_Plugin_Interface $plugin)
     {
-        foreach ($this->_plugins as $p)
-        {
-            if (get_class($p) == get_class($plugin))
-            {
-                throw new Transmorph_Exception('Plugin ' . get_class($plugin) . ' already registered');
-            }
-        }
-        array_push($this->_plugins, $plugin);
+        $this->_pluginStack->appendPlugin($plugin);
     }
 
     /**
@@ -401,22 +388,7 @@ class Transmorph_Processor
      */
     public function removePlugin($pluginClassName)
     {
-        $removeKey = null;
-        foreach ($this->_plugins as $key => $value)
-        {
-            if (get_class($value) === $pluginClassName)
-            {
-                $removeKey = $key;
-                break;
-            }
-        }
-
-        if ($removeKey === null)
-        {
-            throw new Transmorph_Exception('Plugin ' . $pluginClassName . ' not found for removal.');
-        }
-
-        unset($this->_plugins[$removeKey]);
+        $this->_pluginStack->removePlugin($pluginClassName);
     }
 
     /**
@@ -433,7 +405,7 @@ class Transmorph_Processor
         switch ($name)
         {
             case 'plugins':
-                return $this->_plugins;
+                return $this->_pluginStack;
                 break;
             case 'reader':
                 return $this->_reader;
@@ -475,7 +447,7 @@ class Transmorph_Processor
      */
     protected function _fireProcessMap(array $map)
     {
-        foreach ($this->_plugins as $plugin)
+        foreach ($this->_pluginStack as $plugin)
         {
             /* @var $plugin TransmorphPluginInterface */
             $map = $plugin->processMap($this, $map);
@@ -495,7 +467,7 @@ class Transmorph_Processor
      */
     protected function _fireProcessRule(Transmorph_Rule $rule)
     {
-        foreach ($this->_plugins as $plugin)
+        foreach ($this->_pluginStack as $plugin)
         {
             /* @var $plugin TransmorphPluginInterface */
             $rule = $plugin->processRule($this, $rule);
@@ -515,7 +487,7 @@ class Transmorph_Processor
      */
     protected function _fireProcessCallback($callback)
     {
-        foreach ($this->_plugins as $plugin)
+        foreach ($this->_pluginStack as $plugin)
         {
             /* @var $plugin TransmorphPluginInterface */
             $callback = $plugin->processCallback($this, $callback);
@@ -535,7 +507,7 @@ class Transmorph_Processor
      */
     protected function _fireProcessCallbackParams(array $callbackParams)
     {
-        foreach ($this->_plugins as $plugin)
+        foreach ($this->_pluginStack as $plugin)
         {
             /* @var $plugin TransmorphPluginInterface */
             $callbackParams = $plugin->processCallbackParams($this, $callbackParams);

@@ -461,7 +461,6 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Transmorph_Processor::appendPlugin
      * @expectedException Transmorph_Exception
      */
     public function testAppendPluginException1()
@@ -471,7 +470,6 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Transmorph_Processor::prependPlugin
      * @expectedException Transmorph_Exception
      */
     public function testAppendPluginException2()
@@ -481,7 +479,6 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Transmorph_Processor::removePlugin
      * @expectedException Transmorph_Exception
      */
     public function testRemovePluginException()
@@ -489,60 +486,53 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
         $this->object->removePlugin('anyUnregisteredClassName');
     }
 
-    /**
-     * @covers Transmorph_Processor::appendPlugin
-     */
     public function testPluginRegistry1()
     {
         $t = new Transmorph_Processor();
         $t->appendPlugin(new PluginForTest1());
-        $plugins = array_values($t->plugins);
+        $plugins = $this->_getValuesFromPluginStack($t->plugins);
         $this->assertEquals(array(new PluginForTest1()), $plugins);
 
         return $t;
     }
 
     /**
-     * @covers Transmorph_Processor::appendPlugin
      * @depends testPluginRegistry1
      */
     public function testPluginRegistry2(Transmorph_Processor $t)
     {
         $t->appendPlugin(new PluginForTest2());
-        $plugins = array_values($t->plugins);
+        $plugins = $this->_getValuesFromPluginStack($t->plugins);
         $this->assertEquals(array(new PluginForTest1(), new PluginForTest2()), $plugins);
 
         return $t;
     }
 
     /**
-     * @covers Transmorph_Processor::prependPlugin
      * @depends testPluginRegistry2
      */
     public function testPluginRegistry3(Transmorph_Processor $t)
     {
         $t->prependPlugin(new PluginForTest3());
-        $plugins = array_values($t->plugins);
+        $plugins = $this->_getValuesFromPluginStack($t->plugins);
         $this->assertEquals(array(new PluginForTest3(), new PluginForTest1(), new PluginForTest2()), $plugins);
 
         return $t;
     }
 
     /**
-     * @covers Transmorph_Processor::removePlugin
      * @depends testPluginRegistry3
      */
     public function testPluginRegistry4(Transmorph_Processor $t)
     {
         $t->removePlugin('PluginForTest1');
-        $plugins = array_values($t->plugins);
+        $plugins = $this->_getValuesFromPluginStack($t->plugins);
         $this->assertEquals(array(new PluginForTest3(), new PluginForTest2()), $plugins);
     }
 
     public function testInputProperty1()
     {
         $input = array(1, 2);
-        $output = null;
         $plugin = new PluginForInputPropertyTest();
         $t = new Transmorph_Processor();
 
@@ -556,13 +546,22 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
         $fopen = fopen(realpath(dirname(__FILE__) . '/../testResources/emptyFile'), 'r');
 
         $input = array($fopen, 2);
-        $output = null;
         $plugin = new PluginForInputPropertyTest();
         $t = new Transmorph_Processor();
 
         $t->appendPlugin($plugin);
         $t->run($input, realpath(dirname(__FILE__) . '/../testResources/testInputProperty'));
         $this->assertEquals(array(0, 2), PluginForInputPropertyTest::$copiedInput);
+    }
+    
+    private function _getValuesFromPluginStack(Transmorph_Plugin_Stack $stack)
+    {
+        $plugins = array();
+        foreach ($stack as $value)
+        {
+            $plugins[] = $value;
+        }
+        return $plugins;
     }
 
 }

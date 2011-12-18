@@ -1,7 +1,7 @@
 ====== Transmorph README FILE ======
 
 
-Developed under PHP 5.3.2
+Developed and tested under PHP 5.3.2
 
 ===== Generate API documentation with phpDocumentor : =====
 
@@ -12,7 +12,7 @@ Place yourself in the project root directory (where doc.ini stands) and run :
 
 $ phpdoc -c doc.ini
 
-Verified with phpDocumentor 1.4.3
+Verified with phpDocumentor 1.4.4
 
 ===== Run PHPUnit tests =====
 
@@ -21,7 +21,7 @@ Place yourself in the tests directory and run :
 
 $ phpunit --bootstrap bootstrap.php .
 
-Verified with phpunit 3.6.3
+Verified with phpunit 3.6.4
 
 ===== MANUAL =====
 

@@ -30,7 +30,6 @@
  * 
  * @package Core
  * 
- * 
  */
 class Transmorph_Writer_Exception extends Transmorph_Exception
 {
