@@ -22,11 +22,29 @@
  */
 
 /**
- * An plugin base interface for every Transmorph plugin.
+ * Description of Transmorph_Plugin_Reader_Abstract
  * 
  * @package Plugin
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
-interface Transmorph_Plugin_Interface
+abstract class Transmorph_Plugin_Reader_Abstract implements Transmorph_Plugin_Reader_Interface
 {
-    
+
+    /**
+     * Indentity implementation to gain time for simple plugins.
+     * 
+     * @param Transmorph_Reader $transmorphReader A calling 
+     * {@link Transmorph_Reader}.
+     * @param string $ruleNode A rule-node to process.
+     * 
+     * @return string The processed rule-node.
+     * 
+     * @see Transmorph_Plugin_Reader_Interface::processReadRuleNode()
+     */
+    public function processRuleNode(Transmorph_Reader $transmorphReader, $ruleNode)
+    {
+        return $ruleNode;
+    }
+
 }

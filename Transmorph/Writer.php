@@ -32,22 +32,15 @@
  * @property string $objectNodeType The type to instanciate when creating object
  *  nodes.
  */
-class Transmorph_Writer
+class Transmorph_Writer implements Transmorph_Plugin_StackInterface
 {
 
     /**
-     * We can inject a Transmorph_Processor here for the writer to acces the 
-     * plugin stack.
-     * 
-     * @todo TASK I don't like this processor/writer coupling for plugin access.
-     * Time will bring me an idea...-> IDEA -> Writer (& Reader) should have
-     * its own Plugin Stack implemented its own plugin interface, so it will be
-     * stand alone. Used by Processor, this one can feed the plugn stack of its
-     * reader & writer.
+     * A plugin stack.
      *
-     * @var Transmorph_Processor
+     * @var Transmorph_Plugin_StackInterface
      */
-    protected $_transmorphProcessor;
+    protected $_pluginStack;
 
     /**
      * A class name used to instanciate object nodes in the transformation 
@@ -58,32 +51,12 @@ class Transmorph_Writer
     protected $_objectNodeType;
 
     /**
-     * The $transmorph parameter can provide a plugin stack fir the writer. Most
-     * of the time this $transmorph will be a caller of the writer.
-     *
-     * @param mixed $transmorph A calling {@link Transmorph_Processor}.
+     * Initializations.
      */
-    public function __construct($transmorph = null)
+    public function __construct()
     {
-        if ($transmorph !== null)
-        {
-            $this->_setTransmorph($transmorph);
-        }
-
         $this->_objectNodeType = 'stdClass';
-    }
-
-    /**
-     * This method lately "type-hints" the {@link __construct()} $transmorph 
-     * parameter.
-     *
-     * @param Transmorph_Processor $transmorphProcessor A processor. See {@link __construct()}
-     * 
-     * @return void
-     */
-    protected function _setTransmorph(Transmorph_Processor $transmorphProcessor)
-    {
-        $this->_transmorphProcessor = $transmorphProcessor;
+        $this->_pluginStack = new Transmorph_Plugin_Stack();
     }
 
     /**
@@ -119,7 +92,7 @@ class Transmorph_Writer
                 throw new Transmorph_Writer_Exception('Illegal write-rule : ' . $path);
             }
             $pathNode = $matches[1];
-            $pathNode = $this->_fireProcessWriteRuleNode($pathNode);
+            $pathNode = $this->_fireProcessRuleNode($pathNode);
 
             $remainingPath = isset($matches[4]) ? $matches[4] : '';
 
@@ -245,21 +218,73 @@ class Transmorph_Writer
      * 
      * @return string back from plugin.
      *
-     * @see Transmorph_Plugin_Interface::processWriteRuleNode()
+     * @see Transmorph_Plugin_Writer_Interface::processRuleNode()
      */
-    protected function _fireProcessWriteRuleNode($ruleNode)
+    protected function _fireProcessRuleNode($ruleNode)
     {
-        if ($this->_transmorphProcessor !== null)
+        foreach ($this->_pluginStack as $plugin)
         {
-            $plugins = $this->_transmorphProcessor->plugins;
-            /* @var $plugin Transmorph_Plugin_Interface */
-            foreach ($plugins as $plugin)
-            {
-                $ruleNode = $plugin->processWriteRuleNode($this->_transmorphProcessor, $ruleNode);
-            }
+            /* @var $plugin Transmorph_Plugin_Writer_Interface */
+            $ruleNode = $plugin->processRuleNode($this, $ruleNode);
         }
 
         return $ruleNode;
+    }
+
+    /**
+     * Append a plugin to the stack.
+     *
+     * @param Transmorph_Plugin_Interface $plugin A plugin to append.
+     * 
+     * @return void
+     * 
+     * @see Transmorph_Plugin_StackInterface::appendPlugin()
+     */
+    public function appendPlugin(Transmorph_Plugin_Interface $plugin)
+    {
+        if ($plugin instanceof Transmorph_Plugin_Writer_Interface)
+        {
+            $this->_pluginStack->appendPlugin($plugin);
+        }
+        else
+        {
+            throw new Transmorph_Writer_Exception('Unsupported plugin interface');
+        }
+    }
+
+    /**
+     * Prepend a plugin to the stack.
+     *
+     * @param Transmorph_Plugin_Interface $plugin A plugin to prepend.
+     * 
+     * @return void
+     * 
+     * @see Transmorph_Plugin_StackInterface::prependPlugin()
+     */
+    public function prependPlugin(Transmorph_Plugin_Interface $plugin)
+    {
+        if ($plugin instanceof Transmorph_Plugin_Writer_Interface)
+        {
+            $this->_pluginStack->prependPlugin($plugin);
+        }
+        else
+        {
+            throw new Transmorph_Writer_Exception('Unsupported plugin interface');
+        }
+    }
+
+    /**
+     * Remove a plugin from the stack.
+     *
+     * @param string $pluginClassName The class name of the plugin to remove.
+     * 
+     * @return void
+     * 
+     * @see Transmorph_Plugin_StackInterface::removePlugin()
+     */
+    public function removePlugin($pluginClassName)
+    {
+        $this->_pluginStack->removePlugin($pluginClassName);
     }
 
 }

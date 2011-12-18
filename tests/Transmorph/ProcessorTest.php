@@ -1,9 +1,9 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../Transmorph/Processor.php';
-require_once dirname(__FILE__) . '/../../Transmorph/Plugin/Abstract.php';
+//require_once dirname(__FILE__) . '/../../Transmorph/Processor.php';
+//require_once dirname(__FILE__) . '/../../Transmorph/Plugin/Abstract.php';
 
-class TestPlugin extends Transmorph_Plugin_Abstract
+class TestPlugin extends Transmorph_Plugin_Processor_Abstract
 {
     
 }
@@ -23,22 +23,22 @@ function callbackNoParamForTest()
     return __FUNCTION__;
 }
 
-class PluginForTest1 extends Transmorph_Plugin_Abstract
+class PluginForTest1 extends Transmorph_Plugin_Processor_Abstract
 {
     
 }
 
-class PluginForTest2 extends Transmorph_Plugin_Abstract
+class PluginForTest2 extends Transmorph_Plugin_Processor_Abstract
 {
     
 }
 
-class PluginForTest3 extends Transmorph_Plugin_Abstract
+class PluginForTest3 extends Transmorph_Plugin_Processor_Abstract
 {
     
 }
 
-class PluginForInputPropertyTest extends Transmorph_Plugin_Abstract
+class PluginForInputPropertyTest extends Transmorph_Plugin_Processor_Abstract
 {
 
     public static $copiedInput;

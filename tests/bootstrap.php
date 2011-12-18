@@ -12,3 +12,5 @@ ini_set('include_path', implode(PATH_SEPARATOR, array(
 require_once 'Zend/Loader/Autoloader.php';
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->registerNamespace('Transmorph');
+
+define('TEST_DOUBLES_PATH', realpath(dirname(__FILE__) . '/testDoubles'));

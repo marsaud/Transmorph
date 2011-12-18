@@ -35,11 +35,23 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
      */
     protected $_plugins;
 
+    /**
+     * Initializations.
+     */
     public function __construct()
     {
         $this->_plugins = array();
     }
 
+    /**
+     * Appending a plugin to the stack.
+     *
+     * @param Transmorph_Plugin_Interface $newPlugin A plugin.
+     * 
+     * @return void
+     * 
+     * @see Transmorph_Plugin_StackInterface::appendPlugin()
+     */
     public function appendPlugin(Transmorph_Plugin_Interface $newPlugin)
     {
         foreach ($this->_plugins as $plugin)
@@ -52,6 +64,15 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
         $this->_plugins[] = $newPlugin;
     }
 
+    /**
+     * Prepending a plugin to the stack. 
+     *
+     * @param Transmorph_Plugin_Interface $newPlugin A plugin.
+     * 
+     * @return void
+     * 
+     * @see Transmorph_Plugin_StackInterface::prependPlugin()
+     */
     public function prependPlugin(Transmorph_Plugin_Interface $newPlugin)
     {
         foreach ($this->_plugins as $p)
@@ -64,6 +85,15 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
         array_unshift($this->_plugins, $newPlugin);
     }
 
+    /**
+     * Removing a plugin from the stack.
+     *
+     * @param type $pluginClassName A plgin class name.
+     * 
+     * @return void
+     * 
+     * @see Transmorph_Plugin_StackInterface::removePlugin()
+     */
     public function removePlugin($pluginClassName)
     {
         $removeKey = null;
@@ -84,26 +114,51 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
         unset($this->_plugins[$removeKey]);
     }
 
+    /**
+     * Trivial.
+     *
+     * @return Transmorph_Plugin_Interface Current element from the stack.
+     */
     public function current()
     {
         return current($this->_plugins);
     }
 
+    /**
+     * Trivial.
+     *
+     * @return integer Key of the current stack element.
+     */
     public function key()
     {
         return key($this->_plugins);
     }
 
+    /**
+     * Trivial.
+     *
+     * @return Transmorph_Plugin_Interface The next element from the stack.
+     */
     public function next()
     {
         return next($this->_plugins);
     }
 
+    /**
+     * Trivial.
+     * 
+     * @return void
+     */
     public function rewind()
     {
         reset($this->_plugins);
     }
 
+    /**
+     * Trivial.
+     *
+     * @return boolean 
+     */
     public function valid()
     {
         /**

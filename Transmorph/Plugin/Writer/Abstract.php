@@ -22,11 +22,27 @@
  */
 
 /**
- * An plugin base interface for every Transmorph plugin.
+ * Description of Transmorph_Plugin_Writer_Abstract
  * 
  * @package Plugin
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
-interface Transmorph_Plugin_Interface
+abstract class Transmorph_Plugin_Writer_Abstract implements Transmorph_Plugin_Writer_Interface
 {
-    
+
+    /**
+     * Called by {@link Transmorph_Writer::feed()} to process a write-rule node 
+     * before the Transmorph_Writer will exploit it.
+     * 
+     * @param Transmorph_Writer $transmorphWriter The Transmorph_Writer we are 
+     * plugged in.
+     * @param string $ruleNode The original rule node.
+     * 
+     * @return string The processed rule node.
+     */
+    public function processRuleNode(Transmorph_Writer $transmorphWriter, $ruleNode)
+    {
+        
+    }
 }

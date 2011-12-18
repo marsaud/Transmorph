@@ -30,48 +30,21 @@
  * @package Core
  * 
  */
-class Transmorph_Reader
+class Transmorph_Reader implements Transmorph_Plugin_StackInterface
 {
 
     /**
-     * We can inject a Transmorph_Processor here for the reader to acces the 
-     * plugin stack.
-     * 
-     * @todo TASK I don't like this processor/reader coupling for plugin access.
-     * Time will bring me an idea...-> IDEA -> Reader (& Writer) should have
-     * its own Plugin Stack implemented its own plugin interface, so it will be
-     * stand alone. Used by Processor, this one can feed the plugn stack of its
-     * reader & writer.
      *
-     * @var Transmorph_Processor
+     * @var Transmorph_Plugin_StackInterface
      */
-    protected $_transmorphProcessor;
+    protected $_pluginStack;
 
     /**
-     * Provides encapsulation for a calling {@link Transmorph_Processor}, so 
-     * plugins can use it.
-     *
-     * @param type $transmorph A calling {@link Transmorph_Processor}.
+     * Initializations.
      */
-    public function __construct($transmorph = null)
+    public function __construct()
     {
-        if ($transmorph !== null)
-        {
-            $this->_setTransmorph($transmorph);
-        }
-    }
-
-    /**
-     * This method lately "type-hints" the {@link __construct()} $transmorph 
-     * parameter.
-     *
-     * @param Transmorph_Processor $transmorphProcessor A processor. See {@link __construct()}
-     * 
-     * @return void
-     */
-    protected function _setTransmorph(Transmorph_Processor $transmorphProcessor)
-    {
-        $this->_transmorphProcessor = $transmorphProcessor;
+        $this->_pluginStack = new Transmorph_Plugin_Stack();
     }
 
     /**
@@ -132,7 +105,7 @@ class Transmorph_Reader
                 $result = $this->query($input->$key, $remainingPath);
             }
         }
-        
+
         if (gettype($result) === 'resource')
         {
             throw new InvalidArgumentException('resource type is not supported');
@@ -148,20 +121,73 @@ class Transmorph_Reader
      * 
      * @return string back from plugin.
      * 
-     * @see Transmorph_Plugin_Interface::processReadRuleNode()
+     * @see Transmorph_Plugin_Reader_Interface::processRuleNode()
      */
     protected function _fireProcessReadRuleNode($ruleNode)
     {
-        if ($this->_transmorphProcessor !== null)
+        foreach ($this->_pluginStack as $plugin)
         {
-            $plugins = $this->_transmorphProcessor->plugins;
-            foreach ($plugins as $plugin)
-            {
-                $ruleNode = $plugin->processReadRuleNode($this->_transmorphProcessor, $ruleNode);
-            }
+            /* @var $plugin Transmorph_Plugin_Reader_Interface */
+            $ruleNode = $plugin->processRuleNode($this, $ruleNode);
         }
 
         return $ruleNode;
+    }
+
+    /**
+     * Append a plugin to the stack.
+     *
+     * @param Transmorph_Plugin_Interface $plugin A plugin to append.
+     * 
+     * @return void
+     * 
+     * @see Transmorph_Plugin_StackInterface::appendPlugin()
+     */
+    public function appendPlugin(Transmorph_Plugin_Interface $plugin)
+    {
+        if ($plugin instanceof Transmorph_Plugin_Reader_Interface)
+        {
+            $this->_pluginStack->appendPlugin($plugin);
+        }
+        else
+        {
+            throw new Transmorph_Reader_Exception('Unsopported plugin interface');
+        }
+    }
+
+    /**
+     * Prepend a plugin to the stack.
+     *
+     * @param Transmorph_Plugin_Interface $plugin A plugin to prepend.
+     * 
+     * @return void
+     * 
+     * @see Transmorph_Plugin_StackInterface::prependPlugin()
+     */
+    public function prependPlugin(Transmorph_Plugin_Interface $plugin)
+    {
+        if ($plugin instanceof Transmorph_Plugin_Reader_Interface)
+        {
+            $this->_pluginStack->prependPlugin($plugin);
+        }
+        else
+        {
+            throw new Transmorph_Reader_Exception('Unsopported plugin interface');
+        }
+    }
+
+    /**
+     * Remove a plugin from the stack.
+     *
+     * @param string $pluginClassName The class name of the plugin to remove.
+     * 
+     * @return void
+     * 
+     * @see Transmorph_Plugin_StackInterface::removePlugin()
+     */
+    public function removePlugin($pluginClassName)
+    {
+        $this->_pluginStack->removePlugin($pluginClassName);
     }
 
 }

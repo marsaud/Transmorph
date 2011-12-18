@@ -77,7 +77,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      * @var Transmorph_Writer
      */
     protected $_writer;
-    
+
     /**
      *
      * @var Transmorph_Plugin_Stack
@@ -98,7 +98,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
         $this->_writer = new Transmorph_Writer($this);
 
         $this->_plugins = array();
-        
+
         $this->_pluginStack = new Transmorph_Plugin_Stack();
     }
 
@@ -347,7 +347,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      * important when several plugin on the stack concretely implement the same
      * method(s) of the {@link Transmorph_Plugin_Interface}.
      *
-     * @param Transmorph_Plugin_Interface $plugin An instance of a plugin.
+     * @param Transmorph_Plugin_Processor_Interface $plugin An instance of a plugin.
      * 
      * @return void
      * 
@@ -356,7 +356,22 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      */
     public function prependPlugin(Transmorph_Plugin_Interface $plugin)
     {
-        $this->_pluginStack->prependPlugin($plugin);
+        if ($plugin instanceof Transmorph_Plugin_Processor_Interface)
+        {
+            $this->_pluginStack->prependPlugin($plugin);
+        }
+        elseif ($plugin instanceof Transmorph_Plugin_Reader_Interface)
+        {
+            $this->reader->prependPlugin($plugin);
+        }
+        elseif ($plugin instanceof Transmorph_Plugin_Writer_Interface)
+        {
+            $this->writer->prependPlugin($plugin);
+        }
+        else
+        {
+            throw new Transmorph_Exception('Unsupported plugin interface');
+        }
     }
 
     /**
@@ -364,7 +379,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      * is important when several plugin on the stack concretely implement the 
      * same method(s) of the {@link Transmorph_Plugin_Interface}.
      *
-     * @param Transmorph_Plugin_Interface $plugin An instance of a plugin.
+     * @param Transmorph_Plugin_Processor_Interface $plugin An instance of a plugin.
      * 
      * @return void
      * 
@@ -373,7 +388,22 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      */
     public function appendPlugin(Transmorph_Plugin_Interface $plugin)
     {
-        $this->_pluginStack->appendPlugin($plugin);
+        if ($plugin instanceof Transmorph_Plugin_Processor_Interface)
+        {
+            $this->_pluginStack->appendPlugin($plugin);
+        }
+        elseif ($plugin instanceof Transmorph_Plugin_Reader_Interface)
+        {
+            $this->reader->appendPlugin($plugin);
+        }
+        elseif ($plugin instanceof Transmorph_Plugin_Writer_Interface)
+        {
+            $this->writer->appendPlugin($plugin);
+        }
+        else
+        {
+            throw new Transmorph_Exception('Unsupported plugin interface');
+        }
     }
 
     /**
@@ -388,7 +418,21 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      */
     public function removePlugin($pluginClassName)
     {
-        $this->_pluginStack->removePlugin($pluginClassName);
+        try
+        {
+            $this->_pluginStack->removePlugin($pluginClassName);
+        }
+        catch (Transmorph_Exception $exc)
+        {
+            try
+            {
+                $this->reader->removePlugin($pluginClassName);
+            }
+            catch (Transmorph_Exception $exc)
+            {
+                $this->writer->removePlugin($pluginClassName);
+            }
+        }
     }
 
     /**
@@ -449,7 +493,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
     {
         foreach ($this->_pluginStack as $plugin)
         {
-            /* @var $plugin TransmorphPluginInterface */
+            /* @var $plugin Transmorph_Plugin_Processor_Interface */
             $map = $plugin->processMap($this, $map);
         }
 
@@ -469,7 +513,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
     {
         foreach ($this->_pluginStack as $plugin)
         {
-            /* @var $plugin TransmorphPluginInterface */
+            /* @var $plugin Transmorph_Plugin_Processor_Interface */
             $rule = $plugin->processRule($this, $rule);
         }
 
@@ -489,7 +533,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
     {
         foreach ($this->_pluginStack as $plugin)
         {
-            /* @var $plugin TransmorphPluginInterface */
+            /* @var $plugin Transmorph_Plugin_Processor_Interface */
             $callback = $plugin->processCallback($this, $callback);
         }
 
@@ -509,7 +553,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
     {
         foreach ($this->_pluginStack as $plugin)
         {
-            /* @var $plugin TransmorphPluginInterface */
+            /* @var $plugin Transmorph_Plugin_Processor_Interface */
             $callbackParams = $plugin->processCallbackParams($this, $callbackParams);
         }
 

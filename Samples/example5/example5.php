@@ -24,7 +24,7 @@ $input = array(
 
 
 $t = new Transmorph_Processor();
-$t->appendPlugin(new Transmorph_Plugin_ClassCallback());
+$t->appendPlugin(new Transmorph_Plugin_Processor_ClassCallback());
 
 $output = $t->run($input, './rules5');
 

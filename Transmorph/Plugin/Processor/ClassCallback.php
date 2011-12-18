@@ -23,12 +23,12 @@
  */
 
 /**
- * Description of Transmorph_Plugin_ClassCallback
+ * Description of Transmorph_Plugin_Processor_ClassCallback
  * 
  * @package Plugin
  * 
  */
-class Transmorph_Plugin_ClassCallback extends Transmorph_Plugin_Abstract
+class Transmorph_Plugin_Processor_ClassCallback extends Transmorph_Plugin_Processor_Abstract
 {
 
     /**

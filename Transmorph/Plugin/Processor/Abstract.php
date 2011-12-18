@@ -23,14 +23,14 @@
  */
 
 /**
- * Description of Transmorph_Plugin_Abstract
+ * Description of Transmorph_Plugin_Processor_Abstract
  * 
  * @package Plugin
  * 
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  * 
  */
-abstract class Transmorph_Plugin_Abstract implements Transmorph_Plugin_Interface
+abstract class Transmorph_Plugin_Processor_Abstract implements Transmorph_Plugin_Processor_Interface
 {
 
     /**
@@ -67,21 +67,6 @@ abstract class Transmorph_Plugin_Abstract implements Transmorph_Plugin_Interface
      * Indentity implementation to gain time for simple plugins.
      * 
      * @param Transmorph_Processor $transmorph A calling {@link Transmorph_Processor}.
-     * @param string $ruleNode A read-rule node.
-     * 
-     * @return string The processed node. 
-     *
-     * @see Transmorph_Plugin_Interface::processReadRuleNode()
-     */
-    public function processReadRuleNode(Transmorph_Processor $transmorph, $ruleNode)
-    {
-        return $ruleNode;
-    }
-
-    /**
-     * Indentity implementation to gain time for simple plugins.
-     * 
-     * @param Transmorph_Processor $transmorph A calling {@link Transmorph_Processor}.
      * @param Transmorph_Rule $rule A transformation rule object.
      * 
      * @return Transmorph_Rule The processed rule.
@@ -106,21 +91,6 @@ abstract class Transmorph_Plugin_Abstract implements Transmorph_Plugin_Interface
     public function processMap(Transmorph_Processor $transmorph, array $map)
     {
         return $map;
-    }
-
-    /**
-     * Indentity implementation to gain time for simple plugins.
-     * 
-     * @param Transmorph_Processor $transmorph A calling {@link Transmorph_Processor}.
-     * @param type $ruleNode A write-rule node.
-     * 
-     * @return type The processed node.
-     *
-     * @see Transmorph_Plugin_Interface::processWriteRuleNode()
-     */
-    public function processWriteRuleNode(Transmorph_Processor $transmorph, $ruleNode)
-    {
-        return $ruleNode;
     }
 
 }

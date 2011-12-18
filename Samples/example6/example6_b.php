@@ -10,7 +10,7 @@ $input = array(
     );
 
 $t = new Transmorph_Processor();
-$t->appendPlugin(new Transmorph_Plugin_IteratorNode());
+$t->appendPlugin(new Transmorph_Plugin_Processor_IteratorNode());
 
 $output = $t->run($input, './rules6_b');
 

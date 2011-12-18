@@ -23,12 +23,12 @@
  */
 
 /**
- * Description of Transmorph_Plugin_IteratorNode
+ * Description of Transmorph_Plugin_Processor_IteratorNode
  * 
  * @package Plugin
  * 
  */
-class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
+class Transmorph_Plugin_Processor_IteratorNode extends Transmorph_Plugin_Processor_Abstract
 {
     const ITER_NODE_REGEX = '%((\.|/)#)%';
 
