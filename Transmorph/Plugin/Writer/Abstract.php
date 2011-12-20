@@ -43,6 +43,6 @@ abstract class Transmorph_Plugin_Writer_Abstract implements Transmorph_Plugin_Wr
      */
     public function processRuleNode(Transmorph_Writer $transmorphWriter, $ruleNode)
     {
-        
+        return $ruleNode;
     }
 }

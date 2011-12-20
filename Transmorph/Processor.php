@@ -52,6 +52,7 @@
  *  except for plugins fired by 
  * {@link run()}.
  * 
+ * @todo TASK suppress th plugins property-read and related tests.
  */
 class Transmorph_Processor implements Transmorph_Plugin_StackInterface
 {

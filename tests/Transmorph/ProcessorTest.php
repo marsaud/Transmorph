@@ -1,7 +1,7 @@
 <?php
 
-//require_once dirname(__FILE__) . '/../../Transmorph/Processor.php';
-//require_once dirname(__FILE__) . '/../../Transmorph/Plugin/Abstract.php';
+require_once SRC_DIR . '/Transmorph/Processor.php';
+require_once SRC_DIR . '/Transmorph/Plugin/Processor/Abstract.php';
 
 class TestPlugin extends Transmorph_Plugin_Processor_Abstract
 {
@@ -258,9 +258,9 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     {
         $data = array();
 
-        $data[0] = array(array('string1', 'string2', 'string3withLF'), realpath(dirname(__FILE__) . '/../testResources/testHandleFile1'));
-        $data[1] = array(array('string1', 'string2', 'string3withoutLF'), realpath(dirname(__FILE__) . '/../testResources/testHandleFile2'));
-        $data[2] = array(array('beforeEmptyString', '', 'afterEmptyString'), realpath(dirname(__FILE__) . '/../testResources/testHandleFile3'));
+        $data[0] = array(array('string1', 'string2', 'string3withLF'), TEST_RESOURCES_PATH . '/testHandleFile1');
+        $data[1] = array(array('string1', 'string2', 'string3withoutLF'), TEST_RESOURCES_PATH . '/testHandleFile2');
+        $data[2] = array(array('beforeEmptyString', '', 'afterEmptyString'), TEST_RESOURCES_PATH . '/testHandleFile3');
 
         return $data;
     }
@@ -400,6 +400,8 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     public function testRun($ouptut, $input, $filePath)
     {
         $this->object->appendPlugin(new TestPlugin());
+        $this->object->appendPlugin(new ReaderPluginForTest());
+        $this->object->appendPlugin(new WriterPluginForTest());
         $this->assertEquals($ouptut, $this->object->run($input, $filePath));
     }
 
@@ -407,19 +409,19 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     {
         $data = array();
 
-        $data[0] = array('a', 'a', realpath(dirname(__FILE__) . '/../testResources/testRun0'));
-        $data[1] = array('a', array(0 => 'a'), realpath(dirname(__FILE__) . '/../testResources/testRun1'));
-        $data[2] = array('a', array('k' => 'a'), realpath(dirname(__FILE__) . '/../testResources/testRun2'));
+        $data[0] = array('a', 'a', TEST_RESOURCES_PATH . '/testRun0');
+        $data[1] = array('a', array(0 => 'a'), TEST_RESOURCES_PATH . '/testRun1');
+        $data[2] = array('a', array('k' => 'a'), TEST_RESOURCES_PATH . '/testRun2');
 
         $object1 = new stdClass();
         $object1->m = 'a';
 
-        $data[3] = array('a', $object1, realpath(dirname(__FILE__) . '/../testResources/testRun3'));
-        $data[4] = array(array(0 => 'a'), 'a', realpath(dirname(__FILE__) . '/../testResources/testRun4'));
-        $data[5] = array(array('k' => 'a'), 'a', realpath(dirname(__FILE__) . '/../testResources/testRun5'));
-        $data[6] = array($object1, 'a', realpath(dirname(__FILE__) . '/../testResources/testRun6'));
-        $data[7] = array(array(0 => 'a'), $object1, realpath(dirname(__FILE__) . '/../testResources/testRun7'));
-        $data[8] = array($object1, array(0 => 'a'), realpath(dirname(__FILE__) . '/../testResources/testRun8'));
+        $data[3] = array('a', $object1, TEST_RESOURCES_PATH . '/testRun3');
+        $data[4] = array(array(0 => 'a'), 'a', TEST_RESOURCES_PATH . '/testRun4');
+        $data[5] = array(array('k' => 'a'), 'a', TEST_RESOURCES_PATH . '/testRun5');
+        $data[6] = array($object1, 'a', TEST_RESOURCES_PATH . '/testRun6');
+        $data[7] = array(array(0 => 'a'), $object1, TEST_RESOURCES_PATH . '/testRun7');
+        $data[8] = array($object1, array(0 => 'a'), TEST_RESOURCES_PATH . '/testRun8');
 
         $object2 = new stdClass();
         $object2->m1 = 111;
@@ -431,8 +433,8 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
             'k3' => 333
         );
 
-        $data[9] = array($object2, $array2, realpath(dirname(__FILE__) . '/../testResources/testRun9'));
-        $data[10] = array($array2, $object2, realpath(dirname(__FILE__) . '/../testResources/testRun10'));
+        $data[9] = array($object2, $array2, TEST_RESOURCES_PATH . '/testRun9');
+        $data[10] = array($array2, $object2, TEST_RESOURCES_PATH . '/testRun10');
 
         $object3 = new stdClass();
         $object3->m = new stdClass();
@@ -446,10 +448,10 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
             'n' => array('x' => 'nx', 'y' => 'ny')
         );
 
-        $data[11] = array($object3, $array3, realpath(dirname(__FILE__) . '/../testResources/testRun11'));
-        $data[12] = array($array3, $object3, realpath(dirname(__FILE__) . '/../testResources/testRun12'));
+        $data[11] = array($object3, $array3, TEST_RESOURCES_PATH . '/testRun11');
+        $data[12] = array($array3, $object3, TEST_RESOURCES_PATH . '/testRun12');
 
-        $data[13] = array(array(2, 3, 4), null, realpath(dirname(__FILE__) . '/../testResources/testRun13'));
+        $data[13] = array(array(2, 3, 4), null, TEST_RESOURCES_PATH . '/testRun13');
 
         $arrayInput4 = array(
             'firstNames' => array('Albert', 'James', 'Mickey'),
@@ -466,8 +468,8 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
         $name3->last = 'Mouse';
         $arrayOutput4 = array($name1, $name2, $name3);
 
-        $data[14] = array($arrayOutput4, $arrayInput4, realpath(dirname(__FILE__) . '/../testResources/testRun14'));
-        $data[15] = array($arrayInput4, $arrayOutput4, realpath(dirname(__FILE__) . '/../testResources/testRun15'));
+        $data[14] = array($arrayOutput4, $arrayInput4, TEST_RESOURCES_PATH . '/testRun14');
+        $data[15] = array($arrayInput4, $arrayOutput4, TEST_RESOURCES_PATH . '/testRun15');
 
         return $data;
     }
@@ -557,20 +559,20 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
         $t = new Transmorph_Processor();
 
         $t->appendPlugin($plugin);
-        $t->run($input, realpath(dirname(__FILE__) . '/../testResources/testInputProperty'));
+        $t->run($input, TEST_RESOURCES_PATH . '/testInputProperty');
         $this->assertEquals(array(1, 2), PluginForInputPropertyTest::$copiedInput);
     }
 
     public function testInputProperty2()
     {
-        $fopen = fopen(realpath(dirname(__FILE__) . '/../testResources/emptyFile'), 'r');
+        $fopen = fopen(TEST_RESOURCES_PATH . '/emptyFile', 'r');
 
         $input = array($fopen, 2);
         $plugin = new PluginForInputPropertyTest();
         $t = new Transmorph_Processor();
 
         $t->appendPlugin($plugin);
-        $t->run($input, realpath(dirname(__FILE__) . '/../testResources/testInputProperty'));
+        $t->run($input, TEST_RESOURCES_PATH . '/testInputProperty');
         $this->assertEquals(array(0, 2), PluginForInputPropertyTest::$copiedInput);
     }
 

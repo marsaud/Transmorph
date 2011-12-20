@@ -1,8 +1,8 @@
 <?php
 
-//require_once dirname(__FILE__) . '/../../../Transmorph/Plugin/IteratorNode.php';
-//require_once dirname(__FILE__) . '/AbstractTest.php';
-//require_once dirname(__FILE__) . '/../../testDoubles/TST_Transmorph_Processor.php';
+require_once SRC_DIR . '/Transmorph/Plugin/Processor/IteratorNode.php';
+require_once dirname(__FILE__) . '/AbstractTest.php';
+require_once TEST_DOUBLES_PATH . '/TST_Transmorph_Processor.php';
 
 /**
  * Test class for Transmorph_Plugin_Processor_IteratorNode.

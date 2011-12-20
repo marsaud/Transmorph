@@ -1,6 +1,6 @@
 <?php
 
-//require_once dirname(__FILE__) . '/../../../Transmorph/Plugin/Stack.php';
+require_once SRC_DIR . '/Transmorph/Plugin/Stack.php';
 
 class TestPlugin1 implements Transmorph_Plugin_Interface
 {
@@ -24,10 +24,6 @@ class TestPlugin3 implements Transmorph_Plugin_Interface
 class Transmorph_Plugin_StackTest extends PHPUnit_Framework_TestCase
 {
 
-    /**
-     * @ covers {className}::{origMethodName}
-     * @todo Implement testAppendPlugin().
-     */
     public function testAppendPlugin()
     {
         $stack = new Transmorph_Plugin_Stack();
@@ -53,9 +49,6 @@ class Transmorph_Plugin_StackTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends testAppendPlugin
-     * 
-     * @ covers {className}::{origMethodName}
-     * @todo Implement testPrependPlugin().
      */
     public function testPrependPlugin(Transmorph_Plugin_Stack $stack)
     {
@@ -72,9 +65,6 @@ class Transmorph_Plugin_StackTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends testPrependPlugin
-     * 
-     * @ covers {className}::{origMethodName}
-     * @todo Implement testRemovePlugin().
      */
     public function testRemovePlugin(Transmorph_Plugin_Stack $stack)
     {
@@ -119,7 +109,7 @@ class Transmorph_Plugin_StackTest extends PHPUnit_Framework_TestCase
         }
         $this->assertFalse(current($expected));
     }
-    
+
     public function testAppendException()
     {
         $stack = new Transmorph_Plugin_Stack();
@@ -127,7 +117,7 @@ class Transmorph_Plugin_StackTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException('Transmorph_Exception');
         $stack->appendPlugin(new TestPlugin1);
     }
-    
+
     public function testPrependException()
     {
         $stack = new Transmorph_Plugin_Stack();
@@ -135,7 +125,7 @@ class Transmorph_Plugin_StackTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException('Transmorph_Exception');
         $stack->prependPlugin(new TestPlugin1);
     }
-    
+
     public function testRemoveException()
     {
         $stack = new Transmorph_Plugin_Stack();

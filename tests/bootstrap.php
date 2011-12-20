@@ -1,11 +1,11 @@
 <?php
 
-$srcDir = realpath(dirname(__FILE__)).'/..';
+define('SRC_DIR', realpath(dirname(__FILE__)).'/..');
 
 ini_set('include_path', implode(PATH_SEPARATOR, array(
     '/usr/share/php',
     '/usr/share/php/ZendFramework-1.11.11-minimal/library',
-    $srcDir,
+    SRC_DIR,
     '.'
 )));
 
