@@ -1,7 +1,6 @@
 <?php
 
-//require_once dirname(__FILE__) . '/../../../Transmorph/Plugin/ClassCallback.php';
-//require_once dirname(__FILE__) . '/AbstractTest.php';
+require_once dirname(__FILE__) . '/AbstractTest.php';
 
 class Test1
 {

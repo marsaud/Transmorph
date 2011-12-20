@@ -1,6 +1,21 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../../Transmorph/Plugin/Stack.php';
+//require_once dirname(__FILE__) . '/../../../Transmorph/Plugin/Stack.php';
+
+class TestPlugin1 implements Transmorph_Plugin_Interface
+{
+    
+}
+
+class TestPlugin2 implements Transmorph_Plugin_Interface
+{
+    
+}
+
+class TestPlugin3 implements Transmorph_Plugin_Interface
+{
+    
+}
 
 /**
  * Test class for Transmorph_Plugin_Stack.
@@ -10,124 +25,123 @@ class Transmorph_Plugin_StackTest extends PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var Transmorph_Plugin_Stack
-     */
-    protected $object;
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->object = new Transmorph_Plugin_Stack;
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        
-    }
-
-    /**
-     * @covers {className}::{origMethodName}
+     * @ covers {className}::{origMethodName}
      * @todo Implement testAppendPlugin().
      */
     public function testAppendPlugin()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $stack = new Transmorph_Plugin_Stack();
+
+        $stack->appendPlugin(new TestPlugin1);
+        $expected = array('TestPlugin1');
+        foreach ($stack as $plugin)
+        {
+            $this->assertInstanceOf(array_shift($expected), $plugin);
+        }
+        $this->assertEmpty($expected);
+
+        $stack->appendPlugin(new TestPlugin2());
+        $expected = array('TestPlugin1', 'TestPlugin2');
+        foreach ($stack as $plugin)
+        {
+            $this->assertInstanceOf(array_shift($expected), $plugin);
+        }
+        $this->assertEmpty($expected);
+
+        return $stack;
     }
 
     /**
-     * @covers {className}::{origMethodName}
+     * @depends testAppendPlugin
+     * 
+     * @ covers {className}::{origMethodName}
      * @todo Implement testPrependPlugin().
      */
-    public function testPrependPlugin()
+    public function testPrependPlugin(Transmorph_Plugin_Stack $stack)
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $stack->prependPlugin(new TestPlugin3());
+        $expected = array('TestPlugin3', 'TestPlugin1', 'TestPlugin2');
+        foreach ($stack as $plugin)
+        {
+            $this->assertInstanceOf(array_shift($expected), $plugin);
+        }
+        $this->assertEmpty($expected);
+
+        return $stack;
     }
 
     /**
-     * @covers {className}::{origMethodName}
+     * @depends testPrependPlugin
+     * 
+     * @ covers {className}::{origMethodName}
      * @todo Implement testRemovePlugin().
      */
-    public function testRemovePlugin()
+    public function testRemovePlugin(Transmorph_Plugin_Stack $stack)
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $stack->removePlugin('TestPlugin1');
+        $expected = array('TestPlugin3', 'TestPlugin2');
+        foreach ($stack as $plugin)
+        {
+            $this->assertInstanceOf(array_shift($expected), $plugin);
+        }
+        $this->assertEmpty($expected);
+
+        $stack->removePlugin('TestPlugin3');
+        $expected = array('TestPlugin2');
+        foreach ($stack as $plugin)
+        {
+            $this->assertInstanceOf(array_shift($expected), $plugin);
+        }
+        $this->assertEmpty($expected);
+
+        $stack->removePlugin('TestPlugin2');
+        foreach ($stack as $plugin)
+        {
+            $this->fail('Unexpected way for this test');
+        }
     }
 
-    /**
-     * @covers {className}::{origMethodName}
-     * @todo Implement testCurrent().
-     */
-    public function testCurrent()
+    public function testIterator()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
+        $stack = new Transmorph_Plugin_Stack();
 
-    /**
-     * @covers {className}::{origMethodName}
-     * @todo Implement testKey().
-     */
-    public function testKey()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $expected = array('TestPlugin1', 'TestPlugin2', 'TestPlugin3');
+        foreach ($expected as $class)
+        {
+            $stack->appendPlugin(new $class());
+        }
+        reset($expected);
+        foreach ($stack as $key => $value)
+        {
+            $this->assertEquals(key($expected), $key);
+            $this->assertInstanceOf(current($expected), $value);
+            next($expected);
+        }
+        $this->assertFalse(current($expected));
     }
-
-    /**
-     * @covers {className}::{origMethodName}
-     * @todo Implement testNext().
-     */
-    public function testNext()
+    
+    public function testAppendException()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $stack = new Transmorph_Plugin_Stack();
+        $stack->appendPlugin(new TestPlugin1);
+        $this->setExpectedException('Transmorph_Exception');
+        $stack->appendPlugin(new TestPlugin1);
     }
-
-    /**
-     * @covers {className}::{origMethodName}
-     * @todo Implement testRewind().
-     */
-    public function testRewind()
+    
+    public function testPrependException()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $stack = new Transmorph_Plugin_Stack();
+        $stack->prependPlugin(new TestPlugin1);
+        $this->setExpectedException('Transmorph_Exception');
+        $stack->prependPlugin(new TestPlugin1);
     }
-
-    /**
-     * @covers {className}::{origMethodName}
-     * @todo Implement testValid().
-     */
-    public function testValid()
+    
+    public function testRemoveException()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $stack = new Transmorph_Plugin_Stack();
+        $stack->appendPlugin(new TestPlugin1);
+        $this->setExpectedException('Transmorph_Exception');
+        $stack->removePlugin('TestPlugin2');
     }
 
 }
-
-?>

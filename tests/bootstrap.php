@@ -14,3 +14,4 @@ $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->registerNamespace('Transmorph');
 
 define('TEST_DOUBLES_PATH', realpath(dirname(__FILE__) . '/testDoubles'));
+define('TEST_RESOURCES_PATH', realpath(dirname(__FILE__) . '/testResources'));

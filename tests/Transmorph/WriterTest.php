@@ -172,6 +172,11 @@ class Transmorph_WriterTest extends PHPUnit_Framework_TestCase
         
         return $data;
     }
+    
+    public function testFeedException3()
+    {
+        
+    }
 
 }
 
