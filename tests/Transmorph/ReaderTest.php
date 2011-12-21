@@ -1,7 +1,22 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../Transmorph/Processor.php';
-require_once dirname(__FILE__) . '/../../Transmorph/Reader.php';
+require_once SRC_DIR . '/Transmorph/Processor.php';
+require_once SRC_DIR . '/Transmorph/Reader.php';
+
+class UnsupportedReaderPlugin extends Transmorph_Plugin_Processor_Abstract
+{
+    
+}
+
+class ReaderPluginForTest1 extends Transmorph_Plugin_Reader_Abstract
+{
+    
+}
+
+class ReaderPluginForTest2 extends Transmorph_Plugin_Reader_Abstract
+{
+    
+}
 
 /**
  * Test class for Transmorph_Reader.
@@ -22,6 +37,9 @@ class Transmorph_ReaderTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->object = new Transmorph_Reader();
+        $this->object->appendPlugin(new ReaderPluginForTest1());
+        $this->object->prependPlugin(new ReaderPluginForTest2());
+        $this->object->removePlugin('ReaderPluginForTest2');
     }
 
     /**
@@ -62,7 +80,7 @@ class Transmorph_ReaderTest extends PHPUnit_Framework_TestCase
         $data[0] = array('test', '', 'test');
         $data[1] = array('test', '/', 'test');
         $data[2] = array('test', '.', 'test');
-        
+
         $data[3] = array('0test', '', '0test');
         $data[4] = array('01', '', '01');
         $data[5] = array(1, '', 1);
@@ -72,7 +90,7 @@ class Transmorph_ReaderTest extends PHPUnit_Framework_TestCase
         $data[8] = array(array('test0', 'test1'), '/1', 'test1');
 
         $data[9] = array(array('t' => 'test'), '', array('t' => 'test'));
-        
+
         $data[10] = array(array(
                 't1' => 'test1',
                 't2' => 'test2'
@@ -157,10 +175,36 @@ class Transmorph_ReaderTest extends PHPUnit_Framework_TestCase
 
         $data[8] = array($input, '.x');
         $data[9] = array($input, '.t/x');
-        
+
         $data[10] = array(null, 'x');
 
         return $data;
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage resource
+     */
+    public function testQueryException3()
+    {
+        $fopen = fopen(TEST_RESOURCES_PATH . '/emptyFile', 'r');
+        $this->object->query($fopen, '');
+    }
+
+    /**
+     * @expectedException Transmorph_Exception
+     */
+    public function testAppendException()
+    {
+        $this->object->appendPlugin(new UnsupportedReaderPlugin());
+    }
+
+    /**
+     * @expectedException Transmorph_Exception
+     */
+    public function testPrependException()
+    {
+        $this->object->prependPlugin(new UnsupportedReaderPlugin());
     }
 
 }

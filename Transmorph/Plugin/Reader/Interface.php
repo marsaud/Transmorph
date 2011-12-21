@@ -18,15 +18,28 @@
  * 
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
- * @package Core
+ * @package Plugin
  */
 
 /**
- * Package specific exception.
+ * An plugin interface used by {@link Transmorph_Reader}.
  * 
- * @package Core
+ * @package Plugin
  */
-class Transmorph_Rule_Exception extends Transmorph_Exception
+interface Transmorph_Plugin_Reader_Interface extends Transmorph_Plugin_Interface
 {
-    
+
+    /**
+     * Processes read-rule nodes.
+     * 
+     * Called by {@link Transmorph_Reader::query()} to process a read-rule node 
+     * before the Transmorph_Reader will exploit it.
+     * 
+     * @param Transmorph_Reader $transmorphReader The Transmorph_Reader we are 
+     * plugged in.
+     * @param string $ruleNode The original rule node.
+     * 
+     * @return string The processed rule node.
+     */
+    public function processRuleNode(Transmorph_Reader $transmorphReader, $ruleNode);
 }

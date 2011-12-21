@@ -23,36 +23,37 @@
  */
 
 /**
- * Description of Transmorph_Plugin_ClassCallback
+ * Provides support Class method callbacks in complex read-rules.
  * 
  * @package Plugin
  * 
  */
-class Transmorph_Plugin_ClassCallback extends Transmorph_Plugin_Abstract
+class Transmorph_Plugin_Processor_ClassCallback extends Transmorph_Plugin_Processor_Abstract
 {
 
     /**
-     * Class Method callbacks.
+     * Class Method callbacks support.
      * 
      * This plugin method offers to parse a simple Callback expression in 
      * read-rules, in PHP callback arrays.
      * 
      * The expected format is "Class:method" or "Class::method"
      * 
-     * If method is static, the returned array wil provide class name and method
-     *  name.
+     * If method is static, the returned array will provide class name and 
+     * method name.
      * 
      * If method is not static, the returned array will provide a class instance
      *  and the method name. For this to work, the constructor class must have 
      * no required parameters, and it will be called with no parameters at all.
      *
-     * @param Transmorph_Processor $transmorph The calling Transmorph_Processor
+     * @param Transmorph_Processor $transmorph The calling Transmorph_Processor.
      * @param string $callback A callback name.
      * 
      * @return array An array representation of a class or object method for 
      * callback. 
      * 
-     * @SuppressWarnings(PMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) The injected caller is not
+     * used to do the job.
      */
     public function processCallback(Transmorph_Processor $transmorph, $callback)
     {

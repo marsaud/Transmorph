@@ -23,16 +23,21 @@
  */
 
 /**
- * Description of Transmorph_Plugin_IteratorNode
+ * Provides support for iteration read-rules.
  * 
  * @package Plugin
  * 
  */
-class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
+class Transmorph_Plugin_Processor_IteratorNode extends Transmorph_Plugin_Processor_Abstract
 {
+    /**
+     * A regex used to catch the iteration rule-nodes.
+     */
     const ITER_NODE_REGEX = '%((\.|/)#)%';
 
     /**
+     * Iteration on read-rules.
+     * 
      * This plugin method searchs for the # symbol as an array key or object
      * attribute in a read rule-node. 
      * 
@@ -114,6 +119,8 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
     }
 
     /**
+     * Checks the input.
+     * 
      * Retrieves a node in an input data structure, checking it is iterable, so
      * the plugin can do the job.
      *
@@ -131,6 +138,8 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
     }
 
     /**
+     * Creating the new rules.
+     * 
      * The core method of the plugin. Create a read-rule for every key in the
      * iterable stuff trageted by the # symbol in the original read-rule.
      *
@@ -140,7 +149,8 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
      * @return string[] The deterministic read-rules based on the real keys of
      * the $iterableNode argument.
      * 
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable) We have a foreach focused on
+     * keys, so the values are not used.
      */
     public function extendRule($iterableNode, $mapRule)
     {
@@ -165,15 +175,15 @@ class Transmorph_Plugin_IteratorNode extends Transmorph_Plugin_Abstract
      *
      * @param mixed $node The variable to check.
      * 
-     * @throws Transmorph_Exception
+     * @throws Transmorph_Exception if check fails.
      * 
      * @return void
      */
     protected function _checkIterableNode($node)
     {
-        if (!is_array($node) && !is_object($node))
+        if (!is_array($node) && !is_object($node) && !$node instanceof Traversable)
         {
-            throw new Transmorph_Exception('Input value node is not iterable.');
+            throw new Transmorph_Exception('Input value node does not appear to be iterable.');
         }
     }
 

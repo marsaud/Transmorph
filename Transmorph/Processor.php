@@ -23,7 +23,7 @@
  */
 
 /**
- * Description of Transmorph_Processor
+ * Processing transformation rules.
  * 
  * Transmorph's purpose is to provide data stucture transformation driven by a
  * file giving tranformation rules.
@@ -39,22 +39,20 @@
  * other particular operations.
  * 
  * Transmorph_Processor functionalities can be extended by providing plugins
- * implementing {@link Transmorph_Plugin_Interface} or extending 
- * {@link Transmorph_Plugin_Abstract}.
+ * implementing {@link Transmorph_Plugin_Interface} and its various extensions.
  * 
  * @package Core
  * 
- * @property-read TransmorphPluginInterface[] $plugins Array containing 
- * registered plugins.
  * @property-read Transmorph_Reader $reader The input reader component.
  * @property-read Transmorph_Writer $writer The output writer component.
  * @property-read mixed $input The input submitted to {@link run()}. Always null
- *  except for plugins fired by 
- * {@link run()}.
- * 
+ *  except for plugins fired by {@link run()}.
  */
-class Transmorph_Processor
+class Transmorph_Processor implements Transmorph_Plugin_StackInterface
 {
+    /**
+     * A regex for constant rules.
+     */
     const REGEX_CONST = '#^\\\.+$#';
 
     /**
@@ -79,16 +77,15 @@ class Transmorph_Processor
     protected $_writer;
 
     /**
-     * Array of plugins called by all '_fire*' methods.
      *
-     * @var TransmorphPluginInterface[]
+     * @var Transmorph_Plugin_Stack
      */
-    protected $_plugins;
+    protected $_pluginStack;
 
     /**
      * Initializes encapsulated readers and writers.
      * 
-     * @todo FEATURE The constructor could call a kind of _init protected 
+     * @todo FEATURE. The constructor could call a kind of _init protected 
      * overridable method(s) to instanciate reader & writer, so extending 
      * Transmorph_Process would be an opportunity to use extended 
      * Transmorph_Reader and Transmorph_Writer subclasses. 
@@ -97,11 +94,12 @@ class Transmorph_Processor
     {
         $this->_reader = new Transmorph_Reader($this);
         $this->_writer = new Transmorph_Writer($this);
-
-        $this->_plugins = array();
+        $this->_pluginStack = new Transmorph_Plugin_Stack();
     }
 
     /**
+     * Main run.
+     * 
      * Call this method for the main use of Transmorph : transforming a data 
      * structure to another one following a set of rules written in a file.
      *
@@ -113,7 +111,7 @@ class Transmorph_Processor
      * 
      * @return mixed The output structure resulting from the transformation.
      * 
-     * @todo FEATURE This method could take a path/to/file, or the 
+     * @todo FEATURE. This method could take a path/to/file, or the 
      * transformation rules in a string, as it could be written in the file.
      */
     public function run($input, $ruleFilePath)
@@ -138,6 +136,8 @@ class Transmorph_Processor
     }
 
     /**
+     * Rule-file handling.
+     * 
      * Reads a file to give back the file lines in an array of strings.
      * Of course the expected file is a tranformation rule file.
      * 
@@ -148,8 +148,8 @@ class Transmorph_Processor
      * @todo FEATURE. As {@link run()} is implemented, it expects an array of 
      * transformation rules given "ready to use" by handleFile; and it passes
      * this array to {@link _fireProcessMap()}. It would be interesting to
-     * introduce a _fireProcessFileLines in handleFile to take soem work to be
-     * done to go from file to "map".
+     * introduce a _fireProcessFileLines in handleFile to take some work to be
+     * done to go from "file" to "map".
      */
     public function handleFile($filePath)
     {
@@ -227,7 +227,7 @@ class Transmorph_Processor
      * 
      * @return string The constant value
      * 
-     * @todo FEATURE This method could apply a casting strategy to handle
+     * @todo FEATURE. This method could apply a casting strategy to handle
      * PHP simple internal type (int, float, string, boolean).
      */
     protected function _evalConstRule($constRule)
@@ -346,7 +346,8 @@ class Transmorph_Processor
      * important when several plugin on the stack concretely implement the same
      * method(s) of the {@link Transmorph_Plugin_Interface}.
      *
-     * @param Transmorph_Plugin_Interface $plugin An instance of a plugin.
+     * @param Transmorph_Plugin_Processor_Interface $plugin An instance of a 
+     * plugin.
      * 
      * @return void
      * 
@@ -355,14 +356,22 @@ class Transmorph_Processor
      */
     public function prependPlugin(Transmorph_Plugin_Interface $plugin)
     {
-        foreach ($this->_plugins as $p)
+        if ($plugin instanceof Transmorph_Plugin_Processor_Interface)
         {
-            if (get_class($p) == get_class($plugin))
-            {
-                throw new Transmorph_Exception('Plugin ' . get_class($plugin) . ' already registered');
-            }
+            $this->_pluginStack->prependPlugin($plugin);
         }
-        array_unshift($this->_plugins, $plugin);
+        elseif ($plugin instanceof Transmorph_Plugin_Reader_Interface)
+        {
+            $this->reader->prependPlugin($plugin);
+        }
+        elseif ($plugin instanceof Transmorph_Plugin_Writer_Interface)
+        {
+            $this->writer->prependPlugin($plugin);
+        }
+        else
+        {
+            throw new Transmorph_Exception('Unsupported plugin interface');
+        }
     }
 
     /**
@@ -370,7 +379,8 @@ class Transmorph_Processor
      * is important when several plugin on the stack concretely implement the 
      * same method(s) of the {@link Transmorph_Plugin_Interface}.
      *
-     * @param Transmorph_Plugin_Interface $plugin An instance of a plugin.
+     * @param Transmorph_Plugin_Processor_Interface $plugin An instance of a 
+     * plugin.
      * 
      * @return void
      * 
@@ -379,14 +389,22 @@ class Transmorph_Processor
      */
     public function appendPlugin(Transmorph_Plugin_Interface $plugin)
     {
-        foreach ($this->_plugins as $p)
+        if ($plugin instanceof Transmorph_Plugin_Processor_Interface)
         {
-            if (get_class($p) == get_class($plugin))
-            {
-                throw new Transmorph_Exception('Plugin ' . get_class($plugin) . ' already registered');
-            }
+            $this->_pluginStack->appendPlugin($plugin);
         }
-        array_push($this->_plugins, $plugin);
+        elseif ($plugin instanceof Transmorph_Plugin_Reader_Interface)
+        {
+            $this->reader->appendPlugin($plugin);
+        }
+        elseif ($plugin instanceof Transmorph_Plugin_Writer_Interface)
+        {
+            $this->writer->appendPlugin($plugin);
+        }
+        else
+        {
+            throw new Transmorph_Exception('Unsupported plugin interface');
+        }
     }
 
     /**
@@ -401,22 +419,21 @@ class Transmorph_Processor
      */
     public function removePlugin($pluginClassName)
     {
-        $removeKey = null;
-        foreach ($this->_plugins as $key => $value)
+        try
         {
-            if (get_class($value) === $pluginClassName)
+            $this->_pluginStack->removePlugin($pluginClassName);
+        }
+        catch (Transmorph_Exception $exc)
+        {
+            try
             {
-                $removeKey = $key;
-                break;
+                $this->reader->removePlugin($pluginClassName);
+            }
+            catch (Transmorph_Exception $exc)
+            {
+                $this->writer->removePlugin($pluginClassName);
             }
         }
-
-        if ($removeKey === null)
-        {
-            throw new Transmorph_Exception('Plugin ' . $pluginClassName . ' not found for removal.');
-        }
-
-        unset($this->_plugins[$removeKey]);
     }
 
     /**
@@ -426,15 +443,12 @@ class Transmorph_Processor
      * 
      * @return mixed Property value.
      * 
-     * @codeCoverageIgnore Trivial
+     * @codeCoverageIgnore Trivial code.
      */
     public function __get($name)
     {
         switch ($name)
         {
-            case 'plugins':
-                return $this->_plugins;
-                break;
             case 'reader':
                 return $this->_reader;
                 break;
@@ -471,13 +485,13 @@ class Transmorph_Processor
      * 
      * @return string[] back from plugin.
      * 
-     * @see Transmorph_Plugin_Interface::processMap()
+     * @see Transmorph_Plugin_Processor_Interface::processMap()
      */
     protected function _fireProcessMap(array $map)
     {
-        foreach ($this->_plugins as $plugin)
+        foreach ($this->_pluginStack as $plugin)
         {
-            /* @var $plugin TransmorphPluginInterface */
+            /* @var $plugin Transmorph_Plugin_Processor_Interface */
             $map = $plugin->processMap($this, $map);
         }
 
@@ -491,13 +505,13 @@ class Transmorph_Processor
      * 
      * @return Transmorph_Rule back from plugin.
      * 
-     * @see Transmorph_Plugin_Interface::processRule()
+     * @see Transmorph_Plugin_Processor_Interface::processRule()
      */
     protected function _fireProcessRule(Transmorph_Rule $rule)
     {
-        foreach ($this->_plugins as $plugin)
+        foreach ($this->_pluginStack as $plugin)
         {
-            /* @var $plugin TransmorphPluginInterface */
+            /* @var $plugin Transmorph_Plugin_Processor_Interface */
             $rule = $plugin->processRule($this, $rule);
         }
 
@@ -511,13 +525,13 @@ class Transmorph_Processor
      * 
      * @return mixed back from plugin.
      * 
-     * @see Transmorph_Plugin_Interface::processCallback()
+     * @see Transmorph_Plugin_Processor_Interface::processCallback()
      */
     protected function _fireProcessCallback($callback)
     {
-        foreach ($this->_plugins as $plugin)
+        foreach ($this->_pluginStack as $plugin)
         {
-            /* @var $plugin TransmorphPluginInterface */
+            /* @var $plugin Transmorph_Plugin_Processor_Interface */
             $callback = $plugin->processCallback($this, $callback);
         }
 
@@ -531,13 +545,13 @@ class Transmorph_Processor
      * 
      * @return string[] back for plugin.
      * 
-     * @see Transmorph_Plugin_Interface::processCallbackParams()
+     * @see Transmorph_Plugin_Processor_Interface::processCallbackParams()
      */
     protected function _fireProcessCallbackParams(array $callbackParams)
     {
-        foreach ($this->_plugins as $plugin)
+        foreach ($this->_pluginStack as $plugin)
         {
-            /* @var $plugin TransmorphPluginInterface */
+            /* @var $plugin Transmorph_Plugin_Processor_Interface */
             $callbackParams = $plugin->processCallbackParams($this, $callbackParams);
         }
 

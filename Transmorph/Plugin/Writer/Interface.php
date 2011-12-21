@@ -18,15 +18,28 @@
  * 
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
- * @package Core
+ * @package Plugin
  */
 
 /**
- * Package specific exception.
+ * An plugin interface used by {@link Transmorph_Writer}.
  * 
- * @package Core
+ * @package Plugin
  */
-class Transmorph_Rule_Exception extends Transmorph_Exception
+interface Transmorph_Plugin_Writer_Interface extends Transmorph_Plugin_Interface
 {
-    
+
+    /**
+     * Processes write-rule nodes.
+     * 
+     * Called by {@link Transmorph_Writer::feed()} to process a write-rule node 
+     * before the Transmorph_Writer will exploit it.
+     * 
+     * @param Transmorph_Writer $transmorphWriter The Transmorph_Writer we 
+     * are plugged in.
+     * @param string $ruleNode The original rule node.
+     * 
+     * @return string The processed rule node.
+     */
+    public function processRuleNode(Transmorph_Writer $transmorphWriter, $ruleNode);
 }

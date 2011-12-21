@@ -1,6 +1,21 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../Transmorph/Writer.php';
+require_once SRC_DIR . '/Transmorph/Writer.php';
+
+class UnsupportedWriterPlugin extends Transmorph_Plugin_Processor_Abstract
+{
+    
+}
+
+class WriterPluginForTest1 extends Transmorph_Plugin_Writer_Abstract
+{
+    
+}
+
+class WriterPluginForTest2 extends Transmorph_Plugin_Writer_Abstract
+{
+    
+}
 
 /**
  * Test class for Transmorph_Writer.
@@ -21,6 +36,9 @@ class Transmorph_WriterTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->object = new Transmorph_Writer;
+        $this->object->appendPlugin(new WriterPluginForTest1());
+        $this->object->prependPlugin(new WriterPluginForTest2());
+        $this->object->removePlugin('WriterPluginForTest2');
     }
 
     /**
@@ -172,7 +190,32 @@ class Transmorph_WriterTest extends PHPUnit_Framework_TestCase
         
         return $data;
     }
+    
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage resource
+     */
+    public function testFeedException3()
+    {
+        $fopen = fopen(TEST_RESOURCES_PATH . '/emptyFile', 'r');
+        $node = null;
+        $this->object->feed($node, '', $fopen);
+    }
+    
+    /**
+     * @expectedException Transmorph_Exception
+     */
+    public function testAppendException()
+    {
+        $this->object->appendPlugin(new UnsupportedWriterPlugin());
+    }
+    
+    /**
+     * @expectedException Transmorph_Exception
+     */
+    public function testPrependException()
+    {
+        $this->object->prependPlugin(new UnsupportedWriterPlugin());
+    }
 
 }
-
-?>
