@@ -25,13 +25,13 @@
  * An plugin interface used by {@link Transmorph_Reader}.
  * 
  * @package Plugin
- * 
- * @todo
  */
 interface Transmorph_Plugin_Reader_Interface extends Transmorph_Plugin_Interface
 {
 
     /**
+     * Processes read-rule nodes.
+     * 
      * Called by {@link Transmorph_Reader::query()} to process a read-rule node 
      * before the Transmorph_Reader will exploit it.
      * 

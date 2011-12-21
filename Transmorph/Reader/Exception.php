@@ -19,20 +19,14 @@
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
  * @package Core
- * 
- * 
  */
 
 /**
- * Description of Transmorph_Reader_Exception
- * 
  * Package specific exception.
  * 
  * @package Core
- * 
- * 
  */
 class Transmorph_Reader_Exception extends Transmorph_Exception
 {
-    //put your code here
+    
 }

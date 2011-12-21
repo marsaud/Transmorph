@@ -19,13 +19,10 @@
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
  * @package Core
- * 
  */
 
 /**
- * Description of TransmorphWriter
- * 
- * This class handles Transmorph write rules.
+ * Handling of Transmorph write rules.
  * 
  * @package Core
  * 
@@ -44,7 +41,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
 
     /**
      * A class name used to instanciate object nodes in the transformation 
-     * output.
+     * output. "stdClass" by default.
      *
      * @var string
      */
@@ -60,6 +57,8 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
     }
 
     /**
+     * Output building.
+     * 
      * This method resolves a write rule to push data in a variable, creating
      * structure nodes in this variable if necessary.
      *
@@ -173,7 +172,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
      * 
      * @return mixed Property value.
      * 
-     * @codeCoverageIgnore Trivial.
+     * @codeCoverageIgnore Trivial code.
      */
     public function __get($name)
     {
@@ -196,7 +195,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
      * 
      * @return void
      *
-     * @codeCoverageIgnore Trivial.
+     * @codeCoverageIgnore Trivial code.
      */
     public function __set($name, $value)
     {

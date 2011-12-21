@@ -19,21 +19,22 @@
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
  * @package Plugin
- * 
  */
 
 /**
- * A plugin stack interface to implement by classes which will encapsulate the
- * conrete stack.
+ * A plugin stack interface for strategy pattern. To be implemented by stack 
+ * classes and by classes encapsulating stacks.
  *
  * @package Plugin
  */
 interface Transmorph_Plugin_StackInterface
 {
     /**
-     * Adds a plugin in the last position of the plugin stack. The plugin order 
+     * Adding plugins.
+     * 
+     * Adds a plugin at the last position of the plugin stack. The plugin order 
      * is important when several plugin on the stack concretely implement the 
-     * same method(s) of the {@link Transmorph_Plugin_Interface}.
+     * same method(s) of a plugin interface.
      *
      * @param Transmorph_Plugin_Interface $plugin An instance of a plugin.
      * 
@@ -45,9 +46,11 @@ interface Transmorph_Plugin_StackInterface
     public function appendPlugin(Transmorph_Plugin_Interface $plugin);
     
     /**
-     * Adds a plugin in first position on the plugin stack. The plugin order is
-     * important when several plugin on the stack concretely implement the same
-     * method(s) of the {@link Transmorph_Plugin_Interface}.
+     * Adding plugins.
+     * 
+     * Adds a plugin at the first position on the plugin stack. The plugin order
+     *  is important when several plugin on the stack concretely implement the 
+     * same method(s) of a plugin interface.
      *
      * @param Transmorph_Plugin_Interface $plugin An instance of a plugin.
      * 
@@ -59,6 +62,8 @@ interface Transmorph_Plugin_StackInterface
     public function prependPlugin(Transmorph_Plugin_Interface $plugin);
     
     /**
+     * Removing plugins.
+     * 
      * Removes a plugin identified by its class name from the plugin stack. 
      *
      * @param string $pluginClassName The class name of the plugin to remove.

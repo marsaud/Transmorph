@@ -22,9 +22,11 @@
  */
 
 /**
- * Description of Transmorph_Plugin_Stack
+ * A plugin stack used by several components of the core package.
  *
  * @package Plugin
+ * 
+ * @see Transmorph_Plugin_StackInterface
  */
 class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Iterator
 {
@@ -115,7 +117,7 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
     }
 
     /**
-     * Trivial.
+     * See {@link http://www.php.net/manual/en/class.iterator.php PHP Manual : Iterator}
      *
      * @return Transmorph_Plugin_Interface Current element from the stack.
      */
@@ -125,7 +127,7 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
     }
 
     /**
-     * Trivial.
+     * See {@link http://www.php.net/manual/en/class.iterator.php PHP Manual : Iterator}
      *
      * @return integer Key of the current stack element.
      */
@@ -135,7 +137,7 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
     }
 
     /**
-     * Trivial.
+     * See {@link http://www.php.net/manual/en/class.iterator.php PHP Manual : Iterator}
      *
      * @return Transmorph_Plugin_Interface The next element from the stack.
      */
@@ -145,7 +147,7 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
     }
 
     /**
-     * Trivial.
+     * See {@link http://www.php.net/manual/en/class.iterator.php PHP Manual : Iterator}
      * 
      * @return void
      */
@@ -155,7 +157,7 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
     }
 
     /**
-     * Trivial.
+     * See {@link http://www.php.net/manual/en/class.iterator.php PHP Manual : Iterator}
      *
      * @return boolean 
      */

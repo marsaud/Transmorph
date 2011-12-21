@@ -23,9 +23,7 @@
  */
 
 /**
- * Description of Transmorph_Reader
- * 
- * This class handles Transmorph read rules.
+ * Handling Transmorph read rules.
  *
  * @package Core
  * 
@@ -34,6 +32,7 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
 {
 
     /**
+     * A plugin stack.
      *
      * @var Transmorph_Plugin_StackInterface
      */
@@ -56,9 +55,9 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
      * 
      * @return mixed The pulled-out value.
      * 
-     * @todo FEATURE in the read-rules, we could support only '/' and let
+     * @todo FEATURE. In the read-rules, we could support only '/' and let
      * the query handle the 'array key or object property ?' problem. Or 
-     * support '.' as a strict query fr object property, and let the '/'
+     * support '.' as a strict query requiring object property, and let the '/'
      * be general...
      * 
      * @throws InvalidArgumentException If the query finds a resource to return.
@@ -88,7 +87,7 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
             $remainingPath = isset($matches[4]) ? $matches[4] : '';
             $key = substr($nextNode, 1);
 
-            if ($nextNode[0] == '/') // tableau
+            if ($nextNode[0] == '/') // array
             {
                 if (!isset($input[$key]))
                 {
@@ -96,7 +95,7 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
                 }
                 $result = $this->query($input[$key], $remainingPath);
             }
-            elseif ($nextNode[0] == '.') // objet
+            elseif ($nextNode[0] == '.') // object
             {
                 if (!isset($input->$key))
                 {

@@ -19,16 +19,12 @@
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
  * 
  * @package Core
- * 
  */
 
 /**
- * Description of Transmorph_Exception
- * 
  * Package specific exception.
  * 
  * @package Core
- * 
  */
 class Transmorph_Exception extends Exception
 {

@@ -23,25 +23,31 @@
  */
 
 /**
- * Description of Transmorph_Plugin_Processor_Abstract
+ * Basic implementation of {@link Transmorph_Plugin_Processor_Interface} for
+ * further extensions.
+ * 
+ * All methods are pre-implemented to do no side-effects, so we just have to 
+ * override what we need.
  * 
  * @package Plugin
  * 
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter) As methods have no side 
+ * effects, parameters are oftenly not used.
  * 
  */
 abstract class Transmorph_Plugin_Processor_Abstract implements Transmorph_Plugin_Processor_Interface
 {
 
     /**
-     * Indentity implementation to gain time for simple plugins.
+     * Indentity implementation to save time for simple plugins.
      * 
-     * @param Transmorph_Processor $transmorph A calling {@link Transmorph_Processor}.
+     * @param Transmorph_Processor $transmorph A calling 
+     * {@link Transmorph_Processor}.
      * @param mixed $callback A callback name or array representation.
      * 
      * @return mixed The processed callback.
      * 
-     * @see Transmorph_Plugin_Interface::processCallback()
+     * @see Transmorph_Plugin_Processor_Interface::processCallback()
      */
     public function processCallback(Transmorph_Processor $transmorph, $callback)
     {
@@ -49,14 +55,15 @@ abstract class Transmorph_Plugin_Processor_Abstract implements Transmorph_Plugin
     }
 
     /**
-     * Indentity implementation to gain time for simple plugins.
+     * Indentity implementation to save time for simple plugins.
      * 
-     * @param Transmorph_Processor $transmorph A calling {@link Transmorph_Processor}.
+     * @param Transmorph_Processor $transmorph A calling 
+     * {@link Transmorph_Processor}.
      * @param string[] $callbackParams An array of read-rules. 
      * 
      * @return string[] The processed read-rules. 
      *
-     * @see Transmorph_Plugin_Interface::processCallbackParams()
+     * @see Transmorph_Plugin_Processor_Interface::processCallbackParams()
      */
     public function processCallbackParams(Transmorph_Processor $transmorph, $callbackParams)
     {
@@ -64,14 +71,15 @@ abstract class Transmorph_Plugin_Processor_Abstract implements Transmorph_Plugin
     }
 
     /**
-     * Indentity implementation to gain time for simple plugins.
+     * Indentity implementation to save time for simple plugins.
      * 
-     * @param Transmorph_Processor $transmorph A calling {@link Transmorph_Processor}.
+     * @param Transmorph_Processor $transmorph A calling 
+     * {@link Transmorph_Processor}.
      * @param Transmorph_Rule $rule A transformation rule object.
      * 
      * @return Transmorph_Rule The processed rule.
      *
-     * @see Transmorph_Plugin_Interface::processRule()
+     * @see Transmorph_Plugin_Processor_Interface::processRule()
      */
     public function processRule(Transmorph_Processor $transmorph, Transmorph_Rule $rule)
     {
@@ -79,14 +87,17 @@ abstract class Transmorph_Plugin_Processor_Abstract implements Transmorph_Plugin
     }
 
     /**
-     * Indentity implementation to gain time for simple plugins.
+     * Indentity implementation to save time for simple plugins.
      * 
-     * @param Transmorph_Processor $transmorph A calling {@link Transmorph_Processor}.
-     * @param string[] $map An array of ordered strings assumed to come from a rule file. 
+     * @param Transmorph_Processor $transmorph A calling 
+     * {@link Transmorph_Processor}.
+     * @param string[] $map An array of ordered strings assumed to come from a 
+     * rule file. 
      * 
-     * @return array The array on its way (perhaps through several plugins) to become an array of transformation rules.
+     * @return array The array on its way (perhaps through several plugins) to 
+     * become an array of transformation rules.
      *
-     * @see Transmorph_Plugin_Interface::processMap()
+     * @see Transmorph_Plugin_Processor_Interface::processMap()
      */
     public function processMap(Transmorph_Processor $transmorph, array $map)
     {

@@ -22,24 +22,33 @@
  */
 
 /**
- * Description of Transmorph_Plugin_Writer_Abstract
+ * Basic implementation of {@link Transmorph_Plugin_Writer_Interface} for
+ * further extensions.
+ * 
+ * All methods are pre-implemented to do no side-effects, so we just have to 
+ * override what we need.
+ * 
+ * Ok, there is only one method fr the moment, but this is here as a standard
+ * habit, in case the interface grows over time.
  * 
  * @package Plugin
  * 
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter) As methods do no side effects,
+ * parameters are oftenly not used.
  */
 abstract class Transmorph_Plugin_Writer_Abstract implements Transmorph_Plugin_Writer_Interface
 {
 
     /**
-     * Called by {@link Transmorph_Writer::feed()} to process a write-rule node 
-     * before the Transmorph_Writer will exploit it.
+     * Indentity implementation to save time for simple plugins.
      * 
-     * @param Transmorph_Writer $transmorphWriter The Transmorph_Writer we are 
-     * plugged in.
-     * @param string $ruleNode The original rule node.
+     * @param Transmorph_Writer $transmorphWriter A calling 
+     * {@link Transmorph_Writer}.
+     * @param string $ruleNode A rule-node to process.
      * 
-     * @return string The processed rule node.
+     * @return string The processed rule-node.
+     * 
+     * @see Transmorph_Plugin_Writer_Interface::processRuleNode()
      */
     public function processRuleNode(Transmorph_Writer $transmorphWriter, $ruleNode)
     {

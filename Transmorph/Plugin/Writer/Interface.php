@@ -25,13 +25,13 @@
  * An plugin interface used by {@link Transmorph_Writer}.
  * 
  * @package Plugin
- * 
- * @todo
  */
 interface Transmorph_Plugin_Writer_Interface extends Transmorph_Plugin_Interface
 {
 
     /**
+     * Processes write-rule nodes.
+     * 
      * Called by {@link Transmorph_Writer::feed()} to process a write-rule node 
      * before the Transmorph_Writer will exploit it.
      * 

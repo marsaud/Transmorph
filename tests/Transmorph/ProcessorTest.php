@@ -3,11 +3,6 @@
 require_once SRC_DIR . '/Transmorph/Processor.php';
 require_once SRC_DIR . '/Transmorph/Plugin/Processor/Abstract.php';
 
-class TestPlugin extends Transmorph_Plugin_Processor_Abstract
-{
-    
-}
-
 function callbackAddForTest($t1, $t2)
 {
     return $t1 + $t2;
@@ -23,17 +18,7 @@ function callbackNoParamForTest()
     return __FUNCTION__;
 }
 
-class PluginForTest1 extends Transmorph_Plugin_Processor_Abstract
-{
-    
-}
-
-class PluginForTest2 extends Transmorph_Plugin_Processor_Abstract
-{
-    
-}
-
-class PluginForTest3 extends Transmorph_Plugin_Processor_Abstract
+class ProcessorPluginForTest extends Transmorph_Plugin_Processor_Abstract
 {
     
 }
@@ -399,7 +384,7 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     public function testRun($ouptut, $input, $filePath)
     {
-        $this->object->appendPlugin(new TestPlugin());
+        $this->object->appendPlugin(new ProcessorPluginForTest());
         $this->object->appendPlugin(new ReaderPluginForTest());
         $this->object->appendPlugin(new WriterPluginForTest());
         $this->assertEquals($ouptut, $this->object->run($input, $filePath));
@@ -487,8 +472,8 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     public function testAppendPluginException1()
     {
-        $this->object->appendPlugin(new PluginForTest1());
-        $this->object->appendPlugin(new PluginForTest1());
+        $this->object->appendPlugin(new ProcessorPluginForTest());
+        $this->object->appendPlugin(new ProcessorPluginForTest());
     }
 
     /**
@@ -496,8 +481,8 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
      */
     public function testAppendPluginException2()
     {
-        $this->object->prependPlugin(new PluginForTest1());
-        $this->object->prependPlugin(new PluginForTest1());
+        $this->object->prependPlugin(new ProcessorPluginForTest());
+        $this->object->prependPlugin(new ProcessorPluginForTest());
     }
 
     /**
@@ -506,50 +491,6 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     public function testRemovePluginException()
     {
         $this->object->removePlugin('anyUnregisteredClassName');
-    }
-
-    public function testPluginRegistry1()
-    {
-        $t = new Transmorph_Processor();
-        $t->appendPlugin(new PluginForTest1());
-        $plugins = $this->_getValuesFromPluginStack($t->plugins);
-        $this->assertEquals(array(new PluginForTest1()), $plugins);
-
-        return $t;
-    }
-
-    /**
-     * @depends testPluginRegistry1
-     */
-    public function testPluginRegistry2(Transmorph_Processor $t)
-    {
-        $t->appendPlugin(new PluginForTest2());
-        $plugins = $this->_getValuesFromPluginStack($t->plugins);
-        $this->assertEquals(array(new PluginForTest1(), new PluginForTest2()), $plugins);
-
-        return $t;
-    }
-
-    /**
-     * @depends testPluginRegistry2
-     */
-    public function testPluginRegistry3(Transmorph_Processor $t)
-    {
-        $t->prependPlugin(new PluginForTest3());
-        $plugins = $this->_getValuesFromPluginStack($t->plugins);
-        $this->assertEquals(array(new PluginForTest3(), new PluginForTest1(), new PluginForTest2()), $plugins);
-
-        return $t;
-    }
-
-    /**
-     * @depends testPluginRegistry3
-     */
-    public function testPluginRegistry4(Transmorph_Processor $t)
-    {
-        $t->removePlugin('PluginForTest1');
-        $plugins = $this->_getValuesFromPluginStack($t->plugins);
-        $this->assertEquals(array(new PluginForTest3(), new PluginForTest2()), $plugins);
     }
 
     public function testInputProperty1()
@@ -588,19 +529,19 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
 
     public function testPluginInterface()
     {
-        $this->object->appendPlugin(new TestPlugin());
+        $this->object->appendPlugin(new ProcessorPluginForTest());
         $this->object->appendPlugin(new ReaderPluginForTest());
         $this->object->appendPlugin(new WriterPluginForTest());
 
-        $this->object->removePlugin('TestPlugin');
+        $this->object->removePlugin('ProcessorPluginForTest');
         $this->object->removePlugin('ReaderPluginForTest');
         $this->object->removePlugin('WriterPluginForTest');
 
-        $this->object->prependPlugin(new TestPlugin());
+        $this->object->prependPlugin(new ProcessorPluginForTest());
         $this->object->prependPlugin(new ReaderPluginForTest());
         $this->object->prependPlugin(new WriterPluginForTest());
 
-        $this->object->removePlugin('TestPlugin');
+        $this->object->removePlugin('ProcessorPluginForTest');
         $this->object->removePlugin('ReaderPluginForTest');
         $this->object->removePlugin('WriterPluginForTest');
 

@@ -25,13 +25,13 @@
  * An plugin interface used by {@link Transmorph_Processor}.
  * 
  * @package Plugin
- * 
- * @todo Rework documentation
  */
 interface Transmorph_Plugin_Processor_Interface extends Transmorph_Plugin_Interface
 {
 
     /**
+     * Processes transformation rule-set.
+     * 
      * Called by {@link Transmorph_Processor::handleFile()} after the rule file
      * has been read.
      * 
@@ -49,6 +49,8 @@ interface Transmorph_Plugin_Processor_Interface extends Transmorph_Plugin_Interf
     public function processMap(Transmorph_Processor $transmorph, array $map);
 
     /**
+     * Processes rules.
+     * 
      * Called by {@link Transmorph_Processor::handleRule()} to process the rule
      * before passing it to the writer.
      * 
@@ -66,6 +68,8 @@ interface Transmorph_Plugin_Processor_Interface extends Transmorph_Plugin_Interf
     public function processRule(Transmorph_Processor $transmorph, Transmorph_Rule $rule);
 
     /**
+     * Processes callbacks.
+     * 
      * Called by {@link Transmorph_Processor::handleReadRule()} to process 
      * callback names before using them.
      * 
@@ -78,9 +82,11 @@ interface Transmorph_Plugin_Processor_Interface extends Transmorph_Plugin_Interf
     public function processCallback(Transmorph_Processor $transmorph, $callback);
 
     /**
+     * Processes callback parameters.
+     * 
      * Called by {@link Transmorph_Processor::handleReadRule()} to process 
      * callback parameters provided as an array of strings assumed to be
-     * raw read-rules.
+     * ordered raw read-rules.
      * 
      * @param Transmorph_Processor $transmorph The Transmorph_Processor we are 
      * plugged in.

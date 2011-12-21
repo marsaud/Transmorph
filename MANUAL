@@ -8,7 +8,7 @@ format.
 All necessary documentation for development with Transmorph is available in the 
 source code documentation, which respects PhpDocumentor format.
 
-This manual documents the transformation rule format, Transmorph lies onto.
+This manual documents the transformation rule format Transmorph lies onto.
 
 ====== The transformation rule format ======
 

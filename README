@@ -19,7 +19,7 @@ Verified with phpDocumentor 1.4.4
 
 Place yourself in the tests directory and run :
 
-$ phpunit --bootstrap bootstrap.php .
+$ phpunit --coverage-text .
 
 Verified with phpunit 3.6.4
 

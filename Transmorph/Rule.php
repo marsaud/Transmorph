@@ -23,7 +23,7 @@
  */
 
 /**
- * Description of Transmorph_Line
+ * Rule parsing.
  *
  * This class encapsulates the parsing of a transormation rule to obtain the 
  * read-rule and the write_rule.
@@ -80,7 +80,7 @@ class Transmorph_Rule
 
         if ($found !== 1)
         {
-            throw new Transmorph_Rule_Exception('STRING is not conform to Transmorph Rule format');
+            throw new Transmorph_Rule_Exception("STRING '$rule' is not conform to Transmorph Rule format");
         }
 
         $this->_readRule = $matches[1];
@@ -113,7 +113,7 @@ class Transmorph_Rule
     /**
      * Giving back the rule.
      * 
-     * @codeCoverageIgnore Trivial
+     * @codeCoverageIgnore Trivial code.
      *
      * @return string The original tranformation rule string.
      */
