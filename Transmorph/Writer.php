@@ -171,8 +171,6 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
      * @param string $name Property name.
      * 
      * @return mixed Property value.
-     * 
-     * @codeCoverageIgnore Trivial code.
      */
     public function __get($name)
     {
@@ -194,8 +192,6 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
      * @param mixed $value Property value.
      * 
      * @return void
-     *
-     * @codeCoverageIgnore Trivial code.
      */
     public function __set($name, $value)
     {

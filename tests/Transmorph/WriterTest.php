@@ -217,5 +217,23 @@ class Transmorph_WriterTest extends PHPUnit_Framework_TestCase
     {
         $this->object->prependPlugin(new UnsupportedWriterPlugin());
     }
+    
+    public function testPropertyHandling()
+    {
+        $this->object->objectNodeType = 'testValue';
+        $this->assertEquals('testValue', $this->object->objectNodeType);
+    }
+    
+    public function testPropertyExceptionSet()
+    {
+        $this->setExpectedException('OutOfRangeException');
+        $this->object->unexistingProperty = 'test';
+    }
+    
+    public function testPropertyExceptionGet()
+    {
+        $this->setExpectedException('OutOfRangeException');
+        $this->object->unexistingProperty;
+    }
 
 }
