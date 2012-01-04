@@ -135,6 +135,22 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
         return $output;
     }
 
+    public function runString($input, $rules)
+    {
+	    $this->_input = $input;
+
+	    $ruleMap = $this->_fireProcessMap(preg_split('/\r|\n/', $rules));
+	    $output = null;
+	    foreach ($ruleMap as $rule)
+	    {
+		    $this->handleRule($output, $input, $rule);
+	    }
+
+	    $this->_input = null;
+
+	    return $output;
+    }
+
     /**
      * Rule-file handling.
      * 
