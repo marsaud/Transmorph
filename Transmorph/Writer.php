@@ -136,7 +136,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                     $node = new $class();
                 }
 
-                if (!is_object($node))
+                if (!(is_object($node) && ($node instanceof $this->_objectNodeType)))
                 {
                     throw new Transmorph_Writer_Exception('Incoherence beetween write-rule and output node type');
                 }
@@ -202,7 +202,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
         switch ($name)
         {
             case 'objectNodeType':
-                $this->objectNodeType = $value;
+                $this->_objectNodeType = $value;
                 break;
             default:
                 throw new OutOfRangeException(__CLASS__ . ' has no ' . $name . ' property-write.');

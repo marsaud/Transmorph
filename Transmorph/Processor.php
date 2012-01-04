@@ -108,13 +108,14 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      * array and/or objects.
      * @param string $ruleFilePath The path to the file defining tranformation 
      * rules.
-     * 
+     * @param mixed $output Initial value for the output.
+     *
      * @return mixed The output structure resulting from the transformation.
      * 
      * @todo FEATURE. This method could take a path/to/file, or the 
      * transformation rules in a string, as it could be written in the file.
      */
-    public function run($input, $ruleFilePath)
+    public function run($input, $ruleFilePath, $ouput = null)
     {
         $this->_input = $input;
 
@@ -125,7 +126,6 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
 
         $ruleMap = $this->handleFile($ruleFilePath);
 
-        $output = null;
         foreach ($ruleMap as $rule)
         {
             $this->handleRule($output, $input, $rule);
@@ -133,6 +133,26 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
 
         $this->_input = null;
         return $output;
+    }
+
+    /**
+     * Similar to “run()” excepts it does not use a file but directly a string.
+     *
+     * @see run()
+     */
+    public function runString($input, $rules, $output = null)
+    {
+	    $this->_input = $input;
+
+	    $ruleMap = $this->_fireProcessMap(preg_split('/\r|\n/', $rules));
+	    foreach ($ruleMap as $rule)
+	    {
+		    $this->handleRule($output, $input, $rule);
+	    }
+
+	    $this->_input = null;
+
+	    return $output;
     }
 
     /**
