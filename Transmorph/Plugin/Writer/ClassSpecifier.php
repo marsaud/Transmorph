@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of Transmorph.
  *
@@ -24,48 +25,60 @@
 /**
  * Provides support for class specification in write rules.
  *
- * Example  which will  create an  object of  type MyClass  with a  “p” property
+ * Example  which will  create an  object of  type MyClass  with a  “prop” property
  * containing the value “1”:
  *
- *     \1 >> .MyClass::p
+ * \1 >> .MyClass::prop
+ * 
+ * or
+ * 
+ * \1 >> .MyClass:prop
  *
  * @author Julien Fontanet <julien.fontanet@isonoe.net>
+ * 
  * @package Plugin
  */
 class Transmorph_Plugin_Writer_ClassSpecifier extends Transmorph_Plugin_Writer_Abstract
 {
-	/**
-	 * @param string $ruleNode
-	 */
-	function processRuleNode(Transmorph_Writer $w, $ruleNode)
-	{
-		if ($ruleNode[0] !== '.')
-		{
-			// Not a property rule.
 
-			return $ruleNode;
-		}
+    /**
+     * Retreives classnames in write-rule properyt-nodes.
+     *
+     * @param Transmorph_Writer $writer Teh calling writer.
+     * @param string $ruleNode The rule to process.
+     * 
+     * @return string The processed rule-node.
+     */
+    function processRuleNode(Transmorph_Writer $writer, $ruleNode)
+    {
+        if ($ruleNode[0] !== '.')
+        {
+            // Not a property rule.
+            return $ruleNode;
+        }
 
-		if (!preg_match('/^\.([a-z_]+):{1,2}(.+)$/i', $ruleNode, $matches))
-		{
-			// No class specified.
+        $matches = array();
+        if (!preg_match('/^\.([a-z_]+):{1,2}(.+)$/i', $ruleNode, $matches))
+        {
+            // No class specified.
 
-			/*
-			 * Manually resets the original object node type.
-			 *
-			 * This is not perfect because the assumption that this was the original
-			 * value is arbitrary and might  be wrong. The correct solution would be
-			 * to restore  the previous value in  a “tear down” hook  which does not
-			 * exist yet.
-			 *
-			 * TODO: Implements the “tear down” hook.
-			 */
-			$w->objectNodeType = 'stdClass';
+            /*
+             * Manually resets the original object node type.
+             *
+             * This is not perfect because the assumption that this was the original
+             * value is arbitrary and might  be wrong. The correct solution would be
+             * to restore  the previous value in  a “tear down” hook  which does not
+             * exist yet.
+             *
+             * @todo Implements the “tear down” hook.
+             */
+            $writer->objectNodeType = 'stdClass';
 
-			return $ruleNode;
-		}
+            return $ruleNode;
+        }
 
-		$w->objectNodeType = $matches[1];
-		return '.'.$matches[2];
-	}
+        $writer->objectNodeType = $matches[1];
+        return '.' . $matches[2];
+    }
+
 }

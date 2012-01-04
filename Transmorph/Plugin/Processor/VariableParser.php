@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of Transmorph.
  *
@@ -33,63 +34,70 @@
  *   is the user's job to make sure the resulting rule is valid.
  *
  * @author Julien Fontanet <julien.fontanet@isonoe.net>
+ * 
  * @package Plugin
  */
 class Transmorph_Plugin_Processor_VariableParser extends Transmorph_Plugin_Processor_Abstract
 {
-	/**
-	 * @param string[] $vars Names to values associative array.
-	 */
-	function __construct(array $vars)
-	{
-		$this->_vars = $vars;
-	}
 
-	/**
-	 * @return Transmorph_Rule
-	 */
-	function processRule(Transmorph_Processor $p, Transmorph_Rule $r)
-	{
-		if (!$p->isConst($r->readRule))
-		{
-			$r->readRule = $this->_parse($r->readRule);
-		}
-		$r->writeRule = $this->_parse($r->writeRule);
+    /**
+     * @var string[]
+     */
+    protected $_vars;
 
-		return $r;
-	}
+    /**
+     * @param string[] $vars Names to values associative array.
+     */
+    public function __construct(array $vars)
+    {
+        $this->_vars = $vars;
+    }
 
-	/**
-	 * @var string[]
-	 */
-	protected $_vars;
+    /**
+     * Replaces variables in the rule.
+     *
+     * @param Transmorph_Processor $transmorphProcessor The calling processor.
+     * @param Transmorph_Rule $rule The rule to process.
+     * 
+     * @return Transmorph_Rule The processed rule.
+     */
+    public function processRule(Transmorph_Processor $transmorphProcessor, Transmorph_Rule $rule)
+    {
+        if (!$transmorphProcessor->isConst($rule->readRule))
+        {
+            $rule->readRule = $this->_parse($rule->readRule);
+        }
+        $rule->writeRule = $this->_parse($rule->writeRule);
 
-	/**
-	 * @param string $s
-	 *
-	 * @return string
-	 */
-	protected function _parse($s)
-	{
-		return preg_replace_callback(
-			'/@([a-z0-9]+)/i',
-			array($this, '_replaceCallback'),
-			$s
-		);
-	}
+        return $rule;
+    }
 
-	/**
-	 * @param string[] $matches
-	 *
-	 * @return string
-	 */
-	protected function _replaceCallback(array $matches)
-	{
-		if (isset($this->_vars[$matches[1]]))
-		{
-			return $this->_vars[$matches[1]];
-		}
+    /**
+     * @param string $ruleString A read-rule or write-rule.
+     *
+     * @return string The rule with variables replaced by there values.
+     */
+    protected function _parse($ruleString)
+    {
+        return preg_replace_callback(
+                '/@([a-z0-9_]+)/i', array($this, '_replaceCallback'), $ruleString
+        );
+    }
 
-		return $matches[0];
-	}
+    /**
+     * @param string[] $matches An array of substrings matching the variable
+     * pattern.
+     *
+     * @return string the replacement for teh matches.
+     */
+    protected function _replaceCallback(array $matches)
+    {
+        if (isset($this->_vars[$matches[1]]))
+        {
+            return $this->_vars[$matches[1]];
+        }
+
+        return $matches[0];
+    }
+
 }

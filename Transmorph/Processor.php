@@ -115,7 +115,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      * @todo FEATURE. This method could take a path/to/file, or the 
      * transformation rules in a string, as it could be written in the file.
      */
-    public function run($input, $ruleFilePath, $ouput = null)
+    public function run($input, $ruleFilePath, $output = null)
     {
         $this->_input = $input;
 
@@ -138,6 +138,12 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
     /**
      * Similar to “run()” excepts it does not use a file but directly a string.
      *
+     * @param mixed $input The input.
+     * @param string $rules The rules in a string instead of a file.
+     * @param mixed $output The initial output.
+     * 
+     * @return mixed The output after tranformation. 
+     * 
      * @see run()
      */
     public function runString($input, $rules, $output = null)
