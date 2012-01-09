@@ -77,15 +77,25 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
             throw new InvalidArgumentException('resource type is not supported');
         }
 
-        if ($path === '' || $path == '/' || $path == '.')
+        if ($path === '')
         {
-            // Simple type. No structure.
+            // Root path.
             $node = $value;
         }
         else
         {
             $matches = array();
-            $found = preg_match('#^((/[^\./\\\]+)|(\.[^\./\\\]+))((\.|/).*)*$#', $path, $matches);
+            $found = preg_match('@
+                ^         # Begining of the string.
+                (
+                    /[^./]*   # An array rule node.
+                |             # OR
+                    \\.[^./]+ # An object rule node.
+                )
+                ((?1)*)   # Any number of following rule nodes.
+                $         # End of the string.
+                @x', $path, $matches);
+
             if ($found !== 1)
             {
                 throw new Transmorph_Writer_Exception('Illegal write-rule : ' . $path);
@@ -93,7 +103,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
             $pathNode = $matches[1];
             $pathNode = $this->_fireProcessRuleNode($pathNode);
 
-            $remainingPath = isset($matches[4]) ? $matches[4] : '';
+            $remainingPath = isset($matches[2]) ? $matches[2] : '';
 
             if ($pathNode[0] == '/')
             {
@@ -109,22 +119,14 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                 }
 
                 $key = substr($pathNode, 1);
-                if (!isset($node[$key]))
+
+                if ($key === false)
                 {
-                    if (!isset($remainingPath[0]))
-                    {
-                        $node[$key] = $value;
-                    }
-                    else
-                    {
-                        $nextNode = null;
-                        $node[$key] = $this->feed($nextNode, $remainingPath, $value);
-                    }
+	                 $this->feed($node[], $remainingPath, $value);
                 }
                 else
                 {
-                    $nextNode = $node[$key];
-                    $node[$key] = $this->feed($nextNode, $remainingPath, $value);
+	                $this->feed($node[$key], $remainingPath, $value);
                 }
             }
             elseif ($pathNode[0] == '.')
@@ -142,23 +144,8 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                 }
 
                 $key = substr($pathNode, 1);
-                if (!isset($node->$key))
-                {
-                    if (!isset($remainingPath[0]))
-                    {
-                        $node->$key = $value;
-                    }
-                    else
-                    {
-                        $nextNode = null;
-                        $node->$key = $this->feed($nextNode, $remainingPath, $value);
-                    }
-                }
-                else
-                {
-                    $nextNode = $node->$key;
-                    $node->$key = $this->feed($nextNode, $remainingPath, $value);
-                }
+
+                $this->feed($node->$key, $remainingPath, $value);
             }
         }
 

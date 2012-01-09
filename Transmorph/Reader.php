@@ -66,7 +66,7 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
     {
         $result = null;
 
-        if ($rule === '' || $rule == '/' || $rule == '.')
+        if ($rule === '')
         {
             $result = $input;
         }
