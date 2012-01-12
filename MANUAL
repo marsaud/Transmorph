@@ -103,6 +103,9 @@ sequence of rule nodes. The rule nodes are of 2 kinds :
 /array-key
 </code>
 
+If ''array-key'' is “”  (the null string), then a new entry  will be created and
+appened to the array.
+
   * Object nodes :
 
 <code>
@@ -114,6 +117,9 @@ sequence of rule nodes, creating, if necessary, array keys or object attributes
 depending on the type of rule node encountered. When there are no more rule 
 nodes left, Transmorph_Writer writes a value in the last encountered/created 
 node.
+
+Finally, there  is the special  rule “” (null  string) which designate  the root
+(“top”) of the output.
 
 ===== Examples =====
 

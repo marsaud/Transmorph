@@ -57,16 +57,19 @@ class Transmorph_WriterTest extends PHPUnit_Framework_TestCase
 
     public function testFeed1()
     {
+        // Test root path.
         $node = null;
 
         $this->object->feed($node, '', 'a');
         $this->assertEquals('a', $node);
+    }
+
+    public function testArrayAppend()
+    {
+	    $node = null;
 
         $this->object->feed($node, '/', 'b');
-        $this->assertEquals('b', $node);
-
-        $this->object->feed($node, '.', 'c');
-        $this->assertEquals('c', $node);
+        $this->assertEquals(array('b'), $node);
     }
 
     public function testFeed2()
@@ -167,6 +170,7 @@ class Transmorph_WriterTest extends PHPUnit_Framework_TestCase
         $data[1] = array(null, '\a/');
         $data[2] = array(null, '\a.');
         $data[3] = array(null, 'a');
+        $data[4] = array(null, '.');
         
         return $data;
     }
