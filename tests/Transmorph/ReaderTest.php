@@ -78,8 +78,6 @@ class Transmorph_ReaderTest extends PHPUnit_Framework_TestCase
         $data = array();
 
         $data[0] = array('test', '', 'test');
-        $data[1] = array('test', '/', 'test');
-        $data[2] = array('test', '.', 'test');
 
         $data[3] = array('0test', '', '0test');
         $data[4] = array('01', '', '01');
@@ -177,6 +175,9 @@ class Transmorph_ReaderTest extends PHPUnit_Framework_TestCase
         $data[9] = array($input, '.t/x');
 
         $data[10] = array(null, 'x');
+        
+        $data[11] = array('any', '/');
+        $data[12] = array('any', '.');
 
         return $data;
     }

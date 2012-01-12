@@ -73,7 +73,16 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
         else
         {
             $matches = array();
-            $found = preg_match('#^((/[^\./\\\]+)|(\.[^\./\\\]+))((\.|/).*)*$#', $rule, $matches);
+            $found = preg_match('@
+                ^
+                (
+                (/[^\./\\\]+)#array-node
+                |
+                (\.[^\./\\\]+)#object-node
+                )
+                ((\.|/).*)*#other-nodes
+                $
+                @x', $rule, $matches);
 
             if ($found !== 1)
             {
