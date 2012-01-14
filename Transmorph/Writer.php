@@ -145,7 +145,22 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
 
                 $key = substr($pathNode, 1);
 
-                $this->feed($node->$key, $remainingPath, $value);
+                // Indirection to avoid problem with magic properties.
+                try
+                {
+	                /*
+	                 * An  exception  may  be  raised in  some  conditions.  For
+	                 * instance, this might be a write-only property or it might
+	                 * not have a value yet.
+	                 */
+	                $prop = $node->$key;
+                }
+                catch (Exception $e)
+                {
+	                $prop = null;
+                }
+                $this->feed($prop, $remainingPath, $value);
+                $node->$key = $prop;
             }
         }
 
