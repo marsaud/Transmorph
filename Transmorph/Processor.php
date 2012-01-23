@@ -138,6 +138,9 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
     /**
      * Similar to “run()” excepts it does not use a file but directly a string.
      *
+     * Note:  blank lines  (containing only  white spaces)  and  comments (blank
+     * lines followed by a “#” until the end of the line) are ignored.
+     *
      * @param mixed $input The input.
      * @param string $rules The rules in a string instead of a file.
      * @param mixed $output The initial output.
@@ -148,17 +151,32 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      */
     public function runString($input, $rules, $output = null)
     {
-	    $this->_input = $input;
+        $this->_input = $input;
 
-	    $ruleMap = $this->_fireProcessMap(preg_split('/\r|\n/', $rules));
-	    foreach ($ruleMap as $rule)
-	    {
-		    $this->handleRule($output, $input, $rule);
-	    }
+        // Cleans the rules string.
+        $rules = preg_replace(
+            array(
+                '/\r\n|\n\r|\r/',       // Convert eol to \n.
+                '/^(?:\s+|\s*#.*?)$/m', // Removes useless whitespaces and comments.
+                '/^\n|(?<=\n)\n+|\n$/'  // Removes empty lines.
+            ),
+            array(
+                "\n",
+                '',
+                '',
+            ),
+            $rules
+        );
 
-	    $this->_input = null;
+        $ruleMap = $this->_fireProcessMap(preg_split('/\n/', $rules));
+        foreach ($ruleMap as $rule)
+        {
+            $this->handleRule($output, $input, $rule);
+        }
 
-	    return $output;
+        $this->_input = null;
+
+        return $output;
     }
 
     /**
