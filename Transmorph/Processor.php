@@ -119,69 +119,45 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
     {
         $this->_input = $input;
 
-        if (!file_exists($ruleFilePath))
+        if (!file_exists($ruleFilePath)
+            || (($rules = file_get_contents($ruleFilePath)) === false))
         {
             throw new Transmorph_Exception('Rule file does not exist');
         }
 
-        $ruleMap = $this->handleFile($ruleFilePath);
+        return $this->runString($input, $rules, $output);
+    }
 
+    /**
+     * Similar to “run()” excepts it does not use a file but directly a string.
+     *
+     * @param mixed $input A variable of any type. As the purpose is to tranform
+     *                     structures,  most  of  the  time the  input  will  be
+     *                     a structure of array and/or objects.
+     * @param string $rules The rules in a string.
+     * @param mixed $output The initial output.
+     *
+     * @return mixed The output after tranformation.
+     *
+     * @todo FEATURE. As {@link runString()} is implemented, it expects an array of
+     * transformation rules given "ready to use" by handleFile; and it passes
+     * this array to {@link _fireProcessMap()}. It would be interesting to
+     * introduce a _fireProcessFileLines in handleFile to take some work to be
+     * done to go from "file" to "map".
+     */
+    public function runString($input, $rules, $output = null)
+    {
+        $this->_input = $input;
+
+        $ruleMap = $this->_fireProcessMap(preg_split('/\r|\n/', $rules));
         foreach ($ruleMap as $rule)
         {
             $this->handleRule($output, $input, $rule);
         }
 
         $this->_input = null;
+
         return $output;
-    }
-
-    /**
-     * Similar to “run()” excepts it does not use a file but directly a string.
-     *
-     * @param mixed $input The input.
-     * @param string $rules The rules in a string instead of a file.
-     * @param mixed $output The initial output.
-     * 
-     * @return mixed The output after tranformation. 
-     * 
-     * @see run()
-     */
-    public function runString($input, $rules, $output = null)
-    {
-	    $this->_input = $input;
-
-	    $ruleMap = $this->_fireProcessMap(preg_split('/\r|\n/', $rules));
-	    foreach ($ruleMap as $rule)
-	    {
-		    $this->handleRule($output, $input, $rule);
-	    }
-
-	    $this->_input = null;
-
-	    return $output;
-    }
-
-    /**
-     * Rule-file handling.
-     * 
-     * Reads a file to give back the file lines in an array of strings.
-     * Of course the expected file is a tranformation rule file.
-     * 
-     * @param string $filePath A /path/to/a_file.
-     *
-     * @return string[] The lines found in the file.
-     * 
-     * @todo FEATURE. As {@link run()} is implemented, it expects an array of 
-     * transformation rules given "ready to use" by handleFile; and it passes
-     * this array to {@link _fireProcessMap()}. It would be interesting to
-     * introduce a _fireProcessFileLines in handleFile to take some work to be
-     * done to go from "file" to "map".
-     */
-    public function handleFile($filePath)
-    {
-        $ruleMap = file($filePath, FILE_IGNORE_NEW_LINES);
-        $ruleMap = $this->_fireProcessMap($ruleMap);
-        return $ruleMap;
     }
 
     /**

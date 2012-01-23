@@ -228,29 +228,6 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider handleFileDataProvider
-     *
-     * @param type $lines
-     * @param type $filePath 
-     */
-    public function testHandleFile($lines, $filePath)
-    {
-        $object = new Transmorph_Processor(array(), null);
-        $this->assertEquals($lines, $object->handleFile($filePath));
-    }
-
-    public function handleFileDataProvider()
-    {
-        $data = array();
-
-        $data[0] = array(array('string1', 'string2', 'string3withLF'), TEST_RESOURCES_PATH . '/testHandleFile1');
-        $data[1] = array(array('string1', 'string2', 'string3withoutLF'), TEST_RESOURCES_PATH . '/testHandleFile2');
-        $data[2] = array(array('beforeEmptyString', '', 'afterEmptyString'), TEST_RESOURCES_PATH . '/testHandleFile3');
-
-        return $data;
-    }
-
-    /**
      * @dataProvider handleReadRuleDataProvider
      *
      * @param mixed $input
