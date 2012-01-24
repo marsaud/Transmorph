@@ -158,17 +158,17 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
             array(
                 '/\r\n|\n\r|\r/',       // Convert eol to \n.
                 '/^(?:\s+|\s*#.*?)$/m', // Removes useless whitespaces and comments.
-                '/^\n|(?<=\n)\n+|\n$/'  // Removes empty lines.
             ),
             array(
                 "\n",
-                '',
                 '',
             ),
             $rules
         );
 
-        $ruleMap = $this->_fireProcessMap(preg_split('/\n/', $rules));
+        $ruleMap = $this->_fireProcessMap(
+            preg_split('/\n/', $rules, null, PREG_SPLIT_NO_EMPTY)
+        );
         foreach ($ruleMap as $rule)
         {
             $this->handleRule($output, $input, $rule);
