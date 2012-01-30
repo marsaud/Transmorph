@@ -41,7 +41,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
 
     /**
      * A class name used to instanciate object nodes in the transformation 
-     * output. "stdClass" by default.
+     * output.
      *
      * @var string
      */
@@ -86,14 +86,14 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
         {
             $matches = array();
             $found = preg_match('@
-                ^         # Begining of the string.
+                ^
                 (
                     /[^./]*   # An array rule node.
-                |             # OR
+                |
                     \\.[^./]+ # An object rule node.
                 )
                 ((?1)*)   # Any number of following rule nodes.
-                $         # End of the string.
+                $
                 @x', $path, $matches);
 
             if ($found !== 1)
@@ -122,6 +122,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
 
                 if ($key === false)
                 {
+                    // Incremental numeric array key
 	                 $this->feed($node[], $remainingPath, $value);
                 }
                 else

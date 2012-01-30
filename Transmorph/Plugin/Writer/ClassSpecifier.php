@@ -51,6 +51,11 @@ class Transmorph_Plugin_Writer_ClassSpecifier extends Transmorph_Plugin_Writer_A
      */
     function processRuleNode(Transmorph_Writer $writer, $ruleNode)
     {
+        if (!preg_match('#^(\.|/)([^\./])*#', $ruleNode))
+        {
+            throw new Transmorph_Exception('Incorrect rule-node');
+        }
+        
         if ($ruleNode[0] !== '.')
         {
             // Not a property rule.

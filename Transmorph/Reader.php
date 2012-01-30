@@ -76,9 +76,9 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
             $found = preg_match('@
                 ^
                 (
-                (/[^\./\\\]+)#array-node
+                /[^\./\\\]+#array-node
                 |
-                (\.[^\./\\\]+)#object-node
+                \.[^\./\\\]+#object-node
                 )
                 ((\.|/).*)*#other-nodes
                 $
@@ -93,7 +93,7 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
 
             $nextNode = $this->_fireProcessReadRuleNode($nextNode);
 
-            $remainingPath = isset($matches[4]) ? $matches[4] : '';
+            $remainingPath = isset($matches[2]) ? $matches[2] : '';
             $key = substr($nextNode, 1);
 
             if ($nextNode[0] == '/') // array

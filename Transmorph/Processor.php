@@ -53,6 +53,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
     /**
      * A regex for constant rules.
      */
+
     const REGEX_CONST = '#^\\\.+$#';
 
     /**
@@ -148,17 +149,17 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      */
     public function runString($input, $rules, $output = null)
     {
-	    $this->_input = $input;
+        $this->_input = $input;
 
-	    $ruleMap = $this->_fireProcessMap(preg_split('/\r|\n/', $rules));
-	    foreach ($ruleMap as $rule)
-	    {
-		    $this->handleRule($output, $input, $rule);
-	    }
+        $ruleMap = $this->_fireProcessMap(preg_split('/\r|\n/', $rules));
+        foreach ($ruleMap as $rule)
+        {
+            $this->handleRule($output, $input, $rule);
+        }
 
-	    $this->_input = null;
+        $this->_input = null;
 
-	    return $output;
+        return $output;
     }
 
     /**
@@ -382,19 +383,27 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      */
     public function prependPlugin(Transmorph_Plugin_Interface $plugin)
     {
+        $supported = false;
+
         if ($plugin instanceof Transmorph_Plugin_Processor_Interface)
         {
             $this->_pluginStack->prependPlugin($plugin);
+            $supported = true;
         }
-        elseif ($plugin instanceof Transmorph_Plugin_Reader_Interface)
+
+        if ($plugin instanceof Transmorph_Plugin_Reader_Interface)
         {
             $this->reader->prependPlugin($plugin);
+            $supported = true;
         }
-        elseif ($plugin instanceof Transmorph_Plugin_Writer_Interface)
+
+        if ($plugin instanceof Transmorph_Plugin_Writer_Interface)
         {
             $this->writer->prependPlugin($plugin);
+            $supported = true;
         }
-        else
+
+        if (!$supported)
         {
             throw new Transmorph_Exception('Unsupported plugin interface');
         }
@@ -415,19 +424,27 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      */
     public function appendPlugin(Transmorph_Plugin_Interface $plugin)
     {
+        $supported = false;
+
         if ($plugin instanceof Transmorph_Plugin_Processor_Interface)
         {
             $this->_pluginStack->appendPlugin($plugin);
+            $supported = true;
         }
-        elseif ($plugin instanceof Transmorph_Plugin_Reader_Interface)
+
+        if ($plugin instanceof Transmorph_Plugin_Reader_Interface)
         {
             $this->reader->appendPlugin($plugin);
+            $supported = true;
         }
-        elseif ($plugin instanceof Transmorph_Plugin_Writer_Interface)
+
+        if ($plugin instanceof Transmorph_Plugin_Writer_Interface)
         {
             $this->writer->appendPlugin($plugin);
+            $supported = true;
         }
-        else
+
+        if (!$supported)
         {
             throw new Transmorph_Exception('Unsupported plugin interface');
         }

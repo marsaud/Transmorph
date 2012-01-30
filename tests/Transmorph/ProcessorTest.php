@@ -382,12 +382,27 @@ class Transmorph_ProcessorTest extends PHPUnit_Framework_TestCase
      * @param mixed $input
      * @param string $filePath 
      */
-    public function testRun($ouptut, $input, $filePath)
+    public function testRun($output, $input, $filePath)
     {
         $this->object->appendPlugin(new ProcessorPluginForTest());
         $this->object->appendPlugin(new ReaderPluginForTest());
         $this->object->appendPlugin(new WriterPluginForTest());
-        $this->assertEquals($ouptut, $this->object->run($input, $filePath));
+        $this->assertEquals($output, $this->object->run($input, $filePath));
+    }
+    
+    /**
+     * @dataProvider runDataProvider
+     *
+     * @param mixed $ouptut
+     * @param mixed $input
+     * @param string $filePath 
+     */
+    public function testRunString($output, $input, $filePath)
+    {
+        $this->object->appendPlugin(new ProcessorPluginForTest());
+        $this->object->appendPlugin(new ReaderPluginForTest());
+        $this->object->appendPlugin(new WriterPluginForTest());
+        $this->assertEquals($output, $this->object->runString($input, file_get_contents($filePath)));
     }
 
     public function runDataProvider()
