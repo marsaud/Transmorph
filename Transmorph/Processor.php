@@ -132,6 +132,9 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
     /**
      * Similar to “run()” excepts it does not use a file but directly a string.
      *
+     * Note:  blank lines  (containing only  white spaces)  and  comments (blank
+     * lines followed by a “#” until the end of the line) are ignored.
+     *
      * @param mixed $input A variable of any type. As the purpose is to tranform
      *                     structures,  most  of  the  time the  input  will  be
      *                     a structure of array and/or objects.
@@ -145,7 +148,22 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
     {
         $this->_input = $input;
 
-        $ruleMap = $this->_fireProcessMap(preg_split('/\r|\n/', $rules));
+        // Cleans the rules string.
+        $rules = preg_replace(
+            array(
+                '/\r\n|\n\r|\r/',       // Convert eol to \n.
+                '/^(?:\s+|\s*#.*?)$/m', // Removes useless whitespaces and comments.
+            ),
+            array(
+                "\n",
+                '',
+            ),
+            $rules
+        );
+
+        $ruleMap = $this->_fireProcessMap(
+            preg_split('/\n/', $rules, null, PREG_SPLIT_NO_EMPTY)
+        );
         foreach ($ruleMap as $rule)
         {
             $this->handleRule($output, $input, $rule);
