@@ -73,7 +73,8 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
         else
         {
             $matches = array();
-            $found = preg_match('@
+            $found = preg_match(
+                '@
                 ^
                 (
                 /[^\./\\\]+#array-node
@@ -82,7 +83,8 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
                 )
                 ((\.|/).*)*#other-nodes
                 $
-                @x', $rule, $matches);
+                @x', $rule, $matches
+            );
 
             if ($found !== 1)
             {

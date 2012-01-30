@@ -85,16 +85,18 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
         else
         {
             $matches = array();
-            $found = preg_match('@
+            $found = preg_match(
+                '@
                 ^
                 (
-                    /[^./]*   # An array rule node.
+                /[^./]*   # An array rule node.
                 |
-                    \\.[^./]+ # An object rule node.
+                \\.[^./]+ # An object rule node.
                 )
                 ((?1)*)   # Any number of following rule nodes.
                 $
-                @x', $path, $matches);
+                @x', $path, $matches
+            );
 
             if ($found !== 1)
             {
@@ -123,11 +125,11 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                 if ($key === false)
                 {
                     // Incremental numeric array key
-	                 $this->feed($node[], $remainingPath, $value);
+                    $this->feed($node[], $remainingPath, $value);
                 }
                 else
                 {
-	                $this->feed($node[$key], $remainingPath, $value);
+                    $this->feed($node[$key], $remainingPath, $value);
                 }
             }
             elseif ($pathNode[0] == '.')
@@ -149,16 +151,19 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                 // Indirection to avoid problem with magic properties.
                 try
                 {
-	                /*
-	                 * An  exception  may  be  raised in  some  conditions.  For
-	                 * instance, this might be a write-only property or it might
-	                 * not have a value yet.
-	                 */
-	                $prop = $node->$key;
+                    /*
+                     * An  exception  may  be  raised in  some  conditions.  For
+                     * instance, this might be a write-only property or it might
+                     * not have a value yet.
+                     */
+                    $prop = $node->$key;
                 }
-                catch (Exception $e)
+                catch (Exception $exc)
                 {
-	                $prop = null;
+                    /**
+                     * @todo A log stream would be cool
+                     */
+                    $prop = null;
                 }
                 $this->feed($prop, $remainingPath, $value);
                 $node->$key = $prop;

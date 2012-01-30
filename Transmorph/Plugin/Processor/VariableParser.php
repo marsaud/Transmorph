@@ -46,7 +46,11 @@ class Transmorph_Plugin_Processor_VariableParser extends Transmorph_Plugin_Proce
     protected $_vars;
 
     /**
+     * Trivial.
+     * 
      * @param string[] $vars Names to values associative array.
+     *
+     *  @return void
      */
     public function __construct(array $vars)
     {
@@ -73,6 +77,8 @@ class Transmorph_Plugin_Processor_VariableParser extends Transmorph_Plugin_Proce
     }
 
     /**
+     * The variable replacement.
+     * 
      * @param string $ruleString A read-rule or write-rule.
      *
      * @return string The rule with variables replaced by there values.
@@ -80,11 +86,13 @@ class Transmorph_Plugin_Processor_VariableParser extends Transmorph_Plugin_Proce
     protected function _parse($ruleString)
     {
         return preg_replace_callback(
-                '/@([a-z0-9_]+)/i', array($this, '_replaceCallback'), $ruleString
+            '/@([a-z0-9_]+)/i', array($this, '_replaceCallback'), $ruleString
         );
     }
 
     /**
+     * The callback dedicated to variable replacement.
+     * 
      * @param string[] $matches An array of substrings matching the variable
      * pattern.
      *
