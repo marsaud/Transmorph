@@ -164,8 +164,11 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                      * An  exception  may  be  raised in  some  conditions.  For
                      * instance, this might be a write-only property or it might
                      * not have a value yet.
+                     *
+                     * We do not provide error-handling further than the @.
+                     * Users have to care about what they do.
                      */
-                    $propertyValue = $node->$property;
+                    @$propertyValue = $node->$property;
                 }
                 catch (Exception $exc)
                 {

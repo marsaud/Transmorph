@@ -1,6 +1,7 @@
+#!/usr/bin/php
 <?php
-
-require_once '../include.php';
+$dir = dirname(__FILE__);
+require_once $dir . '/../include.php';
 
 class Calc
 {
@@ -22,14 +23,8 @@ $input = array(
     'b' => 3
 );
 
+$plugins = array(
+    new Transmorph_Plugin_Processor_ClassCallback()
+);
 
-$t = new Transmorph_Processor();
-$t->appendPlugin(new Transmorph_Plugin_Processor_ClassCallback());
-
-$output = $t->run($input, './rules5');
-
-var_dump($input);
-echo PHP_EOL;
-readfile('rules5');
-echo PHP_EOL . PHP_EOL;
-var_dump($output);
+sampleRunner($input, $dir . '/rules5', $plugins);
