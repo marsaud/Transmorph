@@ -83,4 +83,30 @@ class Transmorph_Plugin_Writer_ClassSpecifierTest extends PHPUnit_Framework_Test
         return $data;
     }
 
+    /**
+     * @dataProvider postDataProvider
+     */
+    public function testPost($initialType, $type, $rules)
+    {
+        $writer = new Transmorph_Writer();
+        $writer->objectNodeType = $initialType;
+
+        $this->object->processRuleNode($writer, $rules);
+        $this->assertEquals($type, $writer->objectNodeType);
+
+        $this->object->post($writer);
+        $this->assertEquals($initialType, $writer->objectNodeType);
+    }
+
+    public function postDataProvider()
+    {
+        $data = array();
+
+        $data[] = array('B', 'C', '.C::a');
+        $data[] = array('B', 'C', '.C:a');
+        $data[] = array('B', 'B', '.a');
+
+        return $data;
+    }
+
 }

@@ -28,5 +28,5 @@
  */
 class Transmorph_Rule_Exception extends Transmorph_Exception
 {
-    
+
 }

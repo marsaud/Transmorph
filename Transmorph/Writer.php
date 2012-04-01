@@ -15,17 +15,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Transmorph. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
- * 
+ *
  * @package Core
  */
 
 /**
  * Handling of Transmorph write rules.
- * 
+ *
  * @package Core
- * 
+ *
  * @property string $objectNodeType The type to instanciate when creating object
  *  nodes.
  */
@@ -40,7 +40,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
     protected $_pluginStack;
 
     /**
-     * A class name used to instanciate object nodes in the transformation 
+     * A class name used to instanciate object nodes in the transformation
      * output.
      *
      * @var string
@@ -58,23 +58,25 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
 
     /**
      * Output building.
-     * 
+     *
      * This method resolves a write rule to push data in a variable, creating
      * structure nodes in this variable if necessary.
      *
      * @param mixed &$node The variable to write in.
      * @param string $path The write rule.
      * @param mixed $value The value to push in $node.
-     * 
+     *
      * @return mixed The modified $node.
-     * 
+     *
      * @throws InvalidArgumentException If $value is a resource.
      */
     public function feed(&$node, $path, $value)
     {
         if (gettype($value) === 'resource')
         {
-            throw new InvalidArgumentException('resource type is not supported');
+            throw new InvalidArgumentException(
+                'resource type is not supported'
+            );
         }
 
         if ($path === '')
@@ -100,7 +102,9 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
 
             if ($found !== 1)
             {
-                throw new Transmorph_Writer_Exception('Illegal write-rule : ' . $path);
+                throw new Transmorph_Writer_Exception(
+                    'Illegal write-rule : ' . $path
+                );
             }
             $pathNode = $matches[1];
             $pathNode = $this->_fireProcessRuleNode($pathNode);
@@ -117,7 +121,9 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
 
                 if (!is_array($node))
                 {
-                    throw new Transmorph_Writer_Exception('Incoherence beetween write-rule and output node type');
+                    throw new Transmorph_Writer_Exception(
+                        'Incoherence beetween write-rule and output node type'
+                    );
                 }
 
                 $key = substr($pathNode, 1);
@@ -141,12 +147,15 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                     $node = new $class();
                 }
 
-                if (!(is_object($node) && ($node instanceof $this->_objectNodeType)))
+                if (!(is_object($node)
+                    && ($node instanceof $this->_objectNodeType)))
                 {
-                    throw new Transmorph_Writer_Exception('Incoherence beetween write-rule and output node type');
+                    throw new Transmorph_Writer_Exception(
+                        'Incoherence beetween write-rule and output node type'
+                    );
                 }
 
-                $key = substr($pathNode, 1);
+                $property = substr($pathNode, 1);
 
                 // Indirection to avoid problem with magic properties.
                 try
@@ -156,19 +165,21 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                      * instance, this might be a write-only property or it might
                      * not have a value yet.
                      */
-                    $prop = $node->$key;
+                    $propertyValue = $node->$property;
                 }
                 catch (Exception $exc)
                 {
                     /**
-                     * @todo A log stream would be cool
+                     * @todo A rejection log stream would be nice.
                      */
-                    $prop = null;
+                    $propertyValue = null;
                 }
-                $this->feed($prop, $remainingPath, $value);
-                $node->$key = $prop;
+                $this->feed($propertyValue, $remainingPath, $value);
+                $node->$property = $propertyValue;
             }
         }
+
+        $this->_firePost();
 
         return $node;
     }
@@ -177,7 +188,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
      * Property handling.
      *
      * @param string $name Property name.
-     * 
+     *
      * @return mixed Property value.
      */
     public function __get($name)
@@ -188,17 +199,19 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                 return $this->_objectNodeType;
                 break;
             default:
-                throw new OutOfRangeException(__CLASS__ . ' has no ' . $name . ' property-read.');
+                throw new OutOfRangeException(
+                    __CLASS__ . ' has no ' . $name . ' property-read.'
+                );
                 break;
         }
     }
 
     /**
      * Property handling.
-     * 
+     *
      * @param string $name Property name.
      * @param mixed $value Property value.
-     * 
+     *
      * @return void
      */
     public function __set($name, $value)
@@ -209,16 +222,18 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                 $this->_objectNodeType = $value;
                 break;
             default:
-                throw new OutOfRangeException(__CLASS__ . ' has no ' . $name . ' property-write.');
+                throw new OutOfRangeException(
+                    __CLASS__ . ' has no ' . $name . ' property-write.'
+                );
                 break;
         }
     }
 
     /**
      * Plugin caller.
-     * 
+     *
      * @param string $ruleNode passed to plugin.
-     * 
+     *
      * @return string back from plugin.
      *
      * @see Transmorph_Plugin_Writer_Interface::processRuleNode()
@@ -235,12 +250,26 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
     }
 
     /**
+     * Plugin caller
+     *
+     * @return void
+     */
+    protected function _firePost()
+    {
+        foreach ($this->_pluginStack as $plugin)
+        {
+            /* @var $plugin Transmorph_Plugin_Writer_Interface */
+            $plugin->post($this);
+        }
+    }
+
+    /**
      * Append a plugin to the stack.
      *
      * @param Transmorph_Plugin_Interface $plugin A plugin to append.
-     * 
+     *
      * @return void
-     * 
+     *
      * @see Transmorph_Plugin_StackInterface::appendPlugin()
      */
     public function appendPlugin(Transmorph_Plugin_Interface $plugin)
@@ -251,7 +280,9 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
         }
         else
         {
-            throw new Transmorph_Writer_Exception('Unsupported plugin interface');
+            throw new Transmorph_Writer_Exception(
+                'Unsupported plugin interface'
+            );
         }
     }
 
@@ -259,9 +290,9 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
      * Prepend a plugin to the stack.
      *
      * @param Transmorph_Plugin_Interface $plugin A plugin to prepend.
-     * 
+     *
      * @return void
-     * 
+     *
      * @see Transmorph_Plugin_StackInterface::prependPlugin()
      */
     public function prependPlugin(Transmorph_Plugin_Interface $plugin)
@@ -272,7 +303,9 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
         }
         else
         {
-            throw new Transmorph_Writer_Exception('Unsupported plugin interface');
+            throw new Transmorph_Writer_Exception(
+                'Unsupported plugin interface'
+            );
         }
     }
 
@@ -280,9 +313,9 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
      * Remove a plugin from the stack.
      *
      * @param string $pluginClassName The class name of the plugin to remove.
-     * 
+     *
      * @return void
-     * 
+     *
      * @see Transmorph_Plugin_StackInterface::removePlugin()
      */
     public function removePlugin($pluginClassName)

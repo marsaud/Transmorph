@@ -28,5 +28,5 @@
  */
 class Transmorph_Reader_Exception extends Transmorph_Exception
 {
-    
+
 }

@@ -28,5 +28,5 @@
  */
 interface Transmorph_Plugin_Interface
 {
-    
+
 }

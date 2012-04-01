@@ -35,7 +35,8 @@
  * effects, parameters are oftenly not used.
  * 
  */
-abstract class Transmorph_Plugin_Processor_Abstract implements Transmorph_Plugin_Processor_Interface
+abstract class Transmorph_Plugin_Processor_Abstract implements
+Transmorph_Plugin_Processor_Interface
 {
 
     /**
@@ -65,7 +66,9 @@ abstract class Transmorph_Plugin_Processor_Abstract implements Transmorph_Plugin
      *
      * @see Transmorph_Plugin_Processor_Interface::processCallbackParams()
      */
-    public function processCallbackParams(Transmorph_Processor $transmorph, $callbackParams)
+    public function processCallbackParams(
+    Transmorph_Processor $transmorph, $callbackParams
+    )
     {
         return $callbackParams;
     }
@@ -81,7 +84,9 @@ abstract class Transmorph_Plugin_Processor_Abstract implements Transmorph_Plugin
      *
      * @see Transmorph_Plugin_Processor_Interface::processRule()
      */
-    public function processRule(Transmorph_Processor $transmorph, Transmorph_Rule $rule)
+    public function processRule(
+    Transmorph_Processor $transmorph, Transmorph_Rule $rule
+    )
     {
         return $rule;
     }

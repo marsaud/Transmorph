@@ -38,7 +38,8 @@ class Transmorph_Rule
     /**
      * The regex that does the job.
      */
-    const LINE_REGEX = '#^(.*)( >> )(.*)$#';
+
+    const RULE_REGEX = '@^(.*)(?: >> )(.*)$@';
 
     /**
      * The read-rule.
@@ -76,15 +77,17 @@ class Transmorph_Rule
     protected function _parseRule($rule)
     {
         $matches = array();
-        $found = preg_match(self::LINE_REGEX, $rule, $matches);
+        $found = preg_match(self::RULE_REGEX, $rule, $matches);
 
         if ($found !== 1)
         {
-            throw new Transmorph_Rule_Exception("STRING '$rule' is not conform to Transmorph Rule format");
+            throw new Transmorph_Rule_Exception(
+                "STRING '$rule' is not conform to Transmorph Rule format"
+            );
         }
 
         $this->_readRule = $matches[1];
-        $this->_writeRule = $matches[3];
+        $this->_writeRule = $matches[2];
     }
 
     /**
@@ -105,7 +108,9 @@ class Transmorph_Rule
                 return $this->_writeRule;
                 break;
             default:
-                throw new OutOfRangeException(__CLASS__ . ' has no ' . $name . ' property');
+                throw new OutOfRangeException(
+                    __CLASS__ . ' has no ' . $name . ' property'
+                );
                 break;
         }
     }

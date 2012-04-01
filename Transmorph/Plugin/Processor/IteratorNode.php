@@ -28,11 +28,13 @@
  * @package Plugin
  * 
  */
-class Transmorph_Plugin_Processor_IteratorNode extends Transmorph_Plugin_Processor_Abstract
+class Transmorph_Plugin_Processor_IteratorNode extends
+Transmorph_Plugin_Processor_Abstract
 {
     /**
      * A regex used to catch the iteration rule-nodes.
      */
+
     const ITER_NODE_REGEX = '%((\.|/)#)%';
 
     /**
@@ -62,11 +64,17 @@ class Transmorph_Plugin_Processor_IteratorNode extends Transmorph_Plugin_Process
             $tRule = new Transmorph_Rule($mapRule);
 
             $matchesInput = array();
-            $foundInput = preg_match_all(self::ITER_NODE_REGEX, $tRule->readRule, $matchesInput, PREG_OFFSET_CAPTURE);
+            $foundInput = preg_match_all(
+                self::ITER_NODE_REGEX
+                , $tRule->readRule
+                , $matchesInput, PREG_OFFSET_CAPTURE
+            );
+
             if ($foundInput > 1)
             {
                 throw new Transmorph_Exception(
-                    __CLASS__ . ' supports only one iteration node per read-rule. Found '
+                    __CLASS__
+                    . ' supports only one iteration node per read-rule. Found '
                     . $foundInput
                     . ' in read-rule : '
                     . $tRule->readRule
@@ -74,11 +82,15 @@ class Transmorph_Plugin_Processor_IteratorNode extends Transmorph_Plugin_Process
             }
 
             $matchesOutput = array();
-            $foundOutput = preg_match_all(self::ITER_NODE_REGEX, $tRule->writeRule, $matchesOutput);
+            $foundOutput = preg_match_all(
+                self::ITER_NODE_REGEX, $tRule->writeRule, $matchesOutput
+            );
+
             if ($foundOutput > 1)
             {
                 throw new Transmorph_Exception(
-                    __CLASS__ . ' supports only one iteration node per write-rule. Found '
+                    __CLASS__
+                    . ' supports only one iteration node per write-rule. Found '
                     . $foundOutput
                     . ' in write-rule : '
                     . $tRule->writeRule
@@ -87,7 +99,9 @@ class Transmorph_Plugin_Processor_IteratorNode extends Transmorph_Plugin_Process
 
             if ($foundOutput === 1 && $foundInput === 0)
             {
-                throw new Transmorph_Exception('Iteration must root on read-rule.');
+                throw new Transmorph_Exception(
+                    'Iteration must root on read-rule.'
+                );
             }
 
             if ($foundInput === 0 && $foundOutput === 0)
@@ -101,12 +115,18 @@ class Transmorph_Plugin_Processor_IteratorNode extends Transmorph_Plugin_Process
                 $iterableNode = null;
                 try
                 {
-                    $iterableNode = $this->getIterableNode($transmorph->reader, $transmorph->input, $path);
+                    $iterableNode = $this->getIterableNode(
+                        $transmorph->reader, $transmorph->input, $path
+                    );
                 }
                 catch (Transmorph_Exception $exc)
                 {
                     throw new Transmorph_Exception(
-                        __CLASS__ . ' throws : ' . $exc->getMessage() . ' on rule : ' . $tRule
+                        __CLASS__
+                        . ' throws : '
+                        . $exc->getMessage()
+                        . ' on rule : '
+                        . $tRule
                     );
                 }
 
@@ -156,7 +176,7 @@ class Transmorph_Plugin_Processor_IteratorNode extends Transmorph_Plugin_Process
     {
         $this->_checkIterableNode($iterableNode);
         $mapRuleExtension = array();
-        
+
         $count = 0;
         foreach ($iterableNode as $key => $value)
         {
@@ -181,9 +201,13 @@ class Transmorph_Plugin_Processor_IteratorNode extends Transmorph_Plugin_Process
      */
     protected function _checkIterableNode($node)
     {
-        if (!is_array($node) && !is_object($node) && !$node instanceof Traversable)
+        if (!is_array($node)
+            && !is_object($node)
+            && !$node instanceof Traversable)
         {
-            throw new Transmorph_Exception('Input value node does not appear to be iterable.');
+            throw new Transmorph_Exception(
+                'Input value node does not appear to be iterable.'
+            );
         }
     }
 

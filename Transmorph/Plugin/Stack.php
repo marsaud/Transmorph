@@ -15,9 +15,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Transmorph. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
- * 
+ *
  * @package Plugin
  */
 
@@ -25,15 +25,14 @@
  * A plugin stack used by several components of the core package.
  *
  * @package Plugin
- * 
- * @see Transmorph_Plugin_StackInterface
  */
-class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Iterator
+class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface
+, Iterator
 {
 
     /**
      *
-     * @var Transmorph_Plugin_Interface[] 
+     * @var Transmorph_Plugin_Interface[]
      */
     protected $_plugins;
 
@@ -49,33 +48,43 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
      * Appending a plugin to the stack.
      *
      * @param Transmorph_Plugin_Interface $newPlugin A plugin.
-     * 
+     *
      * @return void
-     * 
+     *
      * @see Transmorph_Plugin_StackInterface::appendPlugin()
      */
     public function appendPlugin(Transmorph_Plugin_Interface $newPlugin)
     {
-        foreach ($this->_plugins as $plugin)
-        {
-            if (get_class($plugin) == get_class($newPlugin))
-            {
-                throw new Transmorph_Exception('Plugin ' . get_class($newPlugin) . ' already registered');
-            }
-        }
-        $this->_plugins[] = $newPlugin;
+        $this->_checkPluginDupplication($newPlugin);
+        array_push($this->_plugins, $newPlugin);
     }
 
     /**
-     * Prepending a plugin to the stack. 
+     * Prepending a plugin to the stack.
      *
      * @param Transmorph_Plugin_Interface $newPlugin A plugin.
-     * 
+     *
      * @return void
-     * 
+     *
      * @see Transmorph_Plugin_StackInterface::prependPlugin()
      */
     public function prependPlugin(Transmorph_Plugin_Interface $newPlugin)
+    {
+        $this->_checkPluginDupplication($newPlugin);
+        array_unshift($this->_plugins, $newPlugin);
+    }
+
+    /**
+     * Checks if a plugin is already registered before adding.
+     *
+     * @param Transmorph_Plugin_Interface $newPlugin The plugin to check.
+     *
+     * @return void
+     *
+     * @throws Transmorph_Exception If a plugin of the same class is already in
+     * the stack.
+     */
+    private function _checkPluginDupplication(Transmorph_Plugin_Interface $newPlugin)
     {
         foreach ($this->_plugins as $p)
         {
@@ -84,16 +93,15 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
                 throw new Transmorph_Exception('Plugin ' . get_class($newPlugin) . ' already registered');
             }
         }
-        array_unshift($this->_plugins, $newPlugin);
     }
 
     /**
      * Removing a plugin from the stack.
      *
      * @param type $pluginClassName A plgin class name.
-     * 
+     *
      * @return void
-     * 
+     *
      * @see Transmorph_Plugin_StackInterface::removePlugin()
      */
     public function removePlugin($pluginClassName)
@@ -148,7 +156,7 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
 
     /**
      * See {@link http://www.php.net/manual/en/class.iterator.php PHP Manual : Iterator}
-     * 
+     *
      * @return void
      */
     public function rewind()
@@ -159,12 +167,12 @@ class Transmorph_Plugin_Stack implements Transmorph_Plugin_StackInterface, Itera
     /**
      * See {@link http://www.php.net/manual/en/class.iterator.php PHP Manual : Iterator}
      *
-     * @return boolean 
+     * @return boolean
      */
     public function valid()
     {
         /**
-         * This is OK as encapsulation prevents the array of containing 
+         * This is OK as encapsulation prevents the array of containing
          * boolean values.
          */
         return current($this->_plugins) !== false;

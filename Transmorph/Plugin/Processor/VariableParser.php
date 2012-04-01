@@ -37,7 +37,8 @@
  * 
  * @package Plugin
  */
-class Transmorph_Plugin_Processor_VariableParser extends Transmorph_Plugin_Processor_Abstract
+class Transmorph_Plugin_Processor_VariableParser extends
+Transmorph_Plugin_Processor_Abstract
 {
 
     /**
@@ -65,7 +66,9 @@ class Transmorph_Plugin_Processor_VariableParser extends Transmorph_Plugin_Proce
      * 
      * @return Transmorph_Rule The processed rule.
      */
-    public function processRule(Transmorph_Processor $transmorphProcessor, Transmorph_Rule $rule)
+    public function processRule(
+    Transmorph_Processor $transmorphProcessor, Transmorph_Rule $rule
+    )
     {
         if (!$transmorphProcessor->isConst($rule->readRule))
         {
@@ -96,7 +99,7 @@ class Transmorph_Plugin_Processor_VariableParser extends Transmorph_Plugin_Proce
      * @param string[] $matches An array of substrings matching the variable
      * pattern.
      *
-     * @return string the replacement for teh matches.
+     * @return string the replacement for the matches.
      */
     protected function _replaceCallback(array $matches)
     {

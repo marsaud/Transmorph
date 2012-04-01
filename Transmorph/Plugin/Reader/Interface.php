@@ -41,5 +41,7 @@ interface Transmorph_Plugin_Reader_Interface extends Transmorph_Plugin_Interface
      * 
      * @return string The processed rule node.
      */
-    public function processRuleNode(Transmorph_Reader $transmorphReader, $ruleNode);
+    public function processRuleNode(
+    Transmorph_Reader $transmorphReader, $ruleNode
+    );
 }

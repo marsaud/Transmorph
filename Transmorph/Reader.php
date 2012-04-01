@@ -88,7 +88,9 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
 
             if ($found !== 1)
             {
-                throw new Transmorph_Reader_Exception('Illegal read-rule : ' . $rule);
+                throw new Transmorph_Reader_Exception(
+                    'Illegal read-rule : ' . $rule
+                );
             }
 
             $nextNode = $matches[1];
@@ -102,7 +104,9 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
             {
                 if (!isset($input[$key]))
                 {
-                    throw new Transmorph_Reader_Exception('Read-rule leads to nothing');
+                    throw new Transmorph_Reader_Exception(
+                        'Read-rule leads to nothing'
+                    );
                 }
                 $result = $this->query($input[$key], $remainingPath);
             }
@@ -110,7 +114,9 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
             {
                 if (!isset($input->$key))
                 {
-                    throw new Transmorph_Reader_Exception('Read-rule leads to nothing');
+                    throw new Transmorph_Reader_Exception(
+                        'Read-rule leads to nothing'
+                    );
                 }
                 $result = $this->query($input->$key, $remainingPath);
             }
@@ -118,7 +124,9 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
 
         if (gettype($result) === 'resource')
         {
-            throw new InvalidArgumentException('resource type is not supported');
+            throw new InvalidArgumentException(
+                'resource type is not supported'
+            );
         }
 
         return $result;
@@ -161,7 +169,9 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
         }
         else
         {
-            throw new Transmorph_Reader_Exception('Unsopported plugin interface');
+            throw new Transmorph_Reader_Exception(
+                'Unsupported plugin interface'
+            );
         }
     }
 
@@ -182,7 +192,9 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
         }
         else
         {
-            throw new Transmorph_Reader_Exception('Unsopported plugin interface');
+            throw new Transmorph_Reader_Exception(
+                'Unsupported plugin interface'
+            );
         }
     }
 

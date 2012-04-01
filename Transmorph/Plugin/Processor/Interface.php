@@ -26,7 +26,8 @@
  * 
  * @package Plugin
  */
-interface Transmorph_Plugin_Processor_Interface extends Transmorph_Plugin_Interface
+interface Transmorph_Plugin_Processor_Interface extends
+Transmorph_Plugin_Interface
 {
 
     /**
@@ -65,7 +66,9 @@ interface Transmorph_Plugin_Processor_Interface extends Transmorph_Plugin_Interf
      * 
      * @return Transmorph_Rule The processed rule.
      */
-    public function processRule(Transmorph_Processor $transmorph, Transmorph_Rule $rule);
+    public function processRule(
+    Transmorph_Processor $transmorph, Transmorph_Rule $rule
+    );
 
     /**
      * Processes callbacks.
@@ -79,7 +82,9 @@ interface Transmorph_Plugin_Processor_Interface extends Transmorph_Plugin_Interf
      * 
      * @return mixed The processed callback.
      */
-    public function processCallback(Transmorph_Processor $transmorph, $callback);
+    public function processCallback(
+    Transmorph_Processor $transmorph, $callback
+    );
 
     /**
      * Processes callback parameters.
@@ -95,5 +100,7 @@ interface Transmorph_Plugin_Processor_Interface extends Transmorph_Plugin_Interf
      * 
      * @return string[] The processed array.
      */
-    public function processCallbackParams(Transmorph_Processor $transmorph, $callbackParams);
+    public function processCallbackParams(
+    Transmorph_Processor $transmorph, $callbackParams
+    );
 }

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Transmorph. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Fabrice Marsaud <marsaud.fabrice@neuf.fr>
+ * @author Julien Fontanet <julien.fontanet@isonoe.net>
  *
  * @package Plugin
  *
@@ -25,28 +25,35 @@
 /**
  * Provides support for class specification in write rules.
  *
- * Example  which will  create an  object of  type MyClass  with a  “prop” property
- * containing the value “1”:
+ * Example  which will  create an  object of  type MyClass  with a  “prop”
+ * property containing the value “1” :
  *
  * \1 >> .MyClass::prop
- * 
+ *
  * or
- * 
+ *
  * \1 >> .MyClass:prop
  *
  * @author Julien Fontanet <julien.fontanet@isonoe.net>
- * 
+ *
  * @package Plugin
  */
-class Transmorph_Plugin_Writer_ClassSpecifier extends Transmorph_Plugin_Writer_Abstract
+class Transmorph_Plugin_Writer_ClassSpecifier implements
+Transmorph_Plugin_Writer_Interface
 {
 
     /**
-     * Retreives classnames in write-rule properyt-nodes.
      *
-     * @param Transmorph_Writer $writer Teh calling writer.
+     * @var string
+     */
+    protected $_typeBuffer;
+
+    /**
+     * Retreives classnames in write-rule property-nodes.
+     *
+     * @param Transmorph_Writer $writer The calling writer.
      * @param string $ruleNode The rule to process.
-     * 
+     *
      * @return string The processed rule-node.
      */
     function processRuleNode(Transmorph_Writer $writer, $ruleNode)
@@ -55,7 +62,7 @@ class Transmorph_Plugin_Writer_ClassSpecifier extends Transmorph_Plugin_Writer_A
         {
             throw new Transmorph_Exception('Incorrect rule-node');
         }
-        
+
         if ($ruleNode[0] !== '.')
         {
             // Not a property rule.
@@ -66,24 +73,29 @@ class Transmorph_Plugin_Writer_ClassSpecifier extends Transmorph_Plugin_Writer_A
         if (!preg_match('/^\.([a-z_]+):{1,2}(.+)$/i', $ruleNode, $matches))
         {
             // No class specified.
-
-            /*
-             * Manually resets the original object node type.
-             *
-             * This is not perfect because the assumption that this was the original
-             * value is arbitrary and might  be wrong. The correct solution would be
-             * to restore  the previous value in  a “tear down” hook  which does not
-             * exist yet.
-             *
-             * @todo Implements the “tear down” hook.
-             */
-            $writer->objectNodeType = 'stdClass';
-
             return $ruleNode;
         }
 
+        $this->_typeBuffer = $writer->objectNodeType;
         $writer->objectNodeType = $matches[1];
+
         return '.' . $matches[2];
+    }
+
+    /**
+     * If a type has been buffered by processRuleNode, it will be given back to
+     * the writer now.
+     *
+     * @param Transmorph_Writer $writer The calling writer.
+     *
+     * @return void
+     */
+    public function post(Transmorph_Writer $writer)
+    {
+        $this->_typeBuffer === NULL
+          || $writer->objectNodeType = $this->_typeBuffer;
+
+        $this->_typeBuffer = NULL;
     }
 
 }

@@ -36,7 +36,8 @@
  * @SuppressWarnings(PHPMD.UnusedFormalParameter) As methods do no side effects,
  * parameters are oftenly not used.
  */
-abstract class Transmorph_Plugin_Reader_Abstract implements Transmorph_Plugin_Reader_Interface
+abstract class Transmorph_Plugin_Reader_Abstract implements
+Transmorph_Plugin_Reader_Interface
 {
 
     /**
@@ -50,7 +51,9 @@ abstract class Transmorph_Plugin_Reader_Abstract implements Transmorph_Plugin_Re
      * 
      * @see Transmorph_Plugin_Reader_Interface::processRuleNode()
      */
-    public function processRuleNode(Transmorph_Reader $transmorphReader, $ruleNode)
+    public function processRuleNode(
+    Transmorph_Reader $transmorphReader, $ruleNode
+    )
     {
         return $ruleNode;
     }

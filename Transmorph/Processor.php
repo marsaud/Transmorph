@@ -54,7 +54,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      * A regex for constant rules.
      */
 
-    const REGEX_CONST = '#^\\\.+$#';
+    const CONST_REGEX = '@^\\\.+$@';
 
     /**
      * The input submitted to {@link run()}. Encapsulated to be read by plugins.
@@ -113,8 +113,6 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      *
      * @return mixed The output structure resulting from the transformation.
      * 
-     * @todo FEATURE. This method could take a path/to/file, or the 
-     * transformation rules in a string, as it could be written in the file.
      */
     public function run($input, $ruleFilePath, $output = null)
     {
@@ -151,14 +149,12 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
         // Cleans the rules string.
         $rules = preg_replace(
             array(
-                '/\r\n|\n\r|\r/',       // Convert eol to \n.
-                '/^(?:\s+|\s*#.*?)$/m', // Removes useless whitespaces and comments.
-            ),
-            array(
-                "\n",
-                '',
-            ),
-            $rules
+            '/\r\n|\n\r|\r/', // Convert eol to \n.
+            '/^(?:\s+|\s*#.*?)$/m', // Removes useless whitespaces and comments.
+            ), array(
+            "\n",
+            '',
+            ), $rules
         );
 
         $ruleMap = $this->_fireProcessMap(
@@ -188,7 +184,11 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
     {
         $tRule = new Transmorph_Rule($rule);
         $tRule = $this->_fireProcessRule($tRule);
-        $this->_writer->feed($output, $tRule->writeRule, $this->handleReadRule($input, $tRule->readRule));
+        $this->_writer->feed(
+            $output, $tRule->writeRule, $this->handleReadRule(
+                $input, $tRule->readRule
+            )
+        );
     }
 
     /**
@@ -231,7 +231,15 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
                 {
                     $inputArray[] = $input;
                 }
-                return call_user_func_array($callback, array_map(array($this, __FUNCTION__), $inputArray, $paramExps));
+
+                $callbackOutput = call_user_func_array(
+                    $callback
+                    , array_map(
+                        array($this, __FUNCTION__), $inputArray, $paramExps
+                    )
+                );
+
+                return $callbackOutput;
             }
         }
     }
@@ -260,7 +268,7 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
      */
     public function isConst($mapEntry)
     {
-        return preg_match(self::REGEX_CONST, $mapEntry) == 1;
+        return preg_match(self::CONST_REGEX, $mapEntry) == 1;
     }
 
     /**
@@ -491,7 +499,9 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
                 return $this->_copyInput($this->_input);
                 break;
             default:
-                throw new OutOfRangeException(__CLASS__ . ' has no ' . $name . ' property-read.');
+                throw new OutOfRangeException(
+                    __CLASS__ . ' has no ' . $name . ' property-read.'
+                );
                 break;
         }
     }
@@ -584,7 +594,9 @@ class Transmorph_Processor implements Transmorph_Plugin_StackInterface
         foreach ($this->_pluginStack as $plugin)
         {
             /* @var $plugin Transmorph_Plugin_Processor_Interface */
-            $callbackParams = $plugin->processCallbackParams($this, $callbackParams);
+            $callbackParams = $plugin->processCallbackParams(
+                $this, $callbackParams
+            );
         }
 
         return $callbackParams;
