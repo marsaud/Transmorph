@@ -14,7 +14,32 @@ class WriterPluginForTest1 extends Transmorph_Plugin_Writer_Abstract
 
 class WriterPluginForTest2 extends Transmorph_Plugin_Writer_Abstract
 {
-    
+
+}
+
+class WriteOnlyProperty
+{
+
+    private $_p;
+
+    public function __get($name)
+    {
+        if ($name === 'p')
+        {
+            throw new Exception;
+        }
+    }
+
+    public function __set($name, $value)
+    {
+        $this->_p = $value;
+    }
+
+    public function getPValue()
+    {
+        return $this->_p;
+    }
+
 }
 
 /**
@@ -66,7 +91,7 @@ class Transmorph_WriterTest extends PHPUnit_Framework_TestCase
 
     public function testArrayAppend()
     {
-	    $node = null;
+        $node = null;
 
         $this->object->feed($node, '/', 'b');
         $this->assertEquals(array('b'), $node);
@@ -238,6 +263,13 @@ class Transmorph_WriterTest extends PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('OutOfRangeException');
         $this->object->unexistingProperty;
+    }
+
+    public function testPropertyIndirection()
+    {
+        $obj = new WriteOnlyProperty();
+        $this->object->feed($obj, '.p', 'v');
+        $this->assertEquals('v', $obj->getPValue());
     }
 
 }

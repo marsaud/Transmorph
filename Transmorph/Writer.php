@@ -147,8 +147,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                     $node = new $class();
                 }
 
-                if (!(is_object($node)
-                    && ($node instanceof $this->_objectNodeType)))
+                if (!is_object($node))
                 {
                     throw new Transmorph_Writer_Exception(
                         'Incoherence beetween write-rule and output node type'
