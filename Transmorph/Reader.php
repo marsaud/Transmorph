@@ -102,10 +102,10 @@ class Transmorph_Reader implements Transmorph_Plugin_StackInterface
 
             if ($nextNode[0] == '/') // array
             {
-                if (!isset($input[$key]))
+                if (!(isset($input[$key]) || array_key_exists($key, $input)))
                 {
                     throw new Transmorph_Reader_Exception(
-                        'Read-rule leads to nothing'
+                        'Read-rule leads to nothing (key '.$key.')'
                     );
                 }
                 $result = $this->query($input[$key], $remainingPath);
