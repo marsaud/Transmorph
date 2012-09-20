@@ -62,21 +62,31 @@ Transmorph_Plugin_Processor_Abstract
      * Replaces variables in the rule.
      *
      * @param Transmorph_Processor $transmorphProcessor The calling processor.
-     * @param Transmorph_Rule $rule The rule to process.
-     * 
-     * @return Transmorph_Rule The processed rule.
+     * @param string[] $map An array of transformation rule strings asssumed to
+     *     come from a transformation file.
+     *
+     * @return string[] The processed rules.
      */
-    public function processRule(
-    Transmorph_Processor $transmorphProcessor, Transmorph_Rule $rule
+    public function processMap(
+    Transmorph_Processor $transmorphProcessor, array $map
     )
     {
-        if (!$transmorphProcessor->isConst($rule->readRule))
-        {
-            $rule->readRule = $this->_parse($rule->readRule);
-        }
-        $rule->writeRule = $this->_parse($rule->writeRule);
+	    $result = array();
 
-        return $rule;
+	    foreach ($map as $rule)
+	    {
+		    $rule = new Transmorph_Rule($rule);
+
+		    if (!$transmorphProcessor->isConst($rule->readRule))
+		    {
+			    $rule->readRule = $this->_parse($rule->readRule);
+		    }
+		    $rule->writeRule = $this->_parse($rule->writeRule);
+
+		    $result[] = $rule->readRule.' >> '.$rule->writeRule;
+	    }
+
+        return $result;
     }
 
     /**
