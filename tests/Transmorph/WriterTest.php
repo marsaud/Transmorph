@@ -97,6 +97,14 @@ class Transmorph_WriterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array('b'), $node);
     }
 
+    public function testArrayAccessAppend()
+    {
+        $node = new ArrayObject;
+
+        $this->object->feed($node, '/', 'b');
+        $this->assertEquals('b', $node[0]);
+    }
+
     public function testFeed2()
     {
         $node = null;
