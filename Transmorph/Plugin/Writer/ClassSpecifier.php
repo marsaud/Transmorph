@@ -63,23 +63,16 @@ Transmorph_Plugin_Writer_Interface
             throw new Transmorph_Exception('Incorrect rule-node');
         }
 
-        if ($ruleNode[0] !== '.')
-        {
-            // Not a property rule.
-            return $ruleNode;
-        }
-
-        $matches = array();
-        if (!preg_match('/^\.([a-z_]+):{1,2}(.+)$/i', $ruleNode, $matches))
+        if (!preg_match('#^(\.|/)([a-z_]+):{1,2}(.*)$#i', $ruleNode, $matches))
         {
             // No class specified.
             return $ruleNode;
         }
 
         $this->_typeBuffer = $writer->objectNodeType;
-        $writer->objectNodeType = $matches[1];
+        $writer->objectNodeType = $matches[2];
 
-        return '.' . $matches[2];
+        return $matches[1] . $matches[3];
     }
 
     /**

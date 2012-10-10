@@ -40,6 +40,17 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
     protected $_pluginStack;
 
     /**
+     * A class name used to instanciate array nodes in the transformation
+     * output.
+     *
+     * This attribute is automatically defined from $_objectNodeType if it
+     * implements the ArrayAccess interface.
+     *
+     * @var string
+     */
+    protected $_arrayNodeType;
+
+    /**
      * A class name used to instanciate object nodes in the transformation
      * output.
      *
@@ -116,26 +127,53 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                 // Our node must be an array.
                 if ($node === null)
                 {
-                    $node = array();
+                    if (isset($this->_arrayNodeType))
+                    {
+                        $node = new $this->_arrayNodeType;
+                    }
+                    else
+                    {
+                        $node = array();
+                    }
                 }
-
-                if (!is_array($node))
+                elseif (!is_array($node) && !($node instanceof ArrayAccess))
                 {
                     throw new Transmorph_Writer_Exception(
-                        'Incoherence beetween write-rule and output node type'
+                        'Incoherence: current node is neither an array nor an ArrayAccess object'
                     );
                 }
 
                 $key = substr($pathNode, 1);
 
+                if ($key !== false)
+                {
+                    try
+                    {
+                        /*
+                         * An exception may be raised in some conditions.  For
+                         * instance, this might be a write-only array entry or it
+                         * might not have a value yet.
+                         */
+                        $output = $node[$key];
+                    }
+                    catch (Exception $exc)
+                    {
+                        /**
+                         * @todo A rejection log stream would be nice.
+                         */
+                    }
+                }
+
+                $this->feed($output, $remainingPath, $value);
+
                 if ($key === false)
                 {
                     // Incremental numeric array key
-                    $this->feed($node[], $remainingPath, $value);
+                    $node[] = $output;
                 }
                 else
                 {
-                    $this->feed($node[$key], $remainingPath, $value);
+                    $node[$key] = $output;
                 }
             }
             elseif ($pathNode[0] == '.')
@@ -150,7 +188,7 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
                 if (!is_object($node))
                 {
                     throw new Transmorph_Writer_Exception(
-                        'Incoherence beetween write-rule and output node type'
+                        'Incoherence: current node is not an object'
                     );
                 }
 
@@ -221,7 +259,20 @@ class Transmorph_Writer implements Transmorph_Plugin_StackInterface
         switch ($name)
         {
             case 'objectNodeType':
-                $this->_objectNodeType = $value;
+                if (!isset($value))
+                {
+                    $this->_arrayNodeType = null;
+                    $this->_objectNodeType = null;
+                }
+                else
+                {
+                    $class = new ReflectionClass($value);
+
+                    $this->_arrayNodeType = $class->implementsInterface('ArrayAccess')
+                        ? $value
+                        : null;
+                    $this->_objectNodeType = $value;
+                }
                 break;
             default:
                 throw new OutOfRangeException(
